@@ -15,7 +15,9 @@ type building_opt =
     tile for picking up resources when a dice is rolled [tile_dice_num],
     a fixed position on the board [tile_position], adjacent tiles
     [neighbor_tiles], corners with buildings [corners], and it can have
-    the robber [robber].
+    the robber [robber]. [corners] is an association list where the 6
+    corners of the hex mapped to a building. [edges] is a tuple where
+    the edge exits between two corners
 
     Requires: [tile_position] is from 1-19 *)
 
@@ -24,8 +26,9 @@ type tile = {
   tile_dice_num : int;
   tile_position : int;
   neighbor_tiles : tile list;
-  corners : building_opt list;
+  corners : (int * building_opt) list;
   robber : bool;
+  edges : int * int;
 }
 
 type t = tile

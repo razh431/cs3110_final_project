@@ -34,3 +34,10 @@ type t = player
 let trade_to_bank = failwith "unimplemented"
 
 let trade_to_player = failwith "unimplemented"
+
+(* Longest road for each player: if 6 is attached to a or e, then add 1.
+   if not, then add it to b.
+
+   1____2____3____4____5____(6) *)
+(*      |  *)
+(*      6 *)
