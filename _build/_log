@@ -1,0 +1,6 @@
+### Starting build.
+# Target: board.mli.depends, tags: { extension:mli, file:board.mli, ocaml, ocamldep, quiet, traverse }
+/Users/rachelzhou/.opam/cs3110-2021sp/bin/ocamldep.opt -modules board.mli > board.mli.depends # cached
+# Target: board.cmi, tags: { byte, compile, extension:mli, file:board.mli, interf, ocaml, quiet, traverse }
+/Users/rachelzhou/.opam/cs3110-2021sp/bin/ocamlc.opt -c -o board.cmi board.mli # cached
+# Compilation successful.
