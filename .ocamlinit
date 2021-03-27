@@ -2,6 +2,7 @@
 #require "yojson";;
 #require "ANSITerminal";;
 #directory "_build";;
-#load "adventure.cmo";;
-#load "command.cmo";;
+#load "resource.cmo";;
+#load "tile.cmo";;
 #load "state.cmo";;
+#load "board.cmo";;
