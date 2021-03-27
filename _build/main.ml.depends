@@ -1,1 +1,1 @@
-main.ml: Board
+main.ml: ANSITerminal Board Player State String

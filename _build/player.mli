@@ -8,7 +8,7 @@ exception InvalidTrade
 (** [trade_to_bank player building_name] updates the resources of the
     player according to the cost of the building specified by
     [building_name]. Raises [UnknownBuilding] for an invalid building.
-    Raises [InvalidTrade] if the resources are not sufficient. name *)
+    Raises [InvalidTrade] if the resources are not sufficient. *)
 val trade_to_bank : t -> Board.trade_in -> t
 
 (** [trade_to_player (p1,p2)] returns a new tuple of players after a
