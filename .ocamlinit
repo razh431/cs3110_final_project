@@ -1,0 +1,8 @@
+#require "ounit2";;
+#require "yojson";;
+#require "ANSITerminal";;
+#directory "_build";;
+#load "resource.cmo";;
+#load "tile.cmo";;
+#load "state.cmo";;
+#load "board.cmo";;
