@@ -56,13 +56,15 @@ let end_game = print_endline "end game"
 (* [create_player_list] returns a list of players depending on user
    inputs for the players names. [num_pl] is the number of players in
    that list *)
-let create_player_list num_pl =
-  for x = num_pl downto 0 do
-    print_string "Name of player";
-    print_int x;
-    print_string ": \n";
-    print_string "> "
-  done
+let rec create_player_list num_pl =
+  let name_list = [] in
+  print_string "Name of player";
+  print_int num_pl;
+  print_string ": \n";
+  print_string "> ";
+  let name_input = read_line () |> String.trim in
+  (* append into list *)
+  if num_pl - 1 >= 0 then create_player_list (num_pl - 1) else name_list
 
 (* [play_game num_pl pl_list] runs the rest of the game *)
 let play_game num_pl = print_endline "play game"
@@ -93,7 +95,7 @@ let main () =
     "\n\nWelcome to the 3110 Catan game\n";
   print_endline "\nInstructions: Please enter the number of players 2-4";
   print_string "> ";
-  let input_num_pl = read_line () in
+  let input_num_pl = read_line () |> String.trim in
   if num_pl_checker input_num_pl then play_game input_num_pl
   else inval_num_player input_num_pl
 
