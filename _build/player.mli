@@ -11,9 +11,8 @@ exception InvalidTrade
     Raises [InvalidTrade] if the resources are not sufficient. *)
 val trade_to_bank : t -> Board.trade_in -> t
 
-(** [trade_to_player (p1,p2)] returns a new tuple of players after a
-    trade has been completed. Trade resources [Resource.t list] for
-    resource [Resource.t list]. Raises [InvalidTrade] if one or more
-    players has insufficient resources for the desired trade. *)
-val trade_to_player :
-  t * t -> Resource.t list -> Resource.t list -> t * t
+(** [trade_to_player tr] returns a new tuple of players whose lists of
+    resources have been updated after a trade has been completed. Raises
+    [InvalidTrade] if one or more players has insufficient resources for
+    the desired trade. *)
+val trade_to_player : t -> t -> Resource.t -> Resource.t -> t * t
