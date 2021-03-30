@@ -32,17 +32,39 @@ type player = {
 
 type t = player
 
-(*match player's cards with the resources they need to trade in.
-  [player_cards] is the cards owned. [new_pl_res] is an accumulator.
-  [resources] is list of resources they're trading in. trade_out returns
-  a list of cards, might be modified if successful trade, might not be*)
-let rec trade_out player_cards resources new_pl_res =
+let make_player =
+  {
+    name = "rachel";
+    num = 1;
+    color = Blue;
+    cards = [ Wood; Wool; Wheat; Ore; Ore; Ore ];
+    dev_cards = [];
+    tiles = [];
+    points = 2;
+  }
+
+let make_player_a =
+  { make_player with cards = [ Brick; Wheat; Ore; Ore; Ore ] }
+
+let make_player_1 =
+  { make_player with name = "mindy"; cards = [ Brick; Wood; Ore ] }
+
+let make_player_1a =
+  { make_player_1 with cards = [ Wood; Wool; Ore; Wood ] }
+
+type tr = t * Resource.t list
+
+(*trade_out returns a list of cards that removes the cards they want to
+  trade out. [player_cards] is the cards owned. [new_pl_res] is an
+  accumulator. [resources] is list of resources they're trading in. *)
+let rec trade_out
+    (player_cards : Resource.t list)
+    (resources : Resource.t list)
+    (new_pl_res : Resource.t list) =
   match player_cards with
   | [] ->
       (*player has no cards, but exists cards needed to be traded in*)
-      print_endline
-        "Invalid Trade. You don't have the needed resources.\n";
-      player_cards
+      raise InvalidTrade
   | h :: t -> (
       match resources with
       | [] -> new_pl_res @ player_cards
@@ -55,8 +77,21 @@ let trade_to_bank player res_1 = failwith "unimplemented"
 (*if the player's filtred cards = his origional cards, then they dont
   have that card*)
 
-let trade_to_player player1 player2 res_1 res_2 =
-  failwith "unimplemented"
+(*make new player with newly traded resources res*)
+let trade trade_res (res : Resource.t list) =
+  match trade_res with p, r_l -> trade_out p.cards r_l [] @ res
+
+let trade_to_player trade_1 trade_2 =
+  (*need to trade out-- remove the cards that currently has, then trade
+    in-- add in cards they want*)
+  match trade_1 with
+  | p_1, res_1 -> (
+      match trade_2 with
+      | p_2, res_2 ->
+          let player_1 = { p_1 with cards = trade trade_1 res_2 } in
+          let player_2 = { p_2 with cards = trade trade_2 res_1 } in
+          (player_1, player_2))
+
 (*check to see if the player1 has a resource1 card to give*)
 
 (* Longest road for each player: if 6 is attached to a or e, then add 1.
