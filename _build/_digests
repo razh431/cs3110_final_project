@@ -4,6 +4,7 @@
 "Resource: /Users/angelachen/Documents/CS3110/cs3110_final_project/player.mli": "\160\182\t\164\174\181\143E\160C\235/\228!\237\214"
 "Rule: ocaml dependencies ml (%=state )": "\218\1747\249\161c\135\178\006\245\157\170\168\030f\011"
 "Resource: /Users/angelachen/Documents/CS3110/cs3110_final_project/main.ml": "u\146p\187n\181\0182\167\251\144\017\196\1459\228"
+<<<<<<< HEAD
 "Resource: /Users/mindyli/3110/cs3110_final_project/player.ml": "\2456\023@\132\244@\196\028\146\169\197\240v\0306"
 "Resource: /Users/mindyli/3110/cs3110_final_project/board.mli": "T\248/\230\160\014\148\155\252\218\130\187\143=\214\022"
 "Resource: /Users/angelachen/Documents/CS3110/cs3110_final_project/resource.mli": ">\241g\248\194\160\160\158_r\242\249\137p9\142"
@@ -24,6 +25,22 @@
 "Resource: /Users/rachelzhou/Documents/sp2021/3110/cs3110_final_project/author.mli": "=\022\190\012\r\000\185\159a\012\232\249\011\178\150\132"
 "Rule: ocaml dependencies mli (%=board )": "\211\237\162\188\213\247\183^\135\019\165E'F\029\163"
 "Resource: /Users/mindyli/3110/cs3110_final_project/author.mli": "=\022\190\012\r\000\185\159a\012\232\249\011\178\150\132"
+=======
+"Resource: /Users/angelachen/Documents/CS3110/cs3110_final_project/resource.mli": ">\241g\248\194\160\160\158_r\242\249\137p9\142"
+"Resource: /Users/rachelzhou/Documents/sp2021/3110/cs3110_final_project/state.ml": "\239\221\154\224\243[\023\210a\020\254\140P\\\130\228"
+"Resource: /Users/rachelzhou/Documents/sp2021/3110/final_project/state.mli": "\149\006CM\207\183Le\160f\250\229gCK'"
+"Resource: /Users/rachelzhou/Documents/sp2021/3110/cs3110_final_project/board.ml": "\235\132m\138\207Y\026\229o\031\000\210\233T\247\149"
+"Rule: ocaml: ml & cmi -> cmo (%=tile )": "$\181\021\148\142h\154\237\217\165yj\007k\225\242"
+"Rule: ocaml: mli -> cmi (%=resource )": "\169\132\192\146^\151t\216\154Wd\128j\161\1812"
+"Rule: ocaml dependencies mli (%=tile )": "\014\238\024B\249\153\187\015\175\175s\027W\237Q!"
+"Resource: /Users/rachelzhou/Documents/sp2021/3110/final_project/resource.mli": ">\241g\248\194\160\160\158_r\242\249\137p9\142"
+"Rule: ocaml dependencies mli (%=state )": "\217\\\217\188X6\2085\014,p\180\139\t2\240"
+"Rule: ocaml: mli -> cmi (%=state )": "zK\161\191\227y<+\019\134\145y\\\003\148\150"
+"Resource: /Users/rachelzhou/Documents/sp2021/3110/final_project/tile.mli": "nQ\201\193u/\182\170\151\184\139\217\130\172\193\253"
+"Rule: ocaml: ml & cmi -> cmo (%=board )": "\172\133\159\198\165\169\200<\134z\n\211\195\182`\164"
+"Resource: /Users/rachelzhou/Documents/sp2021/3110/cs3110_final_project/author.mli": "=\022\190\012\r\000\185\159a\012\232\249\011\178\150\132"
+"Rule: ocaml dependencies mli (%=board )": "\t\248\019\194\145\212A\002\1367K\163\138\233\128\157"
+>>>>>>> module
 "Resource: /Users/rachelzhou/Documents/sp2021/3110/cs3110_final_project/resource.ml": "\212\183\000Gs\157`\130\001\004/\179+\157\222Z"
 "Resource: /Users/mindyli/3110/cs3110_final_project/tile.ml": "\186\228\186\168{\255\020$\209\246\216Go\156`\147"
 "Rule: ocaml dependencies mli (%=author )": "\0025\183M\144i\163\161\135\248\215*hk\213\027"
@@ -33,6 +50,7 @@
 "Resource: /Users/angelachen/Documents/CS3110/cs3110_final_project/board.mli": "\247\233\214\161\193\199\162\"d\189\170D\229a~J"
 "Rule: ocaml dependencies mli (%=player )": "\217\229-$\210]1\190\137\014a\205\245\170\207\019"
 "Resource: /Users/rachelzhou/Documents/sp2021/3110/final_project/player.ml": "\019N>\017jB\228>\194SG\014\224\206\027o"
+<<<<<<< HEAD
 "Resource: /Users/mindyli/3110/cs3110_final_project/state.ml": "\239\221\154\224\243[\023\210a\020\254\140P\\\130\228"
 "Resource: /Users/rachelzhou/Documents/sp2021/3110/final_project/resource.ml": "\212\183\000Gs\157`\130\001\004/\179+\157\222Z"
 "Rule: ocaml: ml & cmi -> cmo (%=state )": "A'-s\018?\r\153\163\234\204.\249\217n\216"
@@ -44,6 +62,18 @@
 "Rule: ocaml: ml & cmi -> cmo (%=resource )": "[\135\239\230\152\211\b\012\200\238\156\t\156\022\252\024"
 "Resource: /Users/rachelzhou/Documents/sp2021/3110/final_project/board.ml": "\235\132m\138\207Y\026\229o\031\000\210\233T\247\149"
 "Rule: ocaml dependencies ml (%=tile )": "\023w\148^\133^;\230zH\150\150w\022\170\253"
+=======
+"Resource: /Users/rachelzhou/Documents/sp2021/3110/final_project/resource.ml": "\212\183\000Gs\157`\130\001\004/\179+\157\222Z"
+"Rule: ocaml: ml & cmi -> cmo (%=state )": "\2019f\244\155Y\rX{\183\247g\1788\142\162"
+"Rule: ocaml: ml & cmi -> cmo (%=player )": "\184\254\031MSX\224\127\141\159\202(F\138\200\153"
+"Resource: /Users/angelachen/Documents/CS3110/cs3110_final_project/state.ml": "\239\221\154\224\243[\023\210a\020\254\140P\\\130\228"
+"Rule: ocaml: ml -> cmo & cmi (%=main )": "\200\2350\155i}\131\154\191\131]\182\1280\252\199"
+"Rule: ocaml dependencies ml (%=player )": "\185\225\129<\158\135H\228\031\022{\196\150ft\232"
+"Rule: ocaml: mli -> cmi (%=player )": "\151\r4\181bl\192\167\165\215\127-_\031\006v"
+"Rule: ocaml: ml & cmi -> cmo (%=resource )": "\173W\164rS\206\188\199\222\021\132\246\246P>\134"
+"Resource: /Users/rachelzhou/Documents/sp2021/3110/final_project/board.ml": "\235\132m\138\207Y\026\229o\031\000\210\233T\247\149"
+"Rule: ocaml dependencies ml (%=tile )": "\206\255\174\171KH\213\165\007U8\236K\217\246\255"
+>>>>>>> module
 "Rule: ocaml dependencies ml (%=main )": "P\151\144\158\139\238H\174\198O\146\238\247\134K\025"
 "Rule: ocaml: ml & cmi -> cmo (%=author )": "ki\017J\213kY)M`}jk\216XI"
 "Resource: /Users/mindyli/3110/cs3110_final_project/test.ml": "q\228\b\194\209\018qE$\212\1665\130\023b\173"
@@ -63,7 +93,11 @@
 "Resource: /Users/rachelzhou/Documents/sp2021/3110/final_project/author.ml": "\140hg\247\168\204\236\239y\192\252.N\192x\143"
 "Resource: /Users/rachelzhou/Documents/sp2021/3110/cs3110_final_project/resource.mli": ">\241g\248\194\160\160\158_r\242\249\137p9\142"
 "Resource: /Users/angelachen/Documents/CS3110/cs3110_final_project/tile.ml": "\191\177q\149[\166\024yd\230\168\2432\bMl"
+<<<<<<< HEAD
 "Resource: /Users/rachelzhou/Documents/sp2021/3110/cs3110_final_project/main.ml": "\012\244\026R\204\198-<)\022g\174\253\250\249n"
+=======
+"Resource: /Users/rachelzhou/Documents/sp2021/3110/cs3110_final_project/main.ml": "u\146p\187n\181\0182\167\251\144\017\196\1459\228"
+>>>>>>> module
 "Resource: /Users/rachelzhou/Documents/sp2021/3110/final_project/author.mli": "=\022\190\012\r\000\185\159a\012\232\249\011\178\150\132"
 "Resource: /Users/mindyli/3110/cs3110_final_project/resource.ml": "\173w\133i{\255\n\000\130\2129\t\253\022\181\030"
 "Rule: ocaml dependencies ml (%=resource )": "\240\202/mQ\018\205\030@P}b\205fp\017"
@@ -72,6 +106,7 @@
 "Rule: ocaml dependencies ml (%=board )": "\205\141\198v/\230\025\ts\175U\242\253\222\217\134"
 "Resource: /Users/rachelzhou/Documents/sp2021/3110/final_project/tile.ml": "\215|\n\0227\031\145\161e\228\254\248\220(\151#"
 "Resource: /Users/angelachen/Documents/CS3110/cs3110_final_project/author.ml": "\140hg\247\168\204\236\239y\192\252.N\192x\143"
+<<<<<<< HEAD
 "Rule: ocaml: cmo* -> byte (%=test )": "\162\226&\208\167\187\173+0\175M\029\214\249\201("
 "Resource: /Users/rachelzhou/Documents/sp2021/3110/final_project/main.ml": "\142\211~\135Z\222\214\209_\162\225\224\137\163\228A"
 "Resource: /Users/rachelzhou/Documents/sp2021/3110/cs3110_final_project/player.mli": "\028AKfQAW\150<4\141\240\128\22921"
@@ -80,3 +115,12 @@
 "Resource: /Users/angelachen/Documents/CS3110/cs3110_final_project/state.mli": "\149\006CM\207\183Le\160f\250\229gCK'"
 "Rule: ocaml dependencies mli (%=resource )": "\002\185vGO6\182@\204\003\182\1496\2116\157"
 "Rule: ocaml: mli -> cmi (%=tile )": "$6\194\1529&%\191\150\217`\239\180\145\130X"
+=======
+"Resource: /Users/rachelzhou/Documents/sp2021/3110/final_project/main.ml": "\142\211~\135Z\222\214\209_\162\225\224\137\163\228A"
+"Resource: /Users/rachelzhou/Documents/sp2021/3110/cs3110_final_project/player.mli": "\160\182\t\164\174\181\143E\160C\235/\228!\237\214"
+"Resource: /Users/angelachen/Documents/CS3110/cs3110_final_project/author.mli": "=\022\190\012\r\000\185\159a\012\232\249\011\178\150\132"
+"Resource: /Users/angelachen/Documents/CS3110/cs3110_final_project/tile.mli": "nQ\201\193u/\182\170\151\184\139\217\130\172\193\253"
+"Resource: /Users/angelachen/Documents/CS3110/cs3110_final_project/state.mli": "\149\006CM\207\183Le\160f\250\229gCK'"
+"Rule: ocaml dependencies mli (%=resource )": "$w2\250\162\130{\148\148S\246a\211a\183\143"
+"Rule: ocaml: mli -> cmi (%=tile )": "\1857E\248\193+\213\213\208\246\136\200\b\003\143W"
+>>>>>>> module

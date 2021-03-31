@@ -21,6 +21,7 @@ type color =
     resource cards [cards], a hand of development cards [dev_cards],
     tiles with settlements [tiles], and victory points [points]. *)
 type player = {
+  name : string;
   num : int;
   color : color;
   cards : Resource.t list;
