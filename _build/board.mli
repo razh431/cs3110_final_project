@@ -20,6 +20,6 @@ type dev_card
 (** The type of a port. *)
 type port
 
-(** objects that player can trade cards into include dev cards,
-    buildings *)
+(** The type of objects that player can trade cards into, which includes
+    development cards or buildings. *)
 type trade_in
