@@ -27,7 +27,6 @@ type dev_card =
 type player = {
   name : string;
   num : int;
-  name: string;
   color : color;
   cards : Resource.t list;
   dev_cards : dev_card list;
@@ -35,27 +34,21 @@ type player = {
   points : int;
 }
 
-<<<<<<< HEAD
-
 type t = player
 
-let init_player (number:int) (pl_name:string) (col:color) : t=
+let init_player (number : int) (pl_name : string) (col : color) : t =
   {
-    num= number;
+    num = number;
     name = pl_name;
-    color= col;
-    cards= [];
-    dev_cards= [];
-    tiles= [];
-    points= 0;
+    color = col;
+    cards = [];
+    dev_cards = [];
+    tiles = [];
+    points = 0;
   }
 
-let get_player_name (pl:t) : string = pl.name 
+let get_player_name (pl : t) : string = pl.name
 (* let trade_to_bank = failwith "unimplemented"*)
-
-(* let trade_to_player = failwith "unimplemented" *)
-=======
-type t = player
 
 let make_player =
   {
@@ -118,7 +111,6 @@ let trade_to_player trade_1 trade_2 =
           (player_1, player_2))
 
 (*check to see if the player1 has a resource1 card to give*)
->>>>>>> player
 
 (* Longest road for each player: if 6 is attached to a or e, then add 1.
    if not, then add it to b.

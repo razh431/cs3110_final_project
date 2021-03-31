@@ -60,5 +60,5 @@ val edges_from_pos : int -> edge list
     on it, and it does not have the robber.
 
     Requires: [str] is a valid resource "wheat", "ore", "wool", "brick",
-    or "wood" *)
+    or "wood". Raises [Invalid_argument str] otherwise. *)
 val make_tile : string -> int -> int -> t

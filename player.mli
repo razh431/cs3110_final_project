@@ -11,19 +11,23 @@ type color =
   | White
   | Brown
 
-val init_player : int -> string -> color -> t
+type dev_card =
+  | Temp1
+  | Temp2
 
 type player = {
   name : string;
   num : int;
   color : color;
   cards : Resource.t list;
-  (* dev_cards : dev_card list; *)
+  dev_cards : dev_card list;
   tiles : Tile.t list;
   points : int;
 }
 
 type t = player
+
+val init_player : int -> string -> color -> t
 
 (** The type of a trade. a tuple of list and the list to trade out *)
 type tr = t * Resource.t list

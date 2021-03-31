@@ -1,5 +1,1 @@
-<<<<<<< HEAD
-tile.ml: List Resource
-=======
-tile.ml: Bisect Resource
->>>>>>> player
+tile.ml: Bisect List Resource

@@ -89,12 +89,12 @@ let edges_from_pos pos =
 let make_tile str dice pos =
   let resource =
     match str with
-    | "wheat" -> Resource.wheat
-    | "ore" -> Resource.ore
-    | "wool" -> Resource.wool
-    | "brick" -> Resource.brick
-    | "wood" -> Resource.wood
-    | _ -> assert false
+    | "wheat" -> Wheat
+    | "ore" -> Ore
+    | "wool" -> Wool
+    | "brick" -> Brick
+    | "wood" -> Wood
+    | _ -> raise (Invalid_argument str)
   in
   {
     resource_name = resource;

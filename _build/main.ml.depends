@@ -1,1 +1,1 @@
-main.ml: ANSITerminal Bisect Board Player State String
+main.ml: Bisect Board Player Resource State String Tile
