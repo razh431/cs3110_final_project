@@ -1,12 +1,30 @@
-type t
-
-(** The type of a trade. a tuple of list and the list to trade out *)
-type tr = t * Resource.t list
-
 (* TODO: exceptions with 'of' for more info *)
 exception UnknownBuilding
 
 exception InvalidTrade
+
+type color =
+  | Blue
+  | Red
+  | Green
+  | Orange
+  | White
+  | Brown
+
+type player = {
+  name : string;
+  num : int;
+  color : color;
+  cards : Resource.t list;
+  dev_cards : dev_card list;
+  tiles : Tile.t list;
+  points : int;
+}
+
+type t = player
+
+(** The type of a trade. a tuple of list and the list to trade out *)
+type tr = t * Resource.t list
 
 (** [trade_to_bank player building_name] updates the resources of the
     player according to the cost of the building specified by
