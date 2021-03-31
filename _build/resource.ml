@@ -1,9 +1,7 @@
 (** The type representing resources. *)
-type resource =
+type t =
   | Wheat
   | Ore
   | Wool
   | Brick
   | Wood
-
-type t = resource

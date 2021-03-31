@@ -1,54 +1,28 @@
 ### Starting build.
-# Target: board.mli.depends, tags: { package(ANSITerminal), package(ounit2), package(yojson), extension:mli, file:board.mli, ocaml, ocamldep, quiet, traverse }
-ocamlfind ocamldep -package ounit2 -package yojson -package ANSITerminal -modules board.mli > board.mli.depends
-# Target: board.cmi, tags: { package(ANSITerminal), package(ounit2), package(yojson), byte, compile, extension:mli, file:board.mli, interf, ocaml, quiet, traverse }
-ocamlfind ocamlc -c -package ounit2 -package yojson -package ANSITerminal -o board.cmi board.mli
-# Target: board.ml.depends, tags: { package(ANSITerminal), package(ounit2), package(yojson), extension:ml, file:board.ml, ocaml, ocamldep, quiet, traverse }
-ocamlfind ocamldep -package ounit2 -package yojson -package ANSITerminal -modules board.ml > board.ml.depends
-# Target: resource.mli.depends, tags: { package(ANSITerminal), package(ounit2), package(yojson), extension:mli, file:resource.mli, ocaml, ocamldep, quiet, traverse }
-ocamlfind ocamldep -package ounit2 -package yojson -package ANSITerminal -modules resource.mli > resource.mli.depends
-# Target: tile.mli.depends, tags: { package(ANSITerminal), package(ounit2), package(yojson), extension:mli, file:tile.mli, ocaml, ocamldep, quiet, traverse }
-ocamlfind ocamldep -package ounit2 -package yojson -package ANSITerminal -modules tile.mli > tile.mli.depends
-# Target: resource.cmi, tags: { package(ANSITerminal), package(ounit2), package(yojson), byte, compile, extension:mli, file:resource.mli, interf, ocaml, quiet, traverse }
-ocamlfind ocamlc -c -package ounit2 -package yojson -package ANSITerminal -o resource.cmi resource.mli
-# Target: tile.cmi, tags: { package(ANSITerminal), package(ounit2), package(yojson), byte, compile, extension:mli, file:tile.mli, interf, ocaml, quiet, traverse }
-ocamlfind ocamlc -c -package ounit2 -package yojson -package ANSITerminal -o tile.cmi tile.mli
-# Target: board.cmo, tags: { package(ANSITerminal), package(ounit2), package(yojson), byte, compile, extension:cmo, extension:ml, file:board.cmo, file:board.ml, implem, ocaml, quiet, traverse }
-ocamlfind ocamlc -c -package ounit2 -package yojson -package ANSITerminal -o board.cmo board.ml
-# Target: player.mli.depends, tags: { package(ANSITerminal), package(ounit2), package(yojson), extension:mli, file:player.mli, ocaml, ocamldep, quiet, traverse }
-ocamlfind ocamldep -package ounit2 -package yojson -package ANSITerminal -modules player.mli > player.mli.depends
-# Target: player.cmi, tags: { package(ANSITerminal), package(ounit2), package(yojson), byte, compile, extension:mli, file:player.mli, interf, ocaml, quiet, traverse }
-ocamlfind ocamlc -c -package ounit2 -package yojson -package ANSITerminal -o player.cmi player.mli
-# Target: player.ml.depends, tags: { package(ANSITerminal), package(ounit2), package(yojson), extension:ml, file:player.ml, ocaml, ocamldep, quiet, traverse }
-ocamlfind ocamldep -package ounit2 -package yojson -package ANSITerminal -modules player.ml > player.ml.depends
-# Target: player.cmo, tags: { package(ANSITerminal), package(ounit2), package(yojson), byte, compile, extension:cmo, extension:ml, file:player.cmo, file:player.ml, implem, ocaml, quiet, traverse }
-ocamlfind ocamlc -c -package ounit2 -package yojson -package ANSITerminal -o player.cmo player.ml
-# Target: resource.ml.depends, tags: { package(ANSITerminal), package(ounit2), package(yojson), extension:ml, file:resource.ml, ocaml, ocamldep, quiet, traverse }
-ocamlfind ocamldep -package ounit2 -package yojson -package ANSITerminal -modules resource.ml > resource.ml.depends
-# Target: resource.cmo, tags: { package(ANSITerminal), package(ounit2), package(yojson), byte, compile, extension:cmo, extension:ml, file:resource.cmo, file:resource.ml, implem, ocaml, quiet, traverse }
-ocamlfind ocamlc -c -package ounit2 -package yojson -package ANSITerminal -o resource.cmo resource.ml
-# Target: state.mli.depends, tags: { package(ANSITerminal), package(ounit2), package(yojson), extension:mli, file:state.mli, ocaml, ocamldep, quiet, traverse }
-ocamlfind ocamldep -package ounit2 -package yojson -package ANSITerminal -modules state.mli > state.mli.depends
-# Target: state.cmi, tags: { package(ANSITerminal), package(ounit2), package(yojson), byte, compile, extension:mli, file:state.mli, interf, ocaml, quiet, traverse }
-ocamlfind ocamlc -c -package ounit2 -package yojson -package ANSITerminal -o state.cmi state.mli
-# Target: state.ml.depends, tags: { package(ANSITerminal), package(ounit2), package(yojson), extension:ml, file:state.ml, ocaml, ocamldep, quiet, traverse }
-ocamlfind ocamldep -package ounit2 -package yojson -package ANSITerminal -modules state.ml > state.ml.depends
-# Target: state.cmo, tags: { package(ANSITerminal), package(ounit2), package(yojson), byte, compile, extension:cmo, extension:ml, file:state.cmo, file:state.ml, implem, ocaml, quiet, traverse }
-ocamlfind ocamlc -c -package ounit2 -package yojson -package ANSITerminal -o state.cmo state.ml
-# Target: tile.ml.depends, tags: { package(ANSITerminal), package(ounit2), package(yojson), extension:ml, file:tile.ml, ocaml, ocamldep, quiet, traverse }
-ocamlfind ocamldep -package ounit2 -package yojson -package ANSITerminal -modules tile.ml > tile.ml.depends
-# Target: tile.cmo, tags: { package(ANSITerminal), package(ounit2), package(yojson), byte, compile, extension:cmo, extension:ml, file:tile.cmo, file:tile.ml, implem, ocaml, quiet, traverse }
-ocamlfind ocamlc -c -package ounit2 -package yojson -package ANSITerminal -o tile.cmo tile.ml
-# Target: main.ml.depends, tags: { package(ANSITerminal), package(ounit2), package(yojson), extension:ml, file:main.ml, ocaml, ocamldep, quiet, traverse }
-ocamlfind ocamldep -package ounit2 -package yojson -package ANSITerminal -modules main.ml > main.ml.depends
-# Target: main.cmo, tags: { package(ANSITerminal), package(ounit2), package(yojson), byte, compile, extension:cmo, extension:ml, file:main.cmo, file:main.ml, implem, ocaml, quiet, traverse }
-ocamlfind ocamlc -c -package ounit2 -package yojson -package ANSITerminal -o main.cmo main.ml
-# Target: author.mli.depends, tags: { package(ANSITerminal), package(ounit2), package(yojson), extension:mli, file:author.mli, ocaml, ocamldep, quiet, traverse }
-ocamlfind ocamldep -package ounit2 -package yojson -package ANSITerminal -modules author.mli > author.mli.depends
-# Target: author.cmi, tags: { package(ANSITerminal), package(ounit2), package(yojson), byte, compile, extension:mli, file:author.mli, interf, ocaml, quiet, traverse }
-ocamlfind ocamlc -c -package ounit2 -package yojson -package ANSITerminal -o author.cmi author.mli
-# Target: author.ml.depends, tags: { package(ANSITerminal), package(ounit2), package(yojson), extension:ml, file:author.ml, ocaml, ocamldep, quiet, traverse }
-ocamlfind ocamldep -package ounit2 -package yojson -package ANSITerminal -modules author.ml > author.ml.depends
-# Target: author.cmo, tags: { package(ANSITerminal), package(ounit2), package(yojson), byte, compile, extension:cmo, extension:ml, file:author.cmo, file:author.ml, implem, ocaml, quiet, traverse }
-ocamlfind ocamlc -c -package ounit2 -package yojson -package ANSITerminal -o author.cmo author.ml
-# Compilation successful.
+# Target: board.mli.depends, tags: { package(ANSITerminal), package(bisect_ppx), package(ounit2), package(yojson), extension:mli, file:board.mli, ocaml, ocamldep, quiet, traverse }
+ocamlfind ocamldep -package ounit2 -package yojson -package ANSITerminal -package bisect_ppx -modules board.mli > board.mli.depends # cached
+# Target: board.cmi, tags: { package(ANSITerminal), package(bisect_ppx), package(ounit2), package(yojson), byte, compile, extension:mli, file:board.mli, interf, ocaml, quiet, traverse }
+ocamlfind ocamlc -c -package ounit2 -package yojson -package ANSITerminal -package bisect_ppx -o board.cmi board.mli
+# Target: board.ml.depends, tags: { package(ANSITerminal), package(bisect_ppx), package(ounit2), package(yojson), extension:ml, file:board.ml, ocaml, ocamldep, quiet, traverse }
+ocamlfind ocamldep -package ounit2 -package yojson -package ANSITerminal -package bisect_ppx -modules board.ml > board.ml.depends # cached
+# Target: resource.mli.depends, tags: { package(ANSITerminal), package(bisect_ppx), package(ounit2), package(yojson), extension:mli, file:resource.mli, ocaml, ocamldep, quiet, traverse }
+ocamlfind ocamldep -package ounit2 -package yojson -package ANSITerminal -package bisect_ppx -modules resource.mli > resource.mli.depends # cached
+# Target: tile.mli.depends, tags: { package(ANSITerminal), package(bisect_ppx), package(ounit2), package(yojson), extension:mli, file:tile.mli, ocaml, ocamldep, quiet, traverse }
+ocamlfind ocamldep -package ounit2 -package yojson -package ANSITerminal -package bisect_ppx -modules tile.mli > tile.mli.depends # cached
+# Target: resource.cmi, tags: { package(ANSITerminal), package(bisect_ppx), package(ounit2), package(yojson), byte, compile, extension:mli, file:resource.mli, interf, ocaml, quiet, traverse }
+ocamlfind ocamlc -c -package ounit2 -package yojson -package ANSITerminal -package bisect_ppx -o resource.cmi resource.mli
+# Target: tile.cmi, tags: { package(ANSITerminal), package(bisect_ppx), package(ounit2), package(yojson), byte, compile, extension:mli, file:tile.mli, interf, ocaml, quiet, traverse }
+ocamlfind ocamlc -c -package ounit2 -package yojson -package ANSITerminal -package bisect_ppx -o tile.cmi tile.mli
+# Target: board.cmo, tags: { package(ANSITerminal), package(bisect_ppx), package(ounit2), package(yojson), byte, compile, extension:cmo, extension:ml, file:board.cmo, file:board.ml, implem, ocaml, quiet, traverse }
+ocamlfind ocamlc -c -package ounit2 -package yojson -package ANSITerminal -package bisect_ppx -o board.cmo board.ml
+# Target: player.mli.depends, tags: { package(ANSITerminal), package(bisect_ppx), package(ounit2), package(yojson), extension:mli, file:player.mli, ocaml, ocamldep, quiet, traverse }
+ocamlfind ocamldep -package ounit2 -package yojson -package ANSITerminal -package bisect_ppx -modules player.mli > player.mli.depends
+# Target: player.cmi, tags: { package(ANSITerminal), package(bisect_ppx), package(ounit2), package(yojson), byte, compile, extension:mli, file:player.mli, interf, ocaml, quiet, traverse }
+ocamlfind ocamlc -c -package ounit2 -package yojson -package ANSITerminal -package bisect_ppx -o player.cmi player.mli
++ ocamlfind ocamlc -c -package ounit2 -package yojson -package ANSITerminal -package bisect_ppx -o player.cmi player.mli
+File "player.mli", line 19, characters 14-22:
+19 |   dev_cards : dev_card list;
+                   ^^^^^^^^
+Error: Unbound type constructor dev_card
+Command exited with code 2.
+# Compilation unsuccessful.

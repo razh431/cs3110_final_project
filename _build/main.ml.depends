@@ -1,1 +1,1 @@
-main.ml: ANSITerminal Board Player State String
+main.ml: ANSITerminal Bisect Board Player State String
