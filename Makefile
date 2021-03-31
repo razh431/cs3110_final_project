@@ -40,6 +40,6 @@ play:
 # 		-html -stars -d _doc.private \
 # 		-inv-merge-ml-mli -m A $(MLIS) $(MLS)
 
-# clean:
-# 	ocamlbuild -clean
-# 	rm -rf _doc.public _doc.private adventure.zip
+clean:
+	ocamlbuild -clean
+	rm -rf _doc.public _doc.private adventure.zip

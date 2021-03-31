@@ -15,6 +15,10 @@ type color =
   | White
   | Brown
 
+type dev_card =
+  | Temp1
+  | Temp2
+
 (** The type [player] represents a player.
 
     A player has a number [num], color represented by [color], a hand of
@@ -22,6 +26,7 @@ type color =
     tiles with settlements [tiles], and victory points [points]. *)
 type player = {
   num : int;
+  name: string;
   color : color;
   cards : Resource.t list;
   dev_cards : dev_card list;
@@ -29,11 +34,22 @@ type player = {
   points : int;
 }
 
+
 type t = player
 
-type tr = (t * Resource.t list) list
+let init_player (number:int) (pl_name:string) (col:color) : t=
+  {
+    num= number;
+    name = pl_name;
+    color= col;
+    cards= [];
+    dev_cards= [];
+    tiles= [];
+    points= 0;
+  }
 
-let trade_to_bank = failwith "unimplemented"
+let get_player_name (pl:t) : string = pl.name *)
+(* let trade_to_bank = failwith "unimplemented"
 
 let trade_to_player = failwith "unimplemented"
 
