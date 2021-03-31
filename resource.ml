@@ -1,10 +1,11 @@
 (** The type representing resources. *)
-type resource =
+type t =
   | Wheat
   | Ore
   | Wool
   | Brick
   | Wood
+<<<<<<< HEAD
 
 type t = resource
 
@@ -17,3 +18,5 @@ let wool = Wool
 let brick = Brick
 
 let wood = Wood
+=======
+>>>>>>> player
