@@ -79,7 +79,7 @@ let play_game num_pl =
       (if num_pl = "3" then 3 else
          (if num_pl = "2" then 2 else 0)))
    in let players = create_player_list num num []
-   in print_string board_default;
+   in print_string board_default
    (* let pl = List.nth_opt players 1
    in let n = pl.name
    in print_string n;

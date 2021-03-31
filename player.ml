@@ -48,10 +48,10 @@ let init_player (number:int) (pl_name:string) (col:color) : t=
     points= 0;
   }
 
-let get_player_name (pl:t) : string = pl.name *)
-(* let trade_to_bank = failwith "unimplemented"
+let get_player_name (pl:t) : string = pl.name 
+(* let trade_to_bank = failwith "unimplemented"*)
 
-let trade_to_player = failwith "unimplemented"
+(* let trade_to_player = failwith "unimplemented" *)
 
 (* Longest road for each player: if 6 is attached to a or e, then add 1.
    if not, then add it to b.
