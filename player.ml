@@ -1,6 +1,7 @@
 open Tile
 open Resource
 open Board
+open Dev_cards
 
 exception UnknownBuilding
 
@@ -15,10 +16,6 @@ type color =
   | White
   | Brown
 
-type dev_card =
-  | Temp1
-  | Temp2
-
 (** The type [player] represents a player.
 
     A player has a number [num], color represented by [color], a hand of
@@ -29,7 +26,7 @@ type player = {
   num : int;
   color : color;
   cards : Resource.t list;
-  dev_cards : dev_card list;
+  dev_cards : Dev_cards.t list;
   tiles : Tile.t list;
   points : int;
 }
@@ -47,28 +44,33 @@ let init_player (number : int) (pl_name : string) (col : color) : t =
     points = 0;
   }
 
-let get_player_name (pl : t) : string = pl.name
-(* let trade_to_bank = failwith "unimplemented"*)
+let update_player player cards dev_cards tiles points =
+  { player with cards; dev_cards; tiles; points }
 
-let make_player =
+let get_player_name (pl : t) : string = pl.name
+
+(*generate bank cards*)
+let rec gen_cards card num_needed =
+  match card with
+  | [] -> failwith "never called"
+  | h :: t ->
+      if num_needed = 1 then card
+      else gen_cards (h :: card) (num_needed - 1)
+
+let bank =
   {
-    name = "rachel";
-    num = 1;
-    color = Blue;
-    cards = [ Wood; Wool; Wheat; Ore; Ore; Ore ];
+    num = 0;
+    name = "Bank";
+    color = White;
+    cards =
+      gen_cards [ Wool ] 19
+      @ gen_cards [ Ore ] 19
+      @ gen_cards [ Wool ] 19
+      @ gen_cards [ Brick ] 19;
     dev_cards = [];
     tiles = [];
-    points = 2;
+    points = 0;
   }
-
-let make_player_a =
-  { make_player with cards = [ Brick; Wheat; Ore; Ore; Ore ] }
-
-let make_player_1 =
-  { make_player with name = "mindy"; cards = [ Brick; Wood; Ore ] }
-
-let make_player_1a =
-  { make_player_1 with cards = [ Wood; Wool; Ore; Wood ] }
 
 type tr = t * Resource.t list
 
@@ -91,14 +93,15 @@ let rec trade_out
           if r = h then trade_out t ls new_pl_res
           else trade_out t resources (h :: new_pl_res))
 
-let trade_to_bank player res_1 = failwith "unimplemented"
-(*if the player's filtred cards = his origional cards, then they dont
-  have that card*)
-
 (*make new player with newly traded resources res*)
 let trade trade_res (res : Resource.t list) =
   match trade_res with p, r_l -> trade_out p.cards r_l [] @ res
 
+(*trade_to_player trade_1 trade_2 creates two players with newly traded
+  cards. It removes cards from the player from player1 and adds it to
+  the player in trade2. Note: [trade_1] must be the player of the
+  current turn. This way, can be used to trade with bank, which must be
+  trade_2 *)
 let trade_to_player trade_1 trade_2 =
   (*need to trade out-- remove the cards that currently has, then trade
     in-- add in cards they want*)
@@ -110,6 +113,8 @@ let trade_to_player trade_1 trade_2 =
           let player_2 = { p_2 with cards = trade trade_2 res_1 } in
           (player_1, player_2))
 
+let trade_to_bank player res_list =
+  trade_to_player (player, res_list) (bank, [])
 (*check to see if the player1 has a resource1 card to give*)
 
 (* Longest road for each player: if 6 is attached to a or e, then add 1.

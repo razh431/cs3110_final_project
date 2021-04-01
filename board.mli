@@ -15,7 +15,6 @@ type t
    functions in Board. *)
 
 (** The type of a development card. *)
-type dev_card
 
 (** The type of a port. *)
 type port

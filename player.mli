@@ -11,16 +11,12 @@ type color =
   | White
   | Brown
 
-type dev_card =
-  | Temp1
-  | Temp2
-
 type player = {
   name : string;
   num : int;
   color : color;
   cards : Resource.t list;
-  dev_cards : dev_card list;
+  dev_cards : Dev_cards.t list;
   tiles : Tile.t list;
   points : int;
 }
@@ -37,7 +33,7 @@ type tr = t * Resource.t list
     [building_name]. Raises [UnknownBuilding] for an invalid building.
     Raises [InvalidTrade] if the resources are not sufficient. *)
 
-val trade_to_bank : t -> Board.trade_in -> t
+val trade_to_bank : t -> Resource.t list -> t * t
 
 (** [trade_to_player tr] returns a new tuple of players whose lists of
     resources have been updated after a trade has been completed. Raises
@@ -47,11 +43,4 @@ val trade_to_bank : t -> Board.trade_in -> t
     \[Lumber, Lumber\]) *)
 val trade_to_player : tr -> tr -> t * t
 
-(*testing: delete later*)
-val make_player : t
-
-val make_player_a : t
-
-val make_player_1 : t
-
-val make_player_1a : t
+(* val bank : t *)

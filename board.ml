@@ -1,9 +1,7 @@
 open Random
 open Resource
 open Tile
-
-(* TODO: unimplemented *)
-type dev_card = None
+open Dev_cards
 
 (* TODO: unimplemented *)
 type port = None
@@ -14,12 +12,12 @@ type port = None
     [dev_cards], and ports [ports]. *)
 type board = {
   tiles : Tile.t list;
-  dev_cards : dev_card list;
+  dev_cards : Dev_cards.t list;
   ports : port list;
 }
 
 type trade_in = {
-  dev_cards : dev_card list;
+  dev_cards : Dev_cards.t list;
   building : Tile.building;
 }
 
