@@ -54,8 +54,8 @@ let rec gen_cards card num_needed =
   match card with
   | [] -> failwith "never called"
   | h :: t ->
-      if List.length card == num_needed then card
-      else gen_cards (h :: card) (num_needed + 1)
+      if num_needed = 1 then card
+      else gen_cards (h :: card) (num_needed - 1)
 
 let bank =
   {

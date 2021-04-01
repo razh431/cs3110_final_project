@@ -29,6 +29,16 @@ let edges_test
     (cmp_set_like_lists expected_output (edges_from_pos position))
 
 (* Test a tile's edges, neighbors, and presence of the robber *)
+let tile_attr_tests =
+  [
+    (* edges_test "tile 1's edges" 1 t1_edges; *)
+    (* edges_test "tile 2's edges" 2 t2_edges; *)
+    (* TODO: test neighbors *)
+    assert true;
+  ]
+
+let move_robber_tests = [ assert true ]
+
 let pp_list pp_elt lst =
   let pp_elts lst =
     let rec loop n acc = function

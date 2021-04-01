@@ -43,4 +43,4 @@ val trade_to_bank : t -> Resource.t list -> t * t
     \[Lumber, Lumber\]) *)
 val trade_to_player : tr -> tr -> t * t
 
-val bank : t
+(* val bank : t *)
