@@ -1,4 +1,4 @@
-MODULES=board player resource dev_cards state tile main author
+MODULES=board player resource dev_cards state tile main author adj_matrix
 OBJECTS=$(MODULES:=.cmo)
 MLS=$(MODULES:=.ml)
 MLIS=$(MODULES:=.mli)
