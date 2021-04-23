@@ -21,7 +21,7 @@ type settlement = {
 (* Type of a corner in the adjacency matrix. [Some of settlement]
    describes the player and kind of building if there is a building on
    that corner, otherwise it has type [None]. *)
-type corner =
+type node =
   | Some of settlement
   | None
 
@@ -37,7 +37,7 @@ type tile = {
   id : id;
   dice_num : dice_num;
   resource : resource;
-  corners : corner list;
+  corner_position : int list;
   robber : robber;
 }
 
@@ -53,17 +53,16 @@ val init_road_mtx : road array array
 
 (* [update_road_mtx r c v] updates the the matrix with value [v] into
    row [r] and column [c]*)
-val update_road_mtx :
-  road array array -> int -> int -> road -> road array array
+val update_road_mtx : int -> int -> road -> unit
 
 (*corners functions*)
 
 (* [init_corners] makes the initial corners list.*)
-val init_corners : corner array
+val init_corners : node array
 
-(* [update_corners a i v ] updates the corner array [a] at tile position
+(* [update_corners i v ] updates the corner array [a] at tile position
    [i] with corner v*)
-val update_corners : corner array -> int -> corner -> corner array
+val update_corners : int -> node -> unit
 
 (*[dice_roll_tiles num] if we roll dice, we want a certain number, and
   get all the tiles with that number in a list*)

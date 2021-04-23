@@ -10,23 +10,17 @@ type resource = Resource.t
 
 type resource_str = string
 
-type corners = int list
-
 type robber = bool
 
 type building =
   | House
   | City
 
-type building_opt =
-  | None
-  | Some of building
-
 type tile = {
   id : id;
   dice_num : dice_num;
   resource : resource;
-  corners : corners;
+  corner_position : int list;
   robber : robber;
 }
 
@@ -41,11 +35,11 @@ type settlement = {
   building : building;
 }
 
-type corner =
+type node =
   | Some of settlement
   | None
 
-type corner_matrix = corner list
+  let init_corners = Array.make 54 None
 
 let resource_from_string input =
   match input with
@@ -68,45 +62,57 @@ let tile_from_json json =
     dice_num = json |> member "dice num" |> to_string |> int_of_string;
     resource =
       json |> member "resource" |> to_string |> resource_from_string;
-    corners = json |> member "corners" |> to_list |> filter_int;
+    corner_position = json |> member "corners" |> to_list |> filter_int;
     robber = json |> member "robber" |> to_string |> bool_of_string;
   }
 
 let tiles_from_json json =
   json |> member "tiles" |> to_list |> List.map tile_from_json
 
+  let curr_roads = init_road_mtx
+
 let update_road_mtx
-    (matrix : road array array)
     (row : int)
     (column : int)
-    (value : road) : road array array =
-  matrix.(row).(column) <- value;
-  matrix
+    (value : road) =
+  curr_roads.(row).(column) <- value
 
-let init_corners = Array.make 54 None
+let curr_corners = init_corners
 
-let update_corners arr index (c : corner) =
-  arr.(index) <- c;
-  arr
+let update_corners index (c : node) =
+  curr_corners.(index) <- c
+
+
 
 (*if we roll dice, we want a certain number, and get all the tiles ids*)
 let dice_roll_tiles num json =
   List.filter (fun x -> num = x.dice_num) (tiles_from_json json)
 
-let players_corners (x : corner) = 
-  match x with 
-| Some settlement -> 
-  match settlement.building with 
-    (*failwith "todo: distrubute resources for player with house"*)
-  | House -> true
-  (*failwith "todo: distrubute resources for player wtih city"*)
-  | City -> false
-| None -> failwith "there are no settlements at this corner"
+(*check if players have a building on any of those corners, and update
+  player's resources accordingly*)
+let settlement_on_corner (x : node) =
+  match x with
+  | Some settlement -> (
+      match settlement.building with
+      (*failwith "todo: distrubute resources for player with house"*)
+      | House -> true
+      (*failwith "todo: distrubute resources for player wtih city"*)
+      | City -> false)
+  | None -> failwith "there are no settlements at this corner"
 
-let corners_rolled num json = 
-  let tiles = dice_roll_tiles num json in 
-  let rec update_pl_resource lst acc = 
-    match tiles with 
+(*look through corner list for each corner, distrubute resources. *)
+let corner_pos_to_node corner_pos = 
+  let curr_corner = get_curr_corner corner_pos 
+
+
+
+let corners_rolled num json =
+  let rec update_pl_resource lst acc =
+    match lst with
     | [] -> acc
     | h :: t -> 
-      List.filter (fun x -> players_corners x) h.corners
+      h.corner_position
+
+  in
+
+  update_pl_resource (dice_roll_tiles num json) []
