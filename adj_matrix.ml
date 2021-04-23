@@ -82,8 +82,6 @@ let curr_corners = init_corners
 let update_corners index (c : node) =
   curr_corners.(index) <- c
 
-
-
 (*if we roll dice, we want a certain number, and get all the tiles ids*)
 let dice_roll_tiles num json =
   List.filter (fun x -> num = x.dice_num) (tiles_from_json json)
@@ -102,7 +100,7 @@ let settlement_on_corner (x : node) =
 
 (*look through corner list for each corner, distrubute resources. *)
 let corner_pos_to_node corner_pos = 
-  let curr_corner = get_curr_corner corner_pos 
+  let curr_corner = curr_corners in 
 
 
 

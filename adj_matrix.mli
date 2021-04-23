@@ -51,6 +51,10 @@ val resource_from_string : string -> Resource.t
    throughout the game*)
 val init_road_mtx : road array array
 
+(*[curr_roads] is the current road matrix*)
+
+val curr_roads : road array array
+
 (* [update_road_mtx r c v] updates the the matrix with value [v] into
    row [r] and column [c]*)
 val update_road_mtx : int -> int -> road -> unit
@@ -63,6 +67,9 @@ val init_corners : node array
 (* [update_corners i v ] updates the corner array [a] at tile position
    [i] with corner v*)
 val update_corners : int -> node -> unit
+
+(*[curr_corners] is the current corners list*)
+val curr_corners : node array
 
 (*[dice_roll_tiles num] if we roll dice, we want a certain number, and
   get all the tiles with that number in a list*)
