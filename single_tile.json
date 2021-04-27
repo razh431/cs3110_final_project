@@ -1,0 +1,19 @@
+{
+  "tiles": [
+    {
+      "id": 1,
+      "dice num": 7,
+      "resource": "wheat",
+      "corners": [
+        1,
+        5,
+        9,
+        13,
+        8,
+        4
+      ],
+      "roads": {},
+      "robber": true
+    }
+  ]
+}

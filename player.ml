@@ -125,3 +125,11 @@ let trade_to_bank player res_list =
 (* 6 *)
 
 (*see if this works*)
+
+let player1 =
+  {
+    (init_player 1 "allison" Blue) with
+    cards = [ Wool; Brick; Wool; Wood; Brick ];
+  }
+
+let player2 = { (init_player 1 "rachel" Red) with cards = [ Ore; Ore ] }

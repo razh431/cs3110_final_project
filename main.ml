@@ -11,6 +11,8 @@ open Resource
 open State
 open Tile
 
+(* open Adj_matrix *)
+
 exception Illegal
 
 exception BadNumber
@@ -54,6 +56,45 @@ let board_default =
    ( 6 )           ( 7 )          ( 8 )\n\
   \   ( H )    ( I )  ( J )    ( K )\n\
   \       ( 9 )            (10 ) \n\n"
+
+let board_default2 =
+  "                        ( 1 )           ( 2 )          ( 3 )\n\
+  \                    ( A )     ( B ) ( C )    ( D ) ( E )    ( F )\n\
+  \                 ( 4 )           ( 5 )          ( 6 )          ( 7 )\n\
+  \                 ( G )           ( H )          ( I )          ( J )\n\
+  \                 ( 8 )           ( 9 )          (10 )          (11 )\n\
+  \              ( K ) ( L )     ( M ) ( N )    ( O ) ( P )    ( Q ) ( \
+   R )\n\
+  \          (12 )          (13 )          (14 )          (15 \
+   )          (16 )\n\
+  \          ( S )          ( T )          ( U )          ( V \
+   )          ( W )\n\
+  \          (17 )          (18 )          (19 )          (20 \
+   )          (21 )\n\
+  \      ( X )   ( Y ) ( Z )     (AA ) (AB )    (AC ) (AD )    (AE )  \
+   (AF )    (AG )   \n\
+  \   (22 )         (23 )           (24 )          (25 )          (26 \
+   )          (27 )\n\
+  \   (AH )         (AI )           (AJ )          (AK )          (AL \
+   )          (AM )\n\
+  \   (28 )         (29 )           (30 )          (31 )          (32 \
+   )          (33 )\n\
+  \      (AN )   (AO ) (AP )     (AQ ) (AR )    (AS ) (AT )    (AU ) \
+   (AV )    (AW )\n\
+  \           (34 )         (35 )          (36 )          (37 \
+   )          (38 ) \n\
+  \           (AX )         (AY )          (AZ )          (BA \
+   )          (BB )\n\
+  \           (39 )         (40 )          (41 )          (42 \
+   )          (43 )\n\
+  \              (BC ) (BD )     (BE ) (BF )    (BG ) (BH )    (BI ) \
+   (BJ )\n\
+  \                 (44 )           (45 )          (46 )          (47 )\n\
+  \                 (BK )           (BL )          (BM )          (BN )\n\
+  \                 (48 )           (49 )          (50 )          (51 )\n\
+  \                    (BO )     (BP ) (BQ )    (BR ) (BS )    (BT )\n\
+  \                         (52 )           (53 )          (54 ) \n\
+  \ \n"
 
 let parse (str : string) = failwith "TODO"
 
@@ -130,6 +171,26 @@ let rec setup players_list num_players first_sec =
 (* [play_game num_pl pl_list] runs the rest of the game *)
 let play_game num_pl =
   print_string "\nWelcome to Catan 3110. \n\n";
+
+  (* let rec unmatch_input (res_list : Resource.t list) (acc : string) =
+     match res_list with | [] -> acc | h :: t -> if h = Wool then
+     unmatch_input t ("Wool " ^ acc) else if h = Ore then unmatch_input
+     t ("Ore " ^ acc) else if h = Wood then unmatch_input t ("Wood " ^
+     acc) else if h = Brick then unmatch_input t ("Brick " ^ acc) else
+     if h = Wheat then unmatch_input t ("Wheat " ^ acc) else failwith
+     "incorrect command"
+
+     let rec matching_input (input_filtered : string list) (acc :
+     Resource.t list) = match input_filtered with | [] | [ "" ] -> acc |
+     h :: t -> matching_input t (Adj_matrix.resource_from_string h ::
+     acc)
+
+     let input_to_list input = (*input string into list of string
+     words*) (*todo: fix spaces*) let filtered_input = input |>
+     String.split_on_char ' ' in
+
+     (* |> List.filter (fun l -> l <> "") in List.filter (fun s -> s <>
+     "") filtered_input in *) matching_input filtered_input [] *)
   let num =
     if num_pl = "4" then 4
     else if num_pl = "3" then 3
@@ -138,12 +199,24 @@ let play_game num_pl =
   in
   let players = create_player_list num num [] in
   print_string board_default;
+
   setup players (List.length players - 1) 1;
   setup players (List.length players - 1) 2
 
 (* let pl = List.nth players 0 in let pl_name = pl.name in print_string
    pl_name; print_string ", where would you like to place a house? \n ";
    print_string "> " *)
+
+(* let pl = List.nth_opt players 1 in let n = pl.name in print_string n;
+   print_string " Where would you like to place a house? \n ";
+   print_string "> "; *)
+(* print_string (" You currently have " ^ unmatch_input player1.cards ""
+   ^ "What would you like to trade? \n "); print_string "> "; let trade1
+   = (player1, input_to_list (read_line ())) in print_string " What
+   would you like to trade for? \n "; print_string "> "; let trade2 =
+   (player2, input_to_list (read_line ())) in let player_1 = fst
+   (trade_to_player trade1 trade2) in print_string ("Your cards now: " ^
+   unmatch_input player_1.cards "") *)
 
 (* need to cast num_pl into int here if num_pl = "4" then let num = 4
    else if num_pl = "3" then let num = 3 else if num_pl = "2" then let

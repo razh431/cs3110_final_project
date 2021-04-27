@@ -44,3 +44,7 @@ val trade_to_bank : t -> Resource.t list -> t * t
 val trade_to_player : tr -> tr -> t * t
 
 (* val bank : t *)
+
+val player1 : t
+
+val player2 : t

@@ -1,0 +1,517 @@
+{
+  "tiles": [
+    {
+      "id": 1,
+      "dice num": 7,
+      "resource": "wheat",
+      "corners": [
+        1,
+        5,
+        9,
+        13,
+        8,
+        4
+      ],
+      "roads": [
+        {
+          "id": [
+            "A",
+            "B",
+            "H",
+            "M",
+            "L",
+            "G"
+          ],
+          "player": -1
+        }
+      ],
+      "robber": true
+    },
+    {
+      "id": 2,
+      "dice num": 7,
+      "resource": "wheat",
+      "corners": [
+        2,
+        6,
+        10,
+        14,
+        9,
+        5
+      ],
+      "roads": [
+        {
+          "id": [
+            "C",
+            "D",
+            "I",
+            "O",
+            "N",
+            "H"
+          ],
+          "player": -1
+        }
+      ],
+      "robber": false
+    },
+    {
+      "id": 3,
+      "dice num": 7,
+      "resource": "wheat",
+      "corners": [
+        3,
+        7,
+        11,
+        15,
+        10,
+        6
+      ],
+      "roads": [
+        {
+          "id": [
+            "E",
+            "F",
+            "J",
+            "Q",
+            "P",
+            "I"
+          ],
+          "player": -1
+        }
+      ],
+      "robber": false
+    },
+    {
+      "id": 4,
+      "dice num": 7,
+      "resource": "wheat",
+      "corners": [
+        8,
+        13,
+        18,
+        23,
+        17,
+        12
+      ],
+      "roads": [
+        {
+          "id": [
+            "L",
+            "T",
+            "Z",
+            "Y",
+            "S",
+            "K"
+          ],
+          "player": -1
+        }
+      ],
+      "robber": false
+    },
+    {
+      "id": 5,
+      "dice num": 7,
+      "resource": "wheat",
+      "corners": [
+        9,
+        14,
+        19,
+        24,
+        18,
+        13
+      ],
+      "roads": [
+        {
+          "id": [
+            "N",
+            "U",
+            "AB",
+            "AA",
+            "T",
+            "M"
+          ],
+          "player": -1
+        }
+      ],
+      "robber": false
+    },
+    {
+      "id": 6,
+      "dice num": 7,
+      "resource": "wheat",
+      "corners": [
+        10,
+        15,
+        20,
+        25,
+        19,
+        14
+      ],
+      "roads": [
+        {
+          "id": [
+            "P",
+            "V",
+            "AD",
+            "AC",
+            "U",
+            "O"
+          ],
+          "player": -1
+        }
+      ],
+      "robber": false
+    },
+    {
+      "id": 7,
+      "dice num": 7,
+      "resource": "wheat",
+      "corners": [
+        11,
+        16,
+        21,
+        26,
+        20,
+        15
+      ],
+      "roads": [
+        {
+          "id": [
+            "R",
+            "W",
+            "AF",
+            "AE",
+            "V",
+            "Q"
+          ],
+          "player": -1
+        }
+      ],
+      "robber": false
+    },
+    {
+      "id": 8,
+      "dice num": 7,
+      "resource": "wheat",
+      "corners": [
+        17,
+        23,
+        29,
+        34,
+        28,
+        22
+      ],
+      "roads": [
+        {
+          "id": [
+            "Y",
+            "AI",
+            "AO",
+            "AN",
+            "AH",
+            "X"
+          ],
+          "player": -1
+        }
+      ],
+      "robber": false
+    },
+    {
+      "id": 9,
+      "dice num": 7,
+      "resource": "wheat",
+      "corners": [
+        18,
+        24,
+        30,
+        35,
+        29,
+        23
+      ],
+      "roads": [
+        {
+          "id": [
+            "AA",
+            "AJ",
+            "AQ",
+            "AP",
+            "AI",
+            "Z"
+          ],
+          "player": -1
+        }
+      ],
+      "robber": false
+    },
+    {
+      "id": 10,
+      "dice num": 7,
+      "resource": "wheat",
+      "corners": [
+        19,
+        25,
+        31,
+        36,
+        39,
+        24
+      ],
+      "roads": [
+        {
+          "id": [
+            "AC",
+            "AK",
+            "AS",
+            "AR",
+            "AJ",
+            "AB"
+          ],
+          "player": -1
+        }
+      ],
+      "robber": false
+    },
+    {
+      "id": 11,
+      "dice num": 7,
+      "resource": "wheat",
+      "corners": [
+        20,
+        26,
+        32,
+        37,
+        31,
+        25
+      ],
+      "roads": [
+        {
+          "id": [
+            "AE",
+            "AL",
+            "AU",
+            "AT",
+            "AK",
+            "AD"
+          ],
+          "player": -1
+        }
+      ],
+      "robber": false
+    },
+    {
+      "id": 12,
+      "dice num": 7,
+      "resource": "wheat",
+      "corners": [
+        21,
+        27,
+        33,
+        38,
+        32,
+        26
+      ],
+      "roads": [
+        {
+          "id": [
+            "AG",
+            "AM",
+            "AW",
+            "AV",
+            "AL",
+            "AF"
+          ],
+          "player": -1
+        }
+      ],
+      "robber": false
+    },
+    {
+      "id": 13,
+      "dice num": 7,
+      "resource": "wheat",
+      "corners": [
+        29,
+        35,
+        40,
+        44,
+        39,
+        34
+      ],
+      "roads": [
+        {
+          "id": [
+            "AP",
+            "AY",
+            "BD",
+            "BC",
+            "AX",
+            "AO"
+          ],
+          "player": -1
+        }
+      ],
+      "robber": false
+    },
+    {
+      "id": 14,
+      "dice num": 7,
+      "resource": "wheat",
+      "corners": [
+        30,
+        36,
+        41,
+        45,
+        40,
+        35
+      ],
+      "roads": [
+        {
+          "id": [
+            "AR",
+            "AZ",
+            "BF",
+            "BE",
+            "AY",
+            "AQ"
+          ],
+          "player": -1
+        }
+      ],
+      "robber": false
+    },
+    {
+      "id": 15,
+      "dice num": 7,
+      "resource": "wheat",
+      "corners": [
+        31,
+        37,
+        42,
+        46,
+        41,
+        36
+      ],
+      "roads": [
+        {
+          "id": [
+            "AT",
+            "BA",
+            "BH",
+            "BG",
+            "AZ",
+            "AS"
+          ],
+          "player": -1
+        }
+      ],
+      "robber": false
+    },
+    {
+      "id": 16,
+      "dice num": 7,
+      "resource": "wheat",
+      "corners": [
+        32,
+        38,
+        43,
+        47,
+        42,
+        37
+      ],
+      "roads": [
+        {
+          "id": [
+            "AV",
+            "BB",
+            "BJ",
+            "BI",
+            "BA",
+            "AU"
+          ],
+          "player": -1
+        }
+      ],
+      "robber": false
+    },
+    {
+      "id": 17,
+      "dice num": 7,
+      "resource": "wheat",
+      "corners": [
+        40,
+        45,
+        49,
+        52,
+        48,
+        44
+      ],
+      "roads": [
+        {
+          "id": [
+            "BE",
+            "BL",
+            "BP",
+            "BO",
+            "BK",
+            "BD"
+          ],
+          "player": -1
+        }
+      ],
+      "robber": false
+    },
+    {
+      "id": 18,
+      "dice num": 7,
+      "resource": "wheat",
+      "corners": [
+        41,
+        46,
+        50,
+        53,
+        49,
+        45
+      ],
+      "roads": [
+        {
+          "id": [
+            "BG",
+            "BM",
+            "BR",
+            "BQ",
+            "BL",
+            "BF"
+          ],
+          "player": -1
+        }
+      ],
+      "robber": false
+    },
+    {
+      "id": 19,
+      "dice num": 7,
+      "resource": "wheat",
+      "corners": [
+        42,
+        47,
+        51,
+        54,
+        50,
+        46
+      ],
+      "roads": [
+        {
+          "id": [
+            "BI",
+            "BN",
+            "BT",
+            "BS",
+            "BM",
+            "BH"
+          ],
+          "player": -1
+        }
+      ],
+      "robber": false
+    }
+  ]
+}
