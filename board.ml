@@ -18,7 +18,7 @@ type board = {
 
 type trade_in = {
   dev_cards : Dev_cards.t list;
-  building : Tile.building;
+  building : Adj_matrix.building;
 }
 
 type t = board

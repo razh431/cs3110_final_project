@@ -74,9 +74,9 @@ let bank =
 
 type tr = t * Resource.t list
 
-(*trade_out returns a list of cards that removes the cards they want to
-  trade out. [player_cards] is the cards owned. [new_pl_res] is an
-  accumulator. [resources] is list of resources they're trading in. *)
+(** [trade_out] returns a list of cards that removes the cards they want
+    to trade out. [player_cards] is the cards owned. [new_pl_res] is an
+    accumulator. [resources] is list of resources they're trading in. *)
 let rec trade_out
     (player_cards : Resource.t list)
     (resources : Resource.t list)
@@ -97,11 +97,12 @@ let rec trade_out
 let trade trade_res (res : Resource.t list) =
   match trade_res with p, r_l -> trade_out p.cards r_l [] @ res
 
-(*trade_to_player trade_1 trade_2 creates two players with newly traded
-  cards. It removes cards from the player from player1 and adds it to
-  the player in trade2. Note: [trade_1] must be the player of the
-  current turn. This way, can be used to trade with bank, which must be
-  trade_2 *)
+(** [trade_to_player trade_1 trade_2] creates two players with newly
+    traded cards. It removes cards from the player from player1 and adds
+    it to the player in trade2.
+
+    Note: [trade_1] must be the player of the current turn. This way,
+    can be used to trade with bank, which must be trade_2 *)
 let trade_to_player trade_1 trade_2 =
   (*need to trade out-- remove the cards that currently has, then trade
     in-- add in cards they want*)
@@ -113,8 +114,11 @@ let trade_to_player trade_1 trade_2 =
           let player_2 = { p_2 with cards = trade trade_2 res_1 } in
           (player_1, player_2))
 
-let trade_to_bank player res_list =
-  trade_to_player (player, res_list) (bank, [])
+let trade_to_bank player player_res bank_res =
+  trade_to_player (player, player_res) (bank, bank_res)
+
+let update_pl_cards p_num building res = failwith "TODO"
+
 (*check to see if the player1 has a resource1 card to give*)
 
 (* Longest road for each player: if 6 is attached to a or e, then add 1.

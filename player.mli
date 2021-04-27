@@ -28,12 +28,11 @@ val init_player : int -> string -> color -> t
 (** The type of a trade. a tuple of list and the list to trade out *)
 type tr = t * Resource.t list
 
-(** [trade_to_bank player building_name] updates the resources of the
-    player according to the cost of the building specified by
-    [building_name]. Raises [UnknownBuilding] for an invalid building.
-    Raises [InvalidTrade] if the resources are not sufficient. *)
-
-val trade_to_bank : t -> Resource.t list -> t * t
+(** [trade_to_bank player player_res bank_res] updates the resources of
+    the player according to the resources they wish to trade away in
+    [player_res]. The resources that the bank is giving to the player is
+    denoted by [bank_res]. *)
+val trade_to_bank : t -> Resource.t list -> Resource.t list -> t * t
 
 (** [trade_to_player tr] returns a new tuple of players whose lists of
     resources have been updated after a trade has been completed. Raises
@@ -42,6 +41,11 @@ val trade_to_bank : t -> Resource.t list -> t * t
     p2's 2 lumber: trade_to_player (p1,\[Wool, Brick, Brick\]) (p2,
     \[Lumber, Lumber\]) *)
 val trade_to_player : tr -> tr -> t * t
+
+(** [update_pl_cards p_num building res] updates the cards of player
+    with number [p_num]. If [building] is [House], then they get one of
+    [res]. If it is [City], they get two [res] cards. *)
+val update_pl_cards : int -> Adj_matrix.building -> Resource.t -> unit
 
 (* val bank : t *)
 

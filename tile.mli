@@ -1,10 +1,7 @@
-(** Representation of a Catan tile. *)
+(* * Representation of a Catan tile. *)
 
 (** The abstract type of a hex. *)
-type t
-
-(** The type of a building that players can build on a tile. *)
-type building
+type t = Adj_matrix.tile
 
 (** The type of an edge. Must be specified with the point with a lower
     number first.
@@ -27,12 +24,6 @@ val dice_num : t -> int
 (** [position hex] is the indexed position of the tile [hex]. *)
 val position : t -> int
 
-(** [roads_of_player hex player_num] is the list of edges on which the
-    player of number [player_num] has roads on tile [hex]. Raises
-    [PlayerHasNoRoads] if the player has not built any roads on that
-    tile. *)
-val roads_of_player : t -> int -> edge list
-
 (** [has_robber hex] returns whether or not the robber is on the tile
     [hex]. *)
 val has_robber : t -> bool
@@ -46,19 +37,6 @@ val has_robber : t -> bool
     [pos] is the numerical position of [hex1]. *)
 val move_robber : t * t -> t * t
 
-(** [neighbors_from_pos pos] returns the neighboring tiles of a tile at
-    position [pos]. *)
-val neighbors_from_pos : int -> t list
-
 (** [edges_from_pos pos] returns the surrounding edges of a tile at
     position [pos]. *)
 val edges_from_pos : int -> edge list
-
-(** [make_tile str dice pos edges] creates a tile with resource with
-    name [str], dice roll number [dice_roll], and numerical position
-    [pos] on the board. The resulting tile has no houses or roads built
-    on it, and it does not have the robber.
-
-    Requires: [str] is a valid resource "wheat", "ore", "wool", "brick",
-    or "wood". Raises [Invalid_argument str] otherwise. *)
-val make_tile : string -> int -> int -> t
