@@ -1,6 +1,6 @@
-open Tile
 open Resource
-open Board
+
+(* open Board *)
 open Dev_cards
 
 exception UnknownBuilding
@@ -27,7 +27,7 @@ type player = {
   color : color;
   cards : Resource.t list;
   dev_cards : Dev_cards.t list;
-  tiles : Tile.t list;
+  tiles : Adj_matrix.tile list;
   points : int;
 }
 

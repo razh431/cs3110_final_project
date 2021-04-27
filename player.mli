@@ -17,7 +17,7 @@ type player = {
   color : color;
   cards : Resource.t list;
   dev_cards : Dev_cards.t list;
-  tiles : Tile.t list;
+  tiles : Adj_matrix.tile list;
   points : int;
 }
 
@@ -41,11 +41,6 @@ val trade_to_bank : t -> Resource.t list -> Resource.t list -> t * t
     p2's 2 lumber: trade_to_player (p1,\[Wool, Brick, Brick\]) (p2,
     \[Lumber, Lumber\]) *)
 val trade_to_player : tr -> tr -> t * t
-
-(** [update_pl_cards p_num building res] updates the cards of player
-    with number [p_num]. If [building] is [House], then they get one of
-    [res]. If it is [City], they get two [res] cards. *)
-val update_pl_cards : int -> Adj_matrix.building -> Resource.t -> unit
 
 (* val bank : t *)
 
