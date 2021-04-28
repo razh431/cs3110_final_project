@@ -50,11 +50,12 @@ val resource_from_string : string -> Resource.t
 (** [init_road_mtx] makes the inital road matrix. *)
 val init_road_mtx : road array array
 
-(** [curr_roads] is the mutable adjacency matrix of roads. *)
+(*[curr_roads] is the current road matrix*)
+
 val curr_roads : road array array
 
-(** [update_road_mtx r c v] updates the roads matrix at row [r] and
-    column [c] with value [v]. *)
+(* [update_road_mtx r c v] updates the the matrix with value [v] into
+   row [r] and column [c]*)
 val update_road_mtx : int -> int -> road -> unit
 
 (*corners functions*)
@@ -66,14 +67,12 @@ val init_corners : node array
 val curr_corners : node array
 
 (** [update_corners i v] updates the corner array at tile position [i]
-    with node v*)
+    with node [v] *)
 val update_corners : int -> node -> unit
 
-(** [dice_roll_tiles num] returns a list of all the tiles with the dice
-    roll number that corresponds to [num]. *)
-val dice_roll_tiles : int -> Yojson.Basic.t -> tile list
+(*[curr_corners] is the current corners list*)
+val curr_corners : node array
 
-(** [corners_rolled] finds all the corners of those tiles，check if
-    players have a building on any of those corners, and update player's
-    resources accordingly*)
-val corners_rolled : int -> Yojson.Basic.t -> unit
+(*[dice_roll_tiles num] if we roll dice, we want a certain number, and
+  get all the tiles with that number in a list*)
+val dice_roll_tiles : int -> Yojson.Basic.t -> tile list
