@@ -153,8 +153,8 @@ let update_pl_cards pl_num pl_list building res =
 let update_pl_settlements pl_num building loc =
   Adj_matrix.update_corners loc (Some { player_num = pl_num; building })
 
-let update_pl_roads pl_num pl_list v1 v2 =
-  Adj_matrix.update_road_mtx v1 v2
+let update_pl_roads (pl_num:int) v1 v2 =
+  Adj_matrix.update_road_mtx v1 v2 (Some pl_num)
 
 let update_pl_points pl_num pl_list = failwith "TODO"
 
