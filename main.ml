@@ -168,6 +168,46 @@ let rec setup players_list num_players first_sec =
     print_string board_default;
     setup players_list (num_players - 1) first_sec
 
+(* TODO: figure out what happens if the random int selected is 0 *)
+(* [roll_dice] is a random integer 1-12 *)
+let rec roll_dice = Random.int 13
+
+(* [distr_res players_list rum] is the new players_list with distributed
+   resources to all players in [players_list] based on the num rolled by
+   the dice [num]*)
+(* let distr_res players_list num = failwith "TODO" *)
+
+(* [player_trade res_list1 res_list2] trades resources*)
+(* let player_trade = failwith "TODO" *)
+
+(* [play_turn player] will be the turn for the specified player in the
+   argument [player]. First, they roll a dice and everyone gets their
+   resources, then player whos turn it is can choose to trade with
+   players, trade with bank, or end turn. The function ends when they
+   select end turn. *)
+(* let play_turn players_list player = print_string "Type \"roll\" to
+   roll dice"; let input = read_line () in if input = "roll" then let
+   num = roll_dice in let new_list = distr_res players_list num in let
+   rec trade player= print_string "Type \"player\" to trade with player,
+   type \"bank\" to trade with resource, or type \"end turn\" to end
+   turn."; let input2 = read_line () in if input2 = "player" then let
+   new_player = player_trade in trade new_player else if input2 = "bank"
+   then let new_player = bank_trade in trade new_player else if input =
+   "end" (* else type valid input *)
+
+   else print_string "Please type roll to roll dice" *)
+
+(* [play_turns players_list] will continuously carry out the turns of
+   each player until someone has 10 victory points, meaning they have
+   won the game *)
+(* let rec play_turns players_list (player : player) n = if
+   player.points == 10 then ( print_string player.name; print_string "
+   has won the game. Congradulations!") else if n == 0 then let
+   num_players = List.length players_list in play_turns players_list
+   (List.nth players_list num_players) num_players else ( play_turn
+   players_list player; let new_n = n + 1 in play_turns players_list
+   (List.nth players_list new_n) new_n) *)
+
 (* [play_game num_pl pl_list] runs the rest of the game *)
 let play_game num_pl =
   print_string "\nWelcome to Catan 3110. \n\n";
@@ -217,10 +257,6 @@ let play_game num_pl =
    (player2, input_to_list (read_line ())) in let player_1 = fst
    (trade_to_player trade1 trade2) in print_string ("Your cards now: " ^
    unmatch_input player_1.cards "") *)
-
-(* need to cast num_pl into int here if num_pl = "4" then let num = 4
-   else if num_pl = "3" then let num = 3 else if num_pl = "2" then let
-   num = 2 *)
 
 (* [num_pl_checker input_num_players] is the boolean value of if
    [input_num_players] is a valid int of players. *)
