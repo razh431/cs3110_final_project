@@ -55,7 +55,7 @@ val init_road_mtx : road array array
 val curr_roads : road array array
 
 (* [update_road_mtx r c v] updates the the matrix with value [v] into
-   row [r] and column [c]*)
+   row [r] and column [c]. r and c ranges from [1, 54].*)
 val update_road_mtx : int -> int -> road -> unit
 
 (*corners functions*)
