@@ -16,8 +16,7 @@ exception Illegal
 
 exception BadNumber
 
-(* 
-   let play_game num_pl pl_list = failwith "TODO"
+(* let play_game num_pl pl_list = failwith "TODO"
 
    let rec num_pl_checker = print_string "\n\ Sorry, the number of
    players inputted is invalid.\n\ \ Please enter 2, 3, or 4. \n";
@@ -42,9 +41,26 @@ exception BadNumber
 
 (* [board_default] is the default board the game will be played on and
    will only be 2 tiles for now*)
-let init_tiles = tiles_from_json (Yojson.Basic.from_file "board.json") 
-  
+let init_tiles = tiles_from_json (Yojson.Basic.from_file "board.json")
+
 let parse (str : string) = failwith "TODO"
+
+(* [1,4] *)
+let parse_road_str (s : string) =
+  try
+    s |> String.trim
+    |> String.split_on_char '['
+    |> String.concat ""
+    |> String.split_on_char ']'
+    |> String.concat ""
+    |> String.split_on_char ','
+    |> List.map String.trim |> List.map int_of_string
+  with e ->
+    print_string
+      "\n\
+       Please write in the appropriate format. Format: \n\
+      \    [*corner location*, *corner location*] ex: [1,4] \n";
+    exit 0
 
 (* [create_player_list num_pl total_num_pl pl_list] returns a list of
    players depending on user inputs for the players names. [num_pl] is
@@ -65,8 +81,6 @@ let rec create_player_list num_pl total_num_pl pl_list =
     create_player_list (num_pl - 1) total_num_pl (new_pl :: pl_list))
   else pl_list
 
-
-
 (* [place_home loc] places a home down at the specified [loc] *)
 (* let place_home (loc: string) = loc *)
 
@@ -86,31 +100,37 @@ let rec setup players_list num_players first_sec =
     let pl = List.nth players_list num_players in
     let pl_name = pl.name in
     print_string pl_name;
-    (* print_string (string_of_int n); *)
     if first_sec == 1 then
       print_string
         ", where would you like to place your first house? \n "
     else
       print_string
         ", where would you like to place your second house? \n ";
-    print_string "> \n";
+    print_string ">";
     (* read value and print out changed board *)
-    print_board init_corners init_road_mtx init_tiles;
+    let house_loc = read_int () in
+    update_pl_settlements pl.num House house_loc;
+    print_board curr_corners curr_roads init_tiles;
     print_string pl_name;
-    if first_sec == 1 then
+    if first_sec == 1 then (
       print_string
-        ", where would you like to build your first two roads? Format: \
-         [1,4] [4,7] \n\
-        \ "
-    else
-      print_string
-        ", where would you like to build your second two roads? \
-         Format: [1,4] [4,7] \n\
+        ", where would you like to build your first road? Format: \
+         [*corner location*, *corner location*] ex: [1,4] \n\
         \ ";
-    print_string "> \n";
-    (* read value and print out changed board *)
-    (* let loc = read_line () in place_home loc *)
-    print_board init_corners init_road_mtx init_tiles;
+      print_string ">")
+    else (
+      print_string
+        ", where would you like to build your second road? Format: \
+         [*corner location*, *corner location*] ex: [1,4]\n";
+      print_string ">");
+    let road_loc = read_line () in
+    let road_loc_list =
+      parse_road_str road_loc |> List.map (fun x -> x - 1)
+    in
+    update_pl_roads pl.num
+      (List.nth road_loc_list 0)
+      (List.nth road_loc_list 1);
+    print_board curr_corners curr_roads init_tiles;
     setup players_list (num_players - 1) first_sec
 
 (* TODO: figure out what happens if the random int selected is 0 *)
@@ -183,7 +203,7 @@ let play_game num_pl =
     else 0
   in
   let players = create_player_list num num [] in
-  print_board init_corners init_road_mtx init_tiles;
+  print_board curr_corners curr_roads init_tiles;
 
   setup players (List.length players - 1) 1;
   setup players (List.length players - 1) 2
