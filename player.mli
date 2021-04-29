@@ -71,4 +71,4 @@ val player1 : t
 
 val player2 : t
 
-val trading_logic : unit
+val trading_logic : t -> t -> unit

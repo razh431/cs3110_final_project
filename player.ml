@@ -191,7 +191,7 @@ let input_to_list input =
   let filtered_input = input |> String.split_on_char ' ' in
   matching_input filtered_input []
 
-let trading_logic =
+let trading_logic player1 player2 =
   print_string
     (" You currently have "
     ^ unmatch_input player1.cards ""
