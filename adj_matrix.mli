@@ -60,14 +60,14 @@ val update_road_mtx : int -> int -> road -> unit
 
 (*corners functions*)
 
-(** [init_corners] makes the initial array of corners. *)
+(** [init_corners] makes the initial array of corners.*)
 val init_corners : node array
 
 (** [curr_corners] is the mutable array of corners (i.e. nodes). *)
 val curr_corners : node array
 
 (** [update_corners i v] updates the corner array at tile position [i]
-    with node [v] *)
+    with node [v]. Corner 1 ha index 0 in the array *)
 val update_corners : int -> node -> unit
 
 (*[curr_corners] is the current corners list*)
