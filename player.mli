@@ -7,9 +7,9 @@ type color =
   | Blue
   | Red
   | Green
-  | Orange
+  | Yellow
   | White
-  | Brown
+  | Magenta
 
 type player = {
   name : string;
@@ -17,7 +17,6 @@ type player = {
   color : color;
   cards : Resource.t list;
   dev_cards : Dev_cards.t list;
-  tiles : Tile.t list;
   points : int;
 }
 
@@ -28,12 +27,11 @@ val init_player : int -> string -> color -> t
 (** The type of a trade. a tuple of list and the list to trade out *)
 type tr = t * Resource.t list
 
-(** [trade_to_bank player building_name] updates the resources of the
-    player according to the cost of the building specified by
-    [building_name]. Raises [UnknownBuilding] for an invalid building.
-    Raises [InvalidTrade] if the resources are not sufficient. *)
-
-val trade_to_bank : t -> Resource.t list -> t * t
+(** [trade_to_bank player player_res bank_res] updates the resources of
+    the player according to the resources they wish to trade away in
+    [player_res]. The resources that the bank is giving to the player is
+    denoted by [bank_res]. *)
+val trade_to_bank : t -> Resource.t list -> Resource.t list -> t * t
 
 (** [trade_to_player tr] returns a new tuple of players whose lists of
     resources have been updated after a trade has been completed. Raises
@@ -43,8 +41,34 @@ val trade_to_bank : t -> Resource.t list -> t * t
     \[Lumber, Lumber\]) *)
 val trade_to_player : tr -> tr -> t * t
 
+(** [update_pl_cards pl_num pl_list building res] updates the cards of
+    player with number [pl_num] from a list of players [pl_list].
+    Returns an updated list of players. If [building] is [House], then
+    they get one of [res]. If it is [City], they get two [res] cards.
+
+    [pl_list] stores the players in decreasing order, i.e. [p3;p2;p1]*)
+val update_pl_cards :
+  int -> t list -> Adj_matrix.building -> Resource.t -> t list
+
+(** [update_pl_settlements pl_num building loc] updates the corner array
+    in Adj_matrix by adding a settlement [building] at the corner with
+    id [loc]. *)
+val update_pl_settlements : int -> Adj_matrix.building -> int -> unit
+
+(** [update_pl_roads pl_num v1 v2] updates the road matrix in Adj_matrix
+    so that there is a road owned by player with number [pl_num] between
+    points [v1] and [v2]. *)
+val update_pl_roads : int -> int -> int -> unit
+
+(** [update_pl_points pl_num pl_list] updates the points of the player
+    with number [pl_num], from a list of players [pl_list] and returns
+    an updated list of players. *)
+val update_pl_points : int -> t list -> t list
+
 (* val bank : t *)
 
 val player1 : t
 
 val player2 : t
+
+val trading_logic : t -> t -> unit

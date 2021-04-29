@@ -1,5 +1,2 @@
-type t =
-  | Monopoly
-  | Victory_Points
-  | Knight
-  | Longest_Road
+type t = Monopoly | Victory_Points | Knight | Longest_Road
+

@@ -9,9 +9,7 @@ open Board
 open Player
 open Resource
 open State
-open Tile
-
-(* open Adj_matrix *)
+open Adj_matrix
 
 exception Illegal
 
