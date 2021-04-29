@@ -10,17 +10,13 @@ open Player
 open Resource
 open State
 open Adj_matrix
+open Print_board
 
 exception Illegal
 
 exception BadNumber
 
-(* let board_default = "\n\ \ ( 1 )            ( 2 )\n\       ( A
-   )     ( B )  ( C )    ( D )\n\    ( 3 )           ( 4 )          ( 5
-   )\n\    ( E )           ( F )          ( G )\n\    ( 6 )           (
-   7 )          ( 8 )\n\       ( H )    ( I )  ( J )    ( K )\n\
-             ( 9 )            (10 )"
-
+(* 
    let play_game num_pl pl_list = failwith "TODO"
 
    let rec num_pl_checker = print_string "\n\ Sorry, the number of
@@ -46,57 +42,9 @@ exception BadNumber
 
 (* [board_default] is the default board the game will be played on and
    will only be 2 tiles for now*)
-let board_default =
-  "       ( 1 )            ( 2 )\n\
-  \   ( A )     ( B )  ( C )    ( D )\n\
-   ( 3 )           ( 4 )          ( 5 )\n\
-   ( E )           ( F )          ( G )\n\
-   ( 6 )           ( 7 )          ( 8 )\n\
-  \   ( H )    ( I )  ( J )    ( K )\n\
-  \       ( 9 )            (10 ) \n\n"
-
-let board_default2 =
-  "                        ( 1 )           ( 2 )          ( 3 )\n\
-  \                    ( A )     ( B ) ( C )    ( D ) ( E )    ( F )\n\
-  \                 ( 4 )           ( 5 )          ( 6 )          ( 7 )\n\
-  \                 ( G )           ( H )          ( I )          ( J )\n\
-  \                 ( 8 )           ( 9 )          (10 )          (11 )\n\
-  \              ( K ) ( L )     ( M ) ( N )    ( O ) ( P )    ( Q ) ( \
-   R )\n\
-  \          (12 )          (13 )          (14 )          (15 \
-   )          (16 )\n\
-  \          ( S )          ( T )          ( U )          ( V \
-   )          ( W )\n\
-  \          (17 )          (18 )          (19 )          (20 \
-   )          (21 )\n\
-  \      ( X )   ( Y ) ( Z )     (AA ) (AB )    (AC ) (AD )    (AE )  \
-   (AF )    (AG )   \n\
-  \   (22 )         (23 )           (24 )          (25 )          (26 \
-   )          (27 )\n\
-  \   (AH )         (AI )           (AJ )          (AK )          (AL \
-   )          (AM )\n\
-  \   (28 )         (29 )           (30 )          (31 )          (32 \
-   )          (33 )\n\
-  \      (AN )   (AO ) (AP )     (AQ ) (AR )    (AS ) (AT )    (AU ) \
-   (AV )    (AW )\n\
-  \           (34 )         (35 )          (36 )          (37 \
-   )          (38 ) \n\
-  \           (AX )         (AY )          (AZ )          (BA \
-   )          (BB )\n\
-  \           (39 )         (40 )          (41 )          (42 \
-   )          (43 )\n\
-  \              (BC ) (BD )     (BE ) (BF )    (BG ) (BH )    (BI ) \
-   (BJ )\n\
-  \                 (44 )           (45 )          (46 )          (47 )\n\
-  \                 (BK )           (BL )          (BM )          (BN )\n\
-  \                 (48 )           (49 )          (50 )          (51 )\n\
-  \                    (BO )     (BP ) (BQ )    (BR ) (BS )    (BT )\n\
-  \                         (52 )           (53 )          (54 ) \n\
-  \ \n"
-
+let init_tiles = tiles_from_json (Yojson.Basic.from_file "board.json") 
+  
 let parse (str : string) = failwith "TODO"
-
-let end_game = print_endline "end game"
 
 (* [create_player_list num_pl total_num_pl pl_list] returns a list of
    players depending on user inputs for the players names. [num_pl] is
@@ -117,8 +65,7 @@ let rec create_player_list num_pl total_num_pl pl_list =
     create_player_list (num_pl - 1) total_num_pl (new_pl :: pl_list))
   else pl_list
 
-(* [print_board] prints out the updated board with new houses and roads *)
-let print_board = print_string board_default
+
 
 (* [place_home loc] places a home down at the specified [loc] *)
 (* let place_home (loc: string) = loc *)
@@ -148,7 +95,7 @@ let rec setup players_list num_players first_sec =
         ", where would you like to place your second house? \n ";
     print_string "> \n";
     (* read value and print out changed board *)
-    print_string board_default;
+    print_board init_corners init_road_mtx init_tiles;
     print_string pl_name;
     if first_sec == 1 then
       print_string
@@ -163,7 +110,7 @@ let rec setup players_list num_players first_sec =
     print_string "> \n";
     (* read value and print out changed board *)
     (* let loc = read_line () in place_home loc *)
-    print_string board_default;
+    print_board init_corners init_road_mtx init_tiles;
     setup players_list (num_players - 1) first_sec
 
 (* TODO: figure out what happens if the random int selected is 0 *)
@@ -236,7 +183,7 @@ let play_game num_pl =
     else 0
   in
   let players = create_player_list num num [] in
-  print_string board_default;
+  print_board init_corners init_road_mtx init_tiles;
 
   setup players (List.length players - 1) 1;
   setup players (List.length players - 1) 2
