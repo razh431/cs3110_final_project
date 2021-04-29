@@ -153,21 +153,10 @@ let update_pl_cards pl_num pl_list building res =
 let update_pl_settlements pl_num building loc =
   Adj_matrix.update_corners loc (Some { player_num = pl_num; building })
 
-let update_pl_roads (pl_num:int) v1 v2 =
+let update_pl_roads (pl_num : int) v1 v2 =
   Adj_matrix.update_road_mtx v1 v2 (Some pl_num)
 
 let update_pl_points pl_num pl_list = failwith "TODO"
-
-(*check to see if the player1 has a resource1 card to give*)
-
-(* Longest road for each player: if 6 is attached to a or e, then add 1.
-   if not, then add it to b.
-
-   1____2____3____4____5____(6) *)
-(* | *)
-(* 6 *)
-
-(*see if this works*)
 
 let player1 =
   {
@@ -176,3 +165,41 @@ let player1 =
   }
 
 let player2 = { (init_player 1 "rachel" Red) with cards = [ Ore; Ore ] }
+
+let rec unmatch_input (res_list : Resource.t list) (acc : string) =
+  match res_list with
+  | [] -> acc
+  | h :: t ->
+      if h = Wool then unmatch_input t ("Wool " ^ acc)
+      else if h = Ore then unmatch_input t ("Ore " ^ acc)
+      else if h = Wood then unmatch_input t ("Wood " ^ acc)
+      else if h = Brick then unmatch_input t ("Brick " ^ acc)
+      else if h = Wheat then unmatch_input t ("Wheat " ^ acc)
+      else failwith "incorrect command"
+
+let rec matching_input
+    (input_filtered : string list)
+    (acc : Resource.t list) =
+  match input_filtered with
+  | [] | [ "" ] -> acc
+  | h :: t ->
+      matching_input t (Adj_matrix.resource_from_string h :: acc)
+
+let input_to_list input =
+  (*input string into list of string words*)
+  (*todo: fix spaces*)
+  let filtered_input = input |> String.split_on_char ' ' in
+  matching_input filtered_input []
+
+let trading_logic =
+  print_string
+    (" You currently have "
+    ^ unmatch_input player1.cards ""
+    ^ "What would you like to trade? \n ");
+  print_string "> ";
+  let trade1 = (player1, input_to_list (read_line ())) in
+  print_string " What would you like to trade for? \n ";
+  print_string "> ";
+  let trade2 = (player2, input_to_list (read_line ())) in
+  let player_1 = fst (trade_to_player trade1 trade2) in
+  print_string ("Your cards now: " ^ unmatch_input player_1.cards "")

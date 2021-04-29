@@ -70,3 +70,5 @@ val update_pl_points : int -> t list -> t list
 val player1 : t
 
 val player2 : t
+
+val trading_logic : unit
