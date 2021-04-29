@@ -24,8 +24,8 @@ play:
 # finalcheck:
 # 	@bash check.sh final
 
-# zip:
-# 	zip catan.zip *.ml* *.json *.sh _tags .merlin .ocamlformat .ocamlinit LICENSE Makefile	
+zip:
+	zip catan.zip *.ml* *.json *.sh _tags *.txt .merlin .ocamlformat .ocamlinit LICENSE Makefile	
 	
 # docs: docs-public docs-private
 	
