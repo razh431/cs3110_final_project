@@ -130,10 +130,10 @@ let rec setup players_list num_players first_sec =
     update_pl_roads pl.num
       (List.nth road_loc_list 0)
       (List.nth road_loc_list 1);
-    if
+    (* if
       curr_roads.(List.nth road_loc_list 0).(List.nth road_loc_list 1)
       != None
-    then print_string "there is a road here";
+    then print_string "there is a road here"; *)
     print_board curr_corners curr_roads init_tiles;
     setup players_list (num_players - 1) first_sec
 

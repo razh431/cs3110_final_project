@@ -1,5 +1,7 @@
 open Adj_matrix
 
+type slash = Forward | Backward | Straight
+
 let print_corner (corner : node) (num : int) =
   let strnum = Int.to_string num in
   let head =
@@ -23,18 +25,27 @@ let print_corner (corner : node) (num : int) =
       end;
       print_string ")"
 
-let print_rd rd =
-  match rd with
+let print_rd rd (s:slash)=
+let s_type = begin match s with 
+| Forward -> "/"
+| Backward -> "\\"
+| Straight -> "|"
+    end
+  in match rd with
   | Some t -> (
       match t with
-      | 1 -> ANSITerminal.print_string [ ANSITerminal.blue ] "r"
-      | 2 -> ANSITerminal.print_string [ ANSITerminal.red ] "r"
-      | 3 -> ANSITerminal.print_string [ ANSITerminal.green ] "r"
-      | 4 -> ANSITerminal.print_string [ ANSITerminal.yellow ] "r"
-      | 5 -> ANSITerminal.print_string [ ANSITerminal.white ] "r"
-      | 6 -> ANSITerminal.print_string [ ANSITerminal.blue ] "r"
+      | 1 -> ANSITerminal.print_string [ ANSITerminal.blue ] s_type
+      | 2 -> ANSITerminal.print_string [ ANSITerminal.red ] s_type
+      | 3 -> ANSITerminal.print_string [ ANSITerminal.green ] s_type
+      | 4 -> ANSITerminal.print_string [ ANSITerminal.yellow ] s_type
+      | 5 -> ANSITerminal.print_string [ ANSITerminal.white ] s_type
+      | 6 -> ANSITerminal.print_string [ ANSITerminal.blue ] s_type
       | _ -> failwith "this should never happen printrd")
-  | None -> print_string " "
+  | None -> 
+    match s with 
+    | Forward -> print_string s_type
+    | Backward -> print_string s_type
+    | Straight -> print_string s_type
 
 let print_tile tile =
   if tile.robber = true then print_string "ROBBER"
@@ -60,19 +71,19 @@ let line_1 corn1 corn2 corn3 c1 c2 c3 =
   ignore (print_corner corn3 c3);
   print_string "\n"
 
-let line_2 rd1 rd2 rd3 rd4 rd5 rd6 =
+let line_2 rd1 rd2 rd3 rd4 rd5 rd6 d1 d2 =
   print_string "                      ";
-  print_rd rd1;
+  print_rd rd1 d1;
   print_string "       ";
-  print_rd rd2;
+  print_rd rd2 d2;
   print_string "     ";
-  print_rd rd3;
+  print_rd rd3 d1;
   print_string "       ";
-  print_rd rd4;
+  print_rd rd4 d2;
   print_string "     ";
-  print_rd rd5;
+  print_rd rd5 d1;
   print_string "       ";
-  print_rd rd6;
+  print_rd rd6 d2;
   print_string "\n"
 
 let line_3 corn4 corn5 corn6 corn7 c4 c5 c6 c7 =
@@ -88,38 +99,38 @@ let line_3 corn4 corn5 corn6 corn7 c4 c5 c6 c7 =
 
 let line_4 rd1 rd2 rd3 rd4 t1 t2 t3 =
   print_string "                   ";
-  print_rd rd1;
+  print_rd rd1 Straight;
   print_string "   ";
   print_tile t1;
   print_string "    ";
-  print_rd rd2;
+  print_rd rd2 Straight;
   print_string "   ";
   print_tile t2;
   print_string "    ";
-  print_rd rd3;
+  print_rd rd3 Straight;
   print_string "   ";
   print_tile t3;
-  print_string "   ";
-  print_rd rd4;
+  print_string "    ";
+  print_rd rd4 Straight;
   print_string "\n"
 
-let line_6 rd1 rd2 rd3 rd4 rd5 rd6 rd7 rd8 =
+let line_6 rd1 rd2 rd3 rd4 rd5 rd6 rd7 rd8 d1 d2 =
   print_string "                ";
-  print_rd rd1;
+  print_rd rd1 d1;
   print_string "     ";
-  print_rd rd2;
+  print_rd rd2 d2;
   print_string "       ";
-  print_rd rd3;
+  print_rd rd3 d1;
   print_string "     ";
-  print_rd rd4;
+  print_rd rd4 d2;
   print_string "       ";
-  print_rd rd5;
+  print_rd rd5 d1;
   print_string "     ";
-  print_rd rd6;
+  print_rd rd6 d2;
   print_string "       ";
-  print_rd rd7;
+  print_rd rd7 d1;
   print_string "     ";
-  print_rd rd8;
+  print_rd rd8 d2;
   print_string "\n"
 
 let line_7 corn12 corn13 corn14 corn15 corn16 c12 c13 c14 c15 c16 =
@@ -137,46 +148,46 @@ let line_7 corn12 corn13 corn14 corn15 corn16 c12 c13 c14 c15 c16 =
 
 let line_8 rd1 rd2 rd3 rd4 rd5 t1 t2 t3 t4 =
   print_string "            ";
-  print_rd rd1;
+  print_rd rd1 Straight;
   print_string "   ";
   print_tile t1;
   print_string "    ";
-  print_rd rd2;
+  print_rd rd2 Straight;
   print_string "   ";
   print_tile t2;
   print_string "    ";
-  print_rd rd3;
+  print_rd rd3 Straight;
   print_string "   ";
   print_tile t3;
-  print_string "   ";
-  print_rd rd4;
+  print_string "    ";
+  print_rd rd4 Straight;
   print_string "   ";
   print_tile t4;
-  print_string "   ";
-  print_rd rd5;
+  print_string "    ";
+  print_rd rd5 Straight;
   print_string "\n"
 
-let line_10 rd1 rd2 rd3 rd4 rd5 rd6 rd7 rd8 rd9 rd10 =
+let line_10 rd1 rd2 rd3 rd4 rd5 rd6 rd7 rd8 rd9 rd10  d1 d2=
   print_string "        ";
-  print_rd rd1;
-  print_string "     ";
-  print_rd rd2;
+  print_rd rd1 d1;
   print_string "       ";
-  print_rd rd3;
+  print_rd rd2 d2;
   print_string "     ";
-  print_rd rd4;
+  print_rd rd3 d1;
   print_string "       ";
-  print_rd rd5;
+  print_rd rd4 d2;
   print_string "     ";
-  print_rd rd6;
+  print_rd rd5 d1;
   print_string "       ";
-  print_rd rd7;
+  print_rd rd6 d2;
   print_string "     ";
-  print_rd rd8;
+  print_rd rd7 d1;
   print_string "       ";
-  print_rd rd9;
+  print_rd rd8 d2;
   print_string "     ";
-  print_rd rd10;
+  print_rd rd9 d1;
+  print_string "       ";
+  print_rd rd10 d2;
   print_string "\n"
 
 let line_11
@@ -208,27 +219,27 @@ let line_11
 
 let line_12 rd1 rd2 rd3 rd4 rd5 rd6 t1 t2 t3 t4 t5 =
   print_string "     ";
-  print_rd rd1;
+  print_rd rd1 Straight;
   print_string "   ";
   print_tile t1;
   print_string "    ";
-  print_rd rd2;
+  print_rd rd2 Straight;
   print_string "   ";
   print_tile t2;
   print_string "    ";
-  print_rd rd3;
-  print_string "   ";
+  print_rd rd3 Straight;
+  print_string "    ";
   print_tile t3;
   print_string "   ";
-  print_rd rd4;
+  print_rd rd4 Straight;
   print_string "   ";
   print_tile t4;
-  print_string "   ";
-  print_rd rd5;
+  print_string "    ";
+  print_rd rd5 Straight;
   print_string "   ";
   print_tile t5;
-  print_string "   ";
-  print_rd rd6;
+  print_string "    ";
+  print_rd rd6 Straight;
   print_string "\n"
 
 let print_board
@@ -242,7 +253,7 @@ let print_board
     roads.(1).(4)
     roads.(1).(5)
     roads.(2).(5)
-    roads.(2).(6);
+    roads.(2).(6) Forward Backward;
   line_3 corners.(3) corners.(4) corners.(5) corners.(6) 4 5 6 7;
   line_4
     roads.(3).(7)
@@ -259,7 +270,7 @@ let print_board
     roads.(9).(13)
     roads.(9).(14)
     roads.(10).(14)
-    roads.(10).(15);
+    roads.(10).(15) Forward Backward;
   line_7 corners.(11) corners.(12) corners.(13) corners.(14)
     corners.(15) 12 13 14 15 16;
   line_8
@@ -282,7 +293,7 @@ let print_board
     roads.(19).(24)
     roads.(19).(25)
     roads.(20).(25)
-    roads.(20).(26);
+    roads.(20).(26) Forward Backward;
   line_11 corners.(21) corners.(22) corners.(23) corners.(24)
     corners.(25) corners.(26) 22 23 24 25 26 27;
   line_12
@@ -299,14 +310,14 @@ let print_board
   line_10
     roads.(27).(33)
     roads.(28).(33)
-    roads.(27).(34)
+    roads.(28).(34)
     roads.(29).(34)
     roads.(29).(35)
     roads.(30).(35)
     roads.(30).(36)
     roads.(31).(36)
-    roads.(31).(36)
-    roads.(32).(37);
+    roads.(31).(37)
+    roads.(32).(37) Backward Forward;
   line_7 corners.(33) corners.(34) corners.(35) corners.(36)
     corners.(37) 34 35 36 37 38;
   line_8
@@ -327,7 +338,7 @@ let print_board
     roads.(40).(45)
     roads.(41).(45)
     roads.(41).(46)
-    roads.(42).(46);
+    roads.(42).(46) Backward Forward;
   line_3 corners.(43) corners.(44) corners.(45) corners.(46) 44 45 46 47;
   line_4
     roads.(43).(47)
@@ -342,6 +353,6 @@ let print_board
     roads.(48).(52)
     roads.(49).(52)
     roads.(49).(53)
-    roads.(50).(53);
+    roads.(50).(53) Backward Forward;
   line_1 corners.(51) corners.(52) corners.(53) 52 53 54;
   print_string "\n\n"
