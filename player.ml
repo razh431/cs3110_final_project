@@ -49,7 +49,8 @@ let update_player player cards dev_cards tiles points =
 
 let get_player_name (pl : t) : string = pl.name
 
-(*generate bank cards*)
+(** [gen_cards card num_needed] generates a given number [num_needed] of
+    a kind of resource card [card]. Used to initialize the bank. *)
 let rec gen_cards card num_needed =
   match card with
   | [] -> failwith "never called"
@@ -72,11 +73,14 @@ let bank =
     points = 0;
   }
 
+(** The type [tr] represents the type of a trade as a tuple of a player
+    and the resource cards. *)
 type tr = t * Resource.t list
 
-(*trade_out returns a list of cards that removes the cards they want to
-  trade out. [player_cards] is the cards owned. [new_pl_res] is an
-  accumulator. [resources] is list of resources they're trading in. *)
+(** [trade_out player_cards resources new_pl_res] returns a list of
+    cards that removes the cards that a player wants to trade away.
+    [player_cards] is the cards owned. [resources] is list of resources
+    they're trading in. [new_pl_res] is an accumulator.*)
 let rec trade_out
     (player_cards : Resource.t list)
     (resources : Resource.t list)
@@ -93,15 +97,18 @@ let rec trade_out
           if r = h then trade_out t ls new_pl_res
           else trade_out t resources (h :: new_pl_res))
 
-(*make new player with newly traded resources res*)
+(* [trade trade_res res] returns a list of resources resulting from
+   trading away the resources specified in [trade_res] to be replaced
+   with the resources in [res]. *)
 let trade trade_res (res : Resource.t list) =
   match trade_res with p, r_l -> trade_out p.cards r_l [] @ res
 
-(*trade_to_player trade_1 trade_2 creates two players with newly traded
-  cards. It removes cards from the player from player1 and adds it to
-  the player in trade2. Note: [trade_1] must be the player of the
-  current turn. This way, can be used to trade with bank, which must be
-  trade_2 *)
+(** [trade_to_player trade_1 trade_2] returns a tuple of two players
+    with newly traded cards. It removes resource cards from the player
+    specified in [trade1] and adds them to the player in trade2.
+
+    Note: [trade_1] must be the player of the current turn. This way,
+    can be used to trade with bank, which must be [trade_2] *)
 let trade_to_player trade_1 trade_2 =
   (*need to trade out-- remove the cards that currently has, then trade
     in-- add in cards they want*)
@@ -115,16 +122,6 @@ let trade_to_player trade_1 trade_2 =
 
 let trade_to_bank player res_list =
   trade_to_player (player, res_list) (bank, [])
-(*check to see if the player1 has a resource1 card to give*)
-
-(* Longest road for each player: if 6 is attached to a or e, then add 1.
-   if not, then add it to b.
-
-   1____2____3____4____5____(6) *)
-(* | *)
-(* 6 *)
-
-(*see if this works*)
 
 let player1 =
   {
