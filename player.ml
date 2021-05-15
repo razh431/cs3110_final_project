@@ -32,15 +32,16 @@ type color =
   | Blue
   | Red
   | Green
-  | Orange
+  | Yellow
   | White
-  | Brown
+  | Magenta
 
 (** The type [player] represents a player.
 
     A player has a number [num], color represented by [color], a hand of
     resource cards [cards], a hand of development cards [dev_cards],
     tiles with settlements [tiles], and victory points [points]. *)
+
 type player = {
   name : string;
   num : int;
@@ -112,7 +113,8 @@ let rec trade_out
       (* print_string ("acc when [] " ^ pp_list pp_resource new_pl_res ^
          "\n"); *)
       (*player has no cards, but exists cards needed to be traded in*)
-      if new_pl_res <> [] then new_pl_res else raise InvalidTrade
+      (* if new_pl_res <> [] then new_pl_res else raise InvalidTrade *)
+      new_pl_res
   | h :: t -> (
       match resources with
       | [] ->
@@ -128,13 +130,16 @@ let rec trade_out
 
 (* [trade trade_tup gained_res] returns a list of resources resulting
    from trading away the resources from the player specified in the
-   trade [trade_tup] to be replaced with the resources in [gained_res]. *)
+   trade [trade_tup] to be replaced with the resources in [gained_res].
+
+   Raises InvalidTrade if one of the players trades no cards. *)
 let trade trade_tup (gained_res : Resource.t list) =
   match trade_tup with
   | p, r_l -> (
       (* print_string ("player" ^ string_of_int p.num ^ " wants to trade
-         away " ^ pp_list pp_resource r_l ^ "\n"); print_string
-         ("player's cards are " ^ pp_list pp_resource p.cards ^ "\n"); *)
+         away " ^ pp_list pp_resource r_l ^ "\n"); *)
+      (* print_string ("player's cards are " ^ pp_list pp_resource
+         p.cards ^ "\n"); *)
       try
         (* print_string ("for trade out, cards are " ^ pp_list
            pp_resource p.cards ^ "\n"); *)

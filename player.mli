@@ -7,9 +7,9 @@ type color =
   | Blue
   | Red
   | Green
-  | Orange
+  | Yellow
   | White
-  | Brown
+  | Magenta
 
 type player = {
   name : string;

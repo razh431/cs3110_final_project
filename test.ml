@@ -33,7 +33,7 @@ let cmp_lists lst1 lst2 =
   let sorted2 = List.sort compare lst2 in
   sorted1 = sorted2
 
-(** [cmp_tup_lists tup1 tup2] compares two tuples of resource lists.num
+(** [cmp_tup_lists tup1 tup2] compares two tuples of resource lists.
 
     tup1 = (\[Ore; Wool; Wool; Brick\], \[Wood;Ore\]).
 
@@ -94,33 +94,6 @@ let cards_from_trade trade_result = function
   | 2 -> (snd trade_result).cards
   | _ -> failwith "There are only two players in a trade"
 
-(** NOTE: created two functions to test the trade output of player 1 and
-    player 2 separately in order to use the printing function. *)
-
-(** [trade_p1_test name trade1 trade2 expected_output] checks if the
-    first player has the correct cards after the cards specified in
-    [trade1] are traded away from player 1 and the cards specified in
-    [trade2] are received by player 1. [expected_output] is a tuple of
-    player 1's cards and player 2's cards. *)
-let trade_p1_test name trade1 trade2 expected_output =
-  let trade_result = trade_to_player trade1 trade2 in
-  let p1_cards = cards_from_trade trade_result 1 in
-  name >:: fun _ ->
-  assert_equal ~cmp:cmp_lists ~printer:(pp_list pp_resource) p1_cards
-    (fst expected_output)
-
-(** [trade_p2_test name trade1 trade2 expected_output] checks if the
-    second player has the correct cards after the cards specified in
-    [trade2] are traded away by player 2 and the cards specified in
-    [trade1] are received by player 2. [expected_output] is a tuple of
-    player 1's cards and player 2's cards. *)
-let trade_p2_test name trade1 trade2 expected_output =
-  let trade_result = trade_to_player trade1 trade2 in
-  let p2_cards = cards_from_trade trade_result 2 in
-  name >:: fun _ ->
-  assert_equal ~cmp:cmp_lists ~printer:(pp_list pp_resource) p2_cards
-    (snd expected_output)
-
 let trade_pl_test name trade1 trade2 expected_output =
   let trade_result = trade_to_player trade1 trade2 in
   let p1_cards = cards_from_trade trade_result 1 in
@@ -137,26 +110,34 @@ let p1 =
 
 let p2 = { (init_player 2 "b" Red) with cards = [ Ore; Ore ] }
 
+let p3 =
+  {
+    (init_player 3 "c" Green) with
+    cards =
+      [ Wheat; Wheat; Ore; Ore; Wool; Wool; Brick; Brick; Wood; Wood ];
+  }
+
+(* trading p1 wool for p2 ore *)
 let trade_1_output = ([ Wool; Brick; Ore; Wood ], [ Ore; Wool ])
 
+(* trading p1 wool wool for p2 ore *)
 let trade_2_output = ([ Brick; Wood; Ore ], [ Wool; Wool; Ore ])
 
+(* trading p1 wood for p2 ore *)
 let trade_3_output = ([ Wool; Wool; Brick; Ore ], [ Wood; Ore ])
 
-(** Testing suites *)
+(* trading p1 brick for p2 ore *)
+let trade_4_output = ([ Wool; Wool; Ore; Wood ], [ Ore; Brick ])
+
+(* trade p3 ore for p2 ore ore *)
+let trade_5_output =
+  ( [ Wheat; Wheat; Ore; Ore; Ore; Wool; Wool; Brick; Brick; Wood; Wood ],
+    [ Ore ] )
+
+(** Test suites *)
 let trade_tests =
   [
-    (* trade_p1_test "p1 result: p1 wool for p2 ore" (p1, [ Wool ]) (p2,
-       [ Ore ]) trade_1_output; trade_p2_test "p2 result: p1 wool for p2
-       ore" (p1, [ Wool ]) (p2, [ Ore ]) trade_1_output; *)
-    (* trade_p1_test "p1 result: p1 wool wool for p2 ore" (p1, [ Wool;
-       Wool ]) (p2, [ Ore ]) trade_2_output; trade_p2_test "p2 result:
-       p1 wool wool for p2 ore" (p1, [ Wool; Wool ]) (p2, [ Ore ])
-       trade_2_output; *)
-    (* trade_p1_test "p1 result: p1 wood for p2 ore" (p1, [ Wood ]) (p2,
-       [ Ore ]) trade_3_output; trade_p2_test "p2 result: p1 wood for p2
-       ore" (p1, [ Wood ]) (p2, [ Ore ]) trade_3_output; *)
-    trade_pl_test "p1 wool for p2 ore"
+    trade_pl_test "p1 wool for p2 ore, res at start of list"
       (p1, [ Wool ])
       (p2, [ Ore ])
       trade_1_output;
@@ -164,10 +145,18 @@ let trade_tests =
       (p1, [ Wool; Wool ])
       (p2, [ Ore ])
       trade_2_output;
-    trade_pl_test "p1 wood for p2 ore"
+    trade_pl_test "p1 wood for p2 ore, res at end of list"
       (p1, [ Wood ])
       (p2, [ Ore ])
       trade_3_output;
+    trade_pl_test "p1 brick for p2 ore, res in middle"
+      (p1, [ Brick ])
+      (p2, [ Ore ])
+      trade_4_output;
+    trade_pl_test "p3 ore for p2 ore ore"
+      (p3, [ Ore ])
+      (p2, [ Ore; Ore ])
+      trade_5_output;
   ]
 
 let suite = "test suite for building" >::: List.flatten [ trade_tests ]
