@@ -101,7 +101,7 @@ type tr = t * Resource.t list
 (** [trade_out player_cards resources new_pl_res] returns a list of
     cards that removes the cards that a player wants to trade away.
     [player_cards] is the cards owned. [resources] is list of resources
-    they're trading in. [new_pl_res] is an accumulator.*)
+    they're trading in. [new_pl_res] is an accumulator. *)
 let rec trade_out
     (player_cards : Resource.t list)
     (resources : Resource.t list)
@@ -129,32 +129,38 @@ let rec trade_out
           else trade_out t resources (h :: new_pl_res))
 
 (* [trade trade_tup gained_res] returns a list of resources resulting
-   from trading away the resources from the player specified in the
-   trade [trade_tup] to be replaced with the resources in [gained_res].
+   from trading away the resources from the player, both specified in
+   the trade [trade_tup], to be replaced with the resources in
+   [gained_res].
 
-   Raises InvalidTrade if one of the players trades no cards. *)
+   Raises [InvalidTrade] if one of the players is trades no cards in
+   [trade_tup]. *)
 let trade trade_tup (gained_res : Resource.t list) =
   match trade_tup with
-  | p, r_l -> (
-      (* print_string ("player" ^ string_of_int p.num ^ " wants to trade
-         away " ^ pp_list pp_resource r_l ^ "\n"); *)
-      (* print_string ("player's cards are " ^ pp_list pp_resource
-         p.cards ^ "\n"); *)
-      try
+  | p, r_l ->
+      if
+        (* print_string ("player" ^ string_of_int p.num ^ " wants to
+           trade away " ^ pp_list pp_resource r_l ^ "\n"); *)
+        (* print_string ("player's cards are " ^ pp_list pp_resource
+           p.cards ^ "\n"); *)
+        r_l <> []
+      then
         (* print_string ("for trade out, cards are " ^ pp_list
            pp_resource p.cards ^ "\n"); *)
         let traded_out = trade_out p.cards r_l [] in
         (* print_string ("after replacing: " ^ pp_list pp_resource
            (traded_out @ gained_res) ^ "\n"); *)
         traded_out @ gained_res
-      with InvalidTrade -> failwith "TODO: invalid trade")
+      else raise InvalidTrade
 
 (** [trade_to_player trade_1 trade_2] returns a tuple of two players
     with newly traded cards. It removes resource cards from the player
     specified in [trade1] and adds them to the player in trade2.
 
     Note: [trade_1] must be the player of the current turn. This way,
-    can be used to trade with bank, which must be [trade_2] *)
+    can be used to trade with bank, which must be [trade_2].
+
+    Raises [InvalidTrade] if one of the players is trading no cards. *)
 let trade_to_player trade_1 trade_2 =
   (*need to trade out-- remove the cards that currently has, then trade
     in-- add in cards they want*)

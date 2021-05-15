@@ -3,8 +3,6 @@ open Tile
 open Player
 open Resource
 
-(* let exception_commands_test n input out = n >:: fun _ ->
-   assert_raises out (fun _ -> parse input) *)
 (* let cmp_set_like_lists lst1 lst2 = let uniq1 = List.sort_uniq compare
    lst1 in let uniq2 = List.sort_uniq compare lst2 in List.length lst1 =
    List.length uniq1 && List.length lst2 = List.length uniq2 && uniq1 =
@@ -100,9 +98,14 @@ let trade_pl_test name trade1 trade2 expected_output =
   let p2_cards = cards_from_trade trade_result 2 in
   let trade_result_cards = (p1_cards, p2_cards) in
   name >:: fun _ ->
-  assert_equal ~cmp:cmp_tup_of_lists
+  assert_equal expected_output ~cmp:cmp_tup_of_lists
     ~printer:(pp_tup_list pp_resource)
-    trade_result_cards expected_output
+    trade_result_cards
+
+let trade_err_test name trade1 trade2 expected_output =
+  name >:: fun _ ->
+  assert_raises expected_output (fun () ->
+      trade_to_player trade1 trade2)
 
 (** Constants to be used for testing *)
 let p1 =
@@ -157,6 +160,12 @@ let trade_tests =
       (p3, [ Ore ])
       (p2, [ Ore; Ore ])
       trade_5_output;
+    trade_err_test "invalid trade: p1 []" (p1, [])
+      (p2, [ Ore; Ore ])
+      Player.InvalidTrade;
+    trade_err_test "invalid trade: p2 []"
+      (p1, [ Ore ])
+      (p2, []) Player.InvalidTrade;
   ]
 
 let suite = "test suite for building" >::: List.flatten [ trade_tests ]
