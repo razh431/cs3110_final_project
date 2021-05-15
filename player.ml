@@ -7,6 +7,26 @@ exception UnknownBuilding
 
 exception InvalidTrade
 
+let pp_list pp_elt lst =
+  let pp_elts lst =
+    let rec loop n acc = function
+      | [] -> acc
+      | [ h ] -> acc ^ pp_elt h
+      | h1 :: (h2 :: t as t') ->
+          if n = 100 then acc ^ "..." (* stop printing long list *)
+          else loop (n + 1) (acc ^ pp_elt h1 ^ "; ") t'
+    in
+    loop 0 "" lst
+  in
+  "[" ^ pp_elts lst ^ "]"
+
+let pp_resource = function
+  | Wheat -> "Wheat"
+  | Ore -> "Ore"
+  | Wool -> "Wool"
+  | Brick -> "Brick"
+  | Wood -> "Wood"
+
 (** The type [color] represents the colors of players. *)
 type color =
   | Blue
@@ -85,23 +105,44 @@ let rec trade_out
     (player_cards : Resource.t list)
     (resources : Resource.t list)
     (new_pl_res : Resource.t list) =
+  (* print_string ("player cards before match " ^ pp_list pp_resource
+     player_cards ^ "\n"); *)
   match player_cards with
   | [] ->
+      (* print_string ("acc when [] " ^ pp_list pp_resource new_pl_res ^
+         "\n"); *)
       (*player has no cards, but exists cards needed to be traded in*)
-      raise InvalidTrade
+      if new_pl_res <> [] then new_pl_res else raise InvalidTrade
   | h :: t -> (
       match resources with
-      | [] -> new_pl_res @ player_cards
+      | [] ->
+          (* print_string ("acc1 " ^ pp_list pp_resource new_pl_res ^
+             "\n"); *)
+          new_pl_res @ player_cards
       | r :: ls ->
+          (* print_string ("acc2 " ^ pp_list pp_resource new_pl_res ^
+             "\n"); *)
           (*shorten list of res to trade in, check rest of cards*)
           if r = h then trade_out t ls new_pl_res
           else trade_out t resources (h :: new_pl_res))
 
-(* [trade trade_res res] returns a list of resources resulting from
-   trading away the resources specified in [trade_res] to be replaced
-   with the resources in [res]. *)
-let trade trade_res (res : Resource.t list) =
-  match trade_res with p, r_l -> trade_out p.cards r_l [] @ res
+(* [trade trade_tup gained_res] returns a list of resources resulting
+   from trading away the resources from the player specified in the
+   trade [trade_tup] to be replaced with the resources in [gained_res]. *)
+let trade trade_tup (gained_res : Resource.t list) =
+  match trade_tup with
+  | p, r_l -> (
+      (* print_string ("player" ^ string_of_int p.num ^ " wants to trade
+         away " ^ pp_list pp_resource r_l ^ "\n"); print_string
+         ("player's cards are " ^ pp_list pp_resource p.cards ^ "\n"); *)
+      try
+        (* print_string ("for trade out, cards are " ^ pp_list
+           pp_resource p.cards ^ "\n"); *)
+        let traded_out = trade_out p.cards r_l [] in
+        (* print_string ("after replacing: " ^ pp_list pp_resource
+           (traded_out @ gained_res) ^ "\n"); *)
+        traded_out @ gained_res
+      with InvalidTrade -> failwith "TODO: invalid trade")
 
 (** [trade_to_player trade_1 trade_2] returns a tuple of two players
     with newly traded cards. It removes resource cards from the player
