@@ -27,6 +27,14 @@ val init_player : int -> string -> color -> t
 (** The type of a trade. a tuple of list and the list to trade out *)
 type tr = t * Resource.t list
 
+(** [update_player player cards dev_cards points] makes a new player
+    with those fields*)
+val update_player : t -> Resource.t list -> Dev_cards.t list -> int -> t
+
+(** [gen_cards card num_needed] just creates a list of resource of
+    number [num_needed]*)
+val gen_cards : Resource.t list -> int -> Resource.t list
+
 (** [trade_to_bank player player_res bank_res] updates the resources of
     the player according to the resources they wish to trade away in
     [player_res]. The resources that the bank is giving to the player is
@@ -65,10 +73,9 @@ val update_pl_roads : int -> int -> int -> unit
     an updated list of players. *)
 val update_pl_points : int -> t list -> t list
 
-(* val bank : t *)
+val bank : t
 
-val player1 : t
-
-val player2 : t
+(*input string into list of resource*)
+val input_to_list : string -> Resource.t list
 
 val trading_logic : t -> t -> unit

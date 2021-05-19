@@ -46,7 +46,7 @@ let update_player player cards dev_cards points =
   { player with cards; dev_cards; points }
 
 (*generate bank cards*)
-let rec gen_cards card num_needed =
+let rec gen_cards (card : Resource.t list) (num_needed : int) =
   match card with
   | [] -> failwith "never called"
   | h :: t ->
@@ -186,7 +186,6 @@ let rec matching_input
       matching_input t (Adj_matrix.resource_from_string h :: acc)
 
 let input_to_list input =
-  (*input string into list of string words*)
   (*todo: fix spaces*)
   let filtered_input = input |> String.split_on_char ' ' in
   matching_input filtered_input []

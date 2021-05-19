@@ -11,6 +11,7 @@ open Resource
 open State
 open Adj_matrix
 open Print_board
+open Dev_card_logic
 
 exception Illegal
 
@@ -44,23 +45,6 @@ exception BadNumber
 let init_tiles = tiles_from_json (Yojson.Basic.from_file "board.json")
 
 let parse (str : string) = failwith "TODO"
-
-(* [1,4] *)
-let parse_road_str (s : string) =
-  try
-    s |> String.trim
-    |> String.split_on_char '['
-    |> String.concat ""
-    |> String.split_on_char ']'
-    |> String.concat ""
-    |> String.split_on_char ','
-    |> List.map String.trim |> List.map int_of_string
-  with e ->
-    print_string
-      "\n\
-       Please write in the appropriate format. Format: \n\
-      \    [*corner location*, *corner location*] ex: [1,4] \n";
-    exit 0
 
 (* [create_player_list num_pl total_num_pl pl_list] returns a list of
    players depending on user inputs for the players names. [num_pl] is
@@ -130,10 +114,8 @@ let rec setup players_list num_players first_sec =
     update_pl_roads pl.num
       (List.nth road_loc_list 0)
       (List.nth road_loc_list 1);
-    (* if
-      curr_roads.(List.nth road_loc_list 0).(List.nth road_loc_list 1)
-      != None
-    then print_string "there is a road here"; *)
+    (* if curr_roads.(List.nth road_loc_list 0).(List.nth road_loc_list
+       1) != None then print_string "there is a road here"; *)
     print_board curr_corners curr_roads init_tiles;
     setup players_list (num_players - 1) first_sec
 
