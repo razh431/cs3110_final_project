@@ -76,3 +76,7 @@ val curr_corners : node array
 (*[dice_roll_tiles num] if we roll dice, we want a certain number, and
   get all the tiles with that number in a list*)
 val dice_roll_tiles : int -> Yojson.Basic.t -> tile list
+
+(*[corner_to_node num] returns the node corresponding to the corner,
+  which is the int*)
+val corner_to_node : int -> node

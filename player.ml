@@ -268,3 +268,59 @@ let trading_logic player1 player2 =
   let trade2 = (player2, input_to_list (read_line ())) in
   let player_1 = fst (trade_to_player trade1 trade2 false) in
   print_string ("Your cards now: " ^ unmatch_input player_1.cards "")
+
+(*[dist_helper corners players] check if players have a building on any
+  of those corners by checking and distribute accordingly by creating
+  new players with those resources. [corners] is the corners of a tile.
+  [players] is a player list. *)
+let rec dist_helper corners players res =
+  match corners with
+  | [] -> players
+  | h :: t -> (
+      (*checks which player has that corner, generate a new list of
+        players by replacing the player. [players_on_corner] should be a
+        list of players that have new resources*)
+      let node = corner_to_node h in
+      match node with
+      | Some settlement ->
+          let new_player_list =
+            update_pl_cards settlement.player_num players
+              settlement.building res
+          in
+          dist_helper t new_player_list res
+      | None -> dist_helper t players res)
+
+(* [distr_res players_list rum] is the new players_list with distributed
+   resources to all players in [players_list] based on the num rolled by
+   the dice [num]*)
+let distr_res (players_list : t list) (num : int) json : t list =
+  (*Check which tiles have the same dice number (from tile list) *)
+  let tiles = dice_roll_tiles num json in
+  (*Find all the corners of those tiles *)
+  let rec distr_per_tile tile_list new_pl_list =
+    match tile_list with
+    | [] ->
+        List.rev new_pl_list
+        (*Check if players have a building on any of those corners and
+          distribute accordingly*)
+    | h :: t ->
+        distr_per_tile t
+          (dist_helper h.corner_positions players_list h.resource)
+  in
+  distr_per_tile tiles []
+
+(* [distr_res_setup players_list] is the new players_list with resources
+   associated with all the homes built during the set up process*)
+let distr_res_setup player house_loc json : player =
+  let corner = house_loc - 1 in
+  let tiles = tiles_from_json json in
+  let tiles =
+    List.filter (fun t -> List.mem corner t.corner_positions) tiles
+  in
+  let rec distr_tiles tile cards =
+    match tile with
+    | [] -> cards
+    | h :: t -> distr_tiles t (h.resource :: cards)
+  in
+  let new_cards = distr_tiles tiles [] in
+  { player with cards = new_cards }

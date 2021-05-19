@@ -82,3 +82,14 @@ val bank : t
 val input_to_list : string -> Resource.t list
 
 val trading_logic : t -> t -> unit
+
+(* [distr_res players_list num json ] is the new players_list with
+   distributed resources to all players in [players_list] based on the
+   num rolled by the dice [num]. Returns of list of players with updated
+   cards in the same order*)
+val distr_res : t list -> int -> Yojson.Basic.t -> t list
+
+(* [distr_res_setup players_list json] is the new players_list with
+   resources associated with all the homes built during the set up
+   process*)
+val distr_res_setup : t list -> Yojson.Basic.t -> t list

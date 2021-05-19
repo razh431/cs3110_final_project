@@ -42,7 +42,10 @@ exception BadNumber
 
 (* [board_default] is the default board the game will be played on and
    will only be 2 tiles for now*)
-let init_tiles = tiles_from_json (Yojson.Basic.from_file "board.json")
+
+let json = Yojson.Basic.from_file "board.json"
+
+let init_tiles = tiles_from_json json
 
 let parse (str : string) = failwith "TODO"
 
