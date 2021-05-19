@@ -2,4 +2,5 @@ type t =
   | Monopoly
   | Victory_Points
   | Knight
-  | Longest_Road
+  | Road_Building
+  | Year_Of_Plenty

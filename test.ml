@@ -1,5 +1,4 @@
 open OUnit2
-open Tile
 open Player
 open Resource
 
@@ -93,7 +92,7 @@ let cards_from_trade trade_result = function
   | _ -> failwith "There are only two players in a trade"
 
 let trade_pl_test name trade1 trade2 expected_output =
-  let trade_result = trade_to_player trade1 trade2 in
+  let trade_result = trade_to_player trade1 trade2 false in
   let p1_cards = cards_from_trade trade_result 1 in
   let p2_cards = cards_from_trade trade_result 2 in
   let trade_result_cards = (p1_cards, p2_cards) in
@@ -102,10 +101,16 @@ let trade_pl_test name trade1 trade2 expected_output =
     ~printer:(pp_tup_list pp_resource)
     trade_result_cards
 
+(** Test InvalidTrade *)
 let trade_err_test name trade1 trade2 expected_output =
   name >:: fun _ ->
   assert_raises expected_output (fun () ->
-      trade_to_player trade1 trade2)
+      trade_to_player trade1 trade2 false)
+
+(* let trade_bank_test name trade1 expected_output = let trade_result =
+   trade_to_bank trade1 in let p1_cards = cards_from_trade trade_result
+   1 in name >:: fun _ -> assert_equal expected_output ~cmp:cmp_lists
+   ~printer:(pp_list pp_resource) p1_cards *)
 
 (** Constants to be used for testing *)
 let p1 =
@@ -137,6 +142,8 @@ let trade_5_output =
   ( [ Wheat; Wheat; Ore; Ore; Ore; Wool; Wool; Brick; Brick; Wood; Wood ],
     [ Ore ] )
 
+let trade_bank_1_output = [ Brick; Wood ]
+
 (** Test suites *)
 let trade_tests =
   [
@@ -166,6 +173,8 @@ let trade_tests =
     trade_err_test "invalid trade: p2 []"
       (p1, [ Ore ])
       (p2, []) Player.InvalidTrade;
+    (* trade_bank_test "p1 wool wool to bank" (p1, [ Wool; Wool ])
+       trade_bank_1_output; *)
   ]
 
 let suite = "test suite for building" >::: List.flatten [ trade_tests ]

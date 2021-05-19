@@ -2,8 +2,8 @@
   "tiles": [
     {
       "id": 1,
-      "dice num": 7,
-      "resource": "wheat",
+      "dice num": 10,
+      "resource": "ore",
       "corners": [
         1,
         5,
@@ -25,12 +25,12 @@
           "player": -1
         }
       ],
-      "robber": true
+      "robber": false
     },
     {
       "id": 2,
-      "dice num": 7,
-      "resource": "wheat",
+      "dice num": 2,
+      "resource": "wool",
       "corners": [
         2,
         6,
@@ -56,8 +56,8 @@
     },
     {
       "id": 3,
-      "dice num": 7,
-      "resource": "wheat",
+      "dice num": 9,
+      "resource": "wood",
       "corners": [
         3,
         7,
@@ -83,7 +83,7 @@
     },
     {
       "id": 4,
-      "dice num": 7,
+      "dice num": 12,
       "resource": "wheat",
       "corners": [
         8,
@@ -110,8 +110,8 @@
     },
     {
       "id": 5,
-      "dice num": 7,
-      "resource": "wheat",
+      "dice num": 6,
+      "resource": "brick",
       "corners": [
         9,
         14,
@@ -137,8 +137,8 @@
     },
     {
       "id": 6,
-      "dice num": 7,
-      "resource": "wheat",
+      "dice num": 4,
+      "resource": "wool",
       "corners": [
         10,
         15,
@@ -164,8 +164,8 @@
     },
     {
       "id": 7,
-      "dice num": 7,
-      "resource": "wheat",
+      "dice num": 10,
+      "resource": "brick",
       "corners": [
         11,
         16,
@@ -191,7 +191,7 @@
     },
     {
       "id": 8,
-      "dice num": 7,
+      "dice num": 9,
       "resource": "wheat",
       "corners": [
         17,
@@ -218,8 +218,8 @@
     },
     {
       "id": 9,
-      "dice num": 7,
-      "resource": "wheat",
+      "dice num": 11,
+      "resource": "wood",
       "corners": [
         18,
         24,
@@ -268,12 +268,12 @@
           "player": -1
         }
       ],
-      "robber": false
+      "robber": true
     },
     {
       "id": 11,
-      "dice num": 7,
-      "resource": "wheat",
+      "dice num": 3,
+      "resource": "wood",
       "corners": [
         20,
         26,
@@ -299,8 +299,8 @@
     },
     {
       "id": 12,
-      "dice num": 7,
-      "resource": "wheat",
+      "dice num": 8,
+      "resource": "ore",
       "corners": [
         21,
         27,
@@ -326,8 +326,8 @@
     },
     {
       "id": 13,
-      "dice num": 7,
-      "resource": "wheat",
+      "dice num": 8,
+      "resource": "wood",
       "corners": [
         29,
         35,
@@ -353,8 +353,8 @@
     },
     {
       "id": 14,
-      "dice num": 7,
-      "resource": "wheat",
+      "dice num": 3,
+      "resource": "ore",
       "corners": [
         30,
         36,
@@ -380,7 +380,7 @@
     },
     {
       "id": 15,
-      "dice num": 7,
+      "dice num": 4,
       "resource": "wheat",
       "corners": [
         31,
@@ -407,8 +407,8 @@
     },
     {
       "id": 16,
-      "dice num": 7,
-      "resource": "wheat",
+      "dice num": 5,
+      "resource": "wool",
       "corners": [
         32,
         38,
@@ -434,8 +434,8 @@
     },
     {
       "id": 17,
-      "dice num": 7,
-      "resource": "wheat",
+      "dice num": 5,
+      "resource": "brick",
       "corners": [
         40,
         45,
@@ -461,7 +461,7 @@
     },
     {
       "id": 18,
-      "dice num": 7,
+      "dice num": 6,
       "resource": "wheat",
       "corners": [
         41,
@@ -488,8 +488,8 @@
     },
     {
       "id": 19,
-      "dice num": 7,
-      "resource": "wheat",
+      "dice num": 11,
+      "resource": "wool",
       "corners": [
         42,
         47,

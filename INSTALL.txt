@@ -1,0 +1,2 @@
+-Play our game by typing "make play" in terminal.
+-Control c to exit game
