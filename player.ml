@@ -32,6 +32,26 @@ type player = {
 
 type t = player
 
+let pp_list pp_elt lst =
+  let pp_elts lst =
+    let rec loop n acc = function
+      | [] -> acc
+      | [ h ] -> acc ^ pp_elt h
+      | h1 :: (h2 :: t as t') ->
+          if n = 100 then acc ^ "..." (* stop printing long list *)
+          else loop (n + 1) (acc ^ pp_elt h1 ^ "; ") t'
+    in
+    loop 0 "" lst
+  in
+  "[" ^ pp_elts lst ^ "]"
+
+let pp_resource = function
+  | Wheat -> "Wheat"
+  | Ore -> "Ore"
+  | Wool -> "Wool"
+  | Brick -> "Brick"
+  | Wood -> "Wood"
+
 let init_player (number : int) (pl_name : string) (col : color) : t =
   {
     num = number;
@@ -44,6 +64,8 @@ let init_player (number : int) (pl_name : string) (col : color) : t =
 
 let update_player player cards dev_cards points =
   { player with cards; dev_cards; points }
+
+let get_player_name (pl : t) : string = pl.name
 
 (*generate bank cards*)
 let rec gen_cards (card : Resource.t list) (num_needed : int) =
@@ -67,50 +89,94 @@ let bank =
     points = 0;
   }
 
+(** The type [tr] represents the type of a trade as a tuple of a player
+    and the resource cards. *)
 type tr = t * Resource.t list
 
-(** [trade_out] returns a list of cards that removes the cards they want
-    to trade out. [player_cards] is the cards owned. [new_pl_res] is an
-    accumulator. [resources] is list of resources they're trading in. *)
+(** [trade_out player_cards resources new_pl_res] returns a list of
+    cards that removes the cards that a player wants to trade away.
+    [player_cards] is the cards owned. [resources] is list of resources
+    they're trading in. [new_pl_res] is an accumulator. *)
 let rec trade_out
     (player_cards : Resource.t list)
     (resources : Resource.t list)
     (new_pl_res : Resource.t list) =
+  (* print_string ("player cards before match " ^ pp_list pp_resource
+     player_cards ^ "\n"); *)
   match player_cards with
   | [] ->
+      (* print_string ("acc when [] " ^ pp_list pp_resource new_pl_res ^
+         "\n"); *)
       (*player has no cards, but exists cards needed to be traded in*)
-      raise InvalidTrade
+      (* if new_pl_res <> [] then new_pl_res else raise InvalidTrade *)
+      new_pl_res
   | h :: t -> (
       match resources with
-      | [] -> new_pl_res @ player_cards
+      | [] ->
+          (* print_string ("acc1 " ^ pp_list pp_resource new_pl_res ^
+             "\n"); *)
+          new_pl_res @ player_cards
       | r :: ls ->
+          (* print_string ("acc2 " ^ pp_list pp_resource new_pl_res ^
+             "\n"); *)
           (*shorten list of res to trade in, check rest of cards*)
           if r = h then trade_out t ls new_pl_res
           else trade_out t resources (h :: new_pl_res))
 
-(*make new player with newly traded resources res*)
-let trade trade_res (res : Resource.t list) =
-  match trade_res with p, r_l -> trade_out p.cards r_l [] @ res
+(* [trade trade_tup gained_res] returns a list of resources resulting
+   from trading away the resources from the player, both specified in
+   the trade [trade_tup], to be replaced with the resources in
+   [gained_res].
 
-(** [trade_to_player trade_1 trade_2] creates two players with newly
-    traded cards. It removes cards from the player from player1 and adds
-    it to the player in trade2.
+   Raises [InvalidTrade] if one of the players is trades no cards in
+   [trade_tup]. *)
+let trade trade_tup gained_res with_bank =
+  match trade_tup with
+  | p, r_l ->
+      if
+        (* print_string ("player" ^ string_of_int p.num ^ " wants to
+           trade away " ^ pp_list pp_resource r_l ^ "\n"); *)
+        (* print_string ("player's cards are " ^ pp_list pp_resource
+           p.cards ^ "\n"); *)
+        with_bank || r_l <> []
+      then
+        (* print_string ("for trade out, cards are " ^ pp_list
+           pp_resource p.cards ^ "\n"); *)
+        let traded_out = trade_out p.cards r_l [] in
+        (* print_string ("after replacing: " ^ pp_list pp_resource
+           (traded_out @ gained_res) ^ "\n"); *)
+        traded_out @ gained_res
+      else raise InvalidTrade
+
+(** [trade_to_player trade_1 trade_2 with_bank] returns a tuple of two
+    players with newly traded cards. It removes resource cards from the
+    player specified in [trade1] and adds them to the player in
+    [trade2]. [with_bank] is a bool that is true if the first player is
+    trading with the bank as the second player, and false otherwise.
 
     Note: [trade_1] must be the player of the current turn. This way,
-    can be used to trade with bank, which must be trade_2 *)
-let trade_to_player trade_1 trade_2 =
+    can be used to trade with bank, which must be [trade_2].
+
+    Raises [InvalidTrade] if one of the players is trading no cards. *)
+let trade_to_player trade_1 trade_2 with_bank =
   (*need to trade out-- remove the cards that currently has, then trade
     in-- add in cards they want*)
   match trade_1 with
   | p_1, res_1 -> (
       match trade_2 with
       | p_2, res_2 ->
-          let player_1 = { p_1 with cards = trade trade_1 res_2 } in
-          let player_2 = { p_2 with cards = trade trade_2 res_1 } in
+          let player_1 =
+            { p_1 with cards = trade trade_1 res_2 false }
+          in
+          let player_2 =
+            if with_bank then
+              { p_2 with cards = trade trade_2 res_1 true }
+            else { p_2 with cards = trade trade_2 res_1 false }
+          in
           (player_1, player_2))
 
 let trade_to_bank player player_res bank_res =
-  trade_to_player (player, player_res) (bank, bank_res)
+  trade_to_player (player, player_res) (bank, bank_res) true
 
 (** [front_of_list pl_num lst] returns the elements of player list [lst]
     up to player with number [pl_num], not inclusive.
@@ -200,5 +266,5 @@ let trading_logic player1 player2 =
   print_string " What would you like to trade for? \n ";
   print_string "> ";
   let trade2 = (player2, input_to_list (read_line ())) in
-  let player_1 = fst (trade_to_player trade1 trade2) in
+  let player_1 = fst (trade_to_player trade1 trade2 false) in
   print_string ("Your cards now: " ^ unmatch_input player_1.cards "")

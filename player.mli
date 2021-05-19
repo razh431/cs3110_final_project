@@ -41,13 +41,16 @@ val gen_cards : Resource.t list -> int -> Resource.t list
     denoted by [bank_res]. *)
 val trade_to_bank : t -> Resource.t list -> Resource.t list -> t * t
 
-(** [trade_to_player tr] returns a new tuple of players whose lists of
-    resources have been updated after a trade has been completed. Raises
-    [InvalidTrade] if one or more players has insufficient resources for
-    the desired trade. Ex. If p1 wants to trade 1 wool and 2 brick for
-    p2's 2 lumber: trade_to_player (p1,\[Wool, Brick, Brick\]) (p2,
-    \[Lumber, Lumber\]) *)
-val trade_to_player : tr -> tr -> t * t
+(** [trade_to_player tr1 tr2 with_bank] returns a new tuple of players
+    whose lists of resources have been updated after a trade has been
+    completed.
+
+    Raises [InvalidTrade] if one or more players has insufficient
+    resources for the desired trade.
+
+    Ex. If p1 wants to trade 1 wool and 2 brick for p2's 2 lumber:
+    trade_to_player (p1,\[Wool, Brick, Brick\]) (p2, \[Lumber, Lumber\]) *)
+val trade_to_player : tr -> tr -> bool -> t * t
 
 (** [update_pl_cards pl_num pl_list building res] updates the cards of
     player with number [pl_num] from a list of players [pl_list].
