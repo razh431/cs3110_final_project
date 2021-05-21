@@ -103,7 +103,8 @@ let bank =
     cards =
       gen_cards [ Wool ] 19
       @ gen_cards [ Ore ] 19
-      @ gen_cards [ Wool ] 19
+      @ gen_cards [ Wood ] 19
+      @ gen_cards [ Wheat ] 19
       @ gen_cards [ Brick ] 19;
     dev_cards = [];
     points = 0;
@@ -116,30 +117,26 @@ type tr = t * Resource.t list
 (** [trade_out player_cards resources new_pl_res] returns a list of
     cards that removes the cards that a player wants to trade away.
     [player_cards] is the cards owned. [resources] is list of resources
-    they're trading in. [new_pl_res] is an accumulator. *)
+    they're trading in. [new_pl_res] is an accumulator.
+
+    Raises [InvalidTrade] if the player has insufficient resources for
+    the trade they want to make. *)
 let rec trade_out
     (player_cards : Resource.t list)
     (resources : Resource.t list)
     (new_pl_res : Resource.t list) =
-  (* print_string ("player cards before match " ^ pp_list pp_resource
-     player_cards ^ "\n"); *)
   match player_cards with
   | [] ->
-      (* print_string ("acc when [] " ^ pp_list pp_resource new_pl_res ^
-         "\n"); *)
-      (*player has no cards, but exists cards needed to be traded in*)
-      (* if new_pl_res <> [] then new_pl_res else raise InvalidTrade *)
-      new_pl_res
+      (* if the player still wants to trade resources, but player has
+         insufficient cards, raise exn *)
+      if List.length resources > 0 then raise InvalidTrade
+      else new_pl_res
   | h :: t -> (
       match resources with
-      | [] ->
-          (* print_string ("acc1 " ^ pp_list pp_resource new_pl_res ^
-             "\n"); *)
-          new_pl_res @ player_cards
+      | [] -> new_pl_res @ player_cards
       | r :: ls ->
-          (* print_string ("acc2 " ^ pp_list pp_resource new_pl_res ^
-             "\n"); *)
-          (*shorten list of res to trade in, check rest of cards*)
+          (* if the player has the res, shorten list of res to trade in;
+             check rest of cards*)
           if r = h then trade_out t ls new_pl_res
           else trade_out t resources (h :: new_pl_res))
 
@@ -153,19 +150,11 @@ let rec trade_out
 let trade trade_tup gained_res with_bank =
   match trade_tup with
   | p, r_l ->
-      if
-        (* print_string ("player" ^ string_of_int p.num ^ " wants to
-           trade away " ^ pp_list pp_resource r_l ^ "\n"); *)
-        (* print_string ("player's cards are " ^ pp_list pp_resource
-           p.cards ^ "\n"); *)
-        with_bank || r_l <> []
-      then
-        (* print_string ("for trade out, cards are " ^ pp_list
-           pp_resource p.cards ^ "\n"); *)
-        let traded_out = trade_out p.cards r_l [] in
-        (* print_string ("after replacing: " ^ pp_list pp_resource
-           (traded_out @ gained_res) ^ "\n"); *)
-        traded_out @ gained_res
+      if with_bank || r_l <> [] then
+        try
+          let traded_out = trade_out p.cards r_l [] in
+          traded_out @ gained_res
+        with InvalidTrade -> raise InvalidTrade
       else raise InvalidTrade
 
 (** [trade_to_player trade_1 trade_2 with_bank] returns a tuple of two
@@ -177,10 +166,11 @@ let trade trade_tup gained_res with_bank =
     Note: [trade_1] must be the player of the current turn. This way,
     can be used to trade with bank, which must be [trade_2].
 
-    Raises [InvalidTrade] if one of the players is trading no cards. *)
+    Raises [InvalidTrade] if one of the players is trading no cards, and
+    the trade is not being conducted with the bank. *)
 let trade_to_player trade_1 trade_2 with_bank =
-  (*need to trade out-- remove the cards that currently has, then trade
-    in-- add in cards they want*)
+  (*need to trade out-- remove the cards that player currently has, then
+    trade in-- add in cards they want*)
   match trade_1 with
   | p_1, res_1 -> (
       match trade_2 with

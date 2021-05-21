@@ -46,7 +46,8 @@ val trade_to_bank : t -> Resource.t list -> Resource.t list -> t * t
     completed.
 
     Raises [InvalidTrade] if one or more players has insufficient
-    resources for the desired trade.
+    resources for the desired trade. Also raises [InvalidTrade] if a
+    trade between players involves one player trading no cards.
 
     Ex. If p1 wants to trade 1 wool and 2 brick for p2's 2 lumber:
     trade_to_player (p1,\[Wool, Brick, Brick\]) (p2, \[Lumber, Lumber\]) *)

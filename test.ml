@@ -91,6 +91,7 @@ let cards_from_trade trade_result = function
   | 2 -> (snd trade_result).cards
   | _ -> failwith "There are only two players in a trade"
 
+(** Test trade of resource cards in between two players. *)
 let trade_pl_test name trade1 trade2 expected_output =
   let trade_result = trade_to_player trade1 trade2 false in
   let p1_cards = cards_from_trade trade_result 1 in
@@ -101,16 +102,26 @@ let trade_pl_test name trade1 trade2 expected_output =
     ~printer:(pp_tup_list pp_resource)
     trade_result_cards
 
-(** Test InvalidTrade *)
+(** Tests cases where [InvalidTrade] is raised. *)
 let trade_err_test name trade1 trade2 expected_output =
   name >:: fun _ ->
   assert_raises expected_output (fun () ->
       trade_to_player trade1 trade2 false)
 
-(* let trade_bank_test name trade1 expected_output = let trade_result =
-   trade_to_bank trade1 in let p1_cards = cards_from_trade trade_result
-   1 in name >:: fun _ -> assert_equal expected_output ~cmp:cmp_lists
-   ~printer:(pp_list pp_resource) p1_cards *)
+(** [trade_bank_test name trade1 bank_res expected_output] tests a
+    player trading resources into the bank and receiving [bank_res] in
+    return. [bank_res] may be empty. *)
+let trade_bank_test name trade1 bank_res expected_output =
+  match trade1 with
+  | pl, res ->
+      let trade_result = trade_to_bank pl res bank_res in
+      let p1_cards = cards_from_trade trade_result 1 in
+      let bank_output_cards = cards_from_trade trade_result 2 in
+      let trade_result_cards = (p1_cards, bank_output_cards) in
+      name >:: fun _ ->
+      assert_equal expected_output ~cmp:cmp_tup_of_lists
+        ~printer:(pp_tup_list pp_resource)
+        trade_result_cards
 
 (** Constants to be used for testing *)
 let p1 =
@@ -142,7 +153,46 @@ let trade_5_output =
   ( [ Wheat; Wheat; Ore; Ore; Ore; Wool; Wool; Brick; Brick; Wood; Wood ],
     [ Ore ] )
 
-let trade_bank_1_output = [ Brick; Wood ]
+(* p3 wheat for p1 wool wool *)
+let trade_6_output =
+  ( [ Wheat; Ore; Ore; Wool; Wool; Brick; Brick; Wood; Wood; Wool; Wool ],
+    [ Brick; Wood; Wheat ] )
+
+let bank1 =
+  {
+    num = 0;
+    name = "Bank";
+    color = White;
+    cards =
+      gen_cards [ Wool ] 19
+      @ gen_cards [ Ore ] 19
+      @ gen_cards [ Wood ] 20
+      @ gen_cards [ Wheat ] 19
+      @ gen_cards [ Brick ] 19;
+    dev_cards = [];
+    points = 0;
+  }
+
+(* p1 trades wood to the initial bank *)
+let trade_bank_1_output = ([ Wool; Wool; Brick ], bank1.cards)
+
+let bank2 =
+  {
+    num = 0;
+    name = "Bank";
+    color = White;
+    cards =
+      gen_cards [ Wool ] 18
+      @ gen_cards [ Ore ] 21
+      @ gen_cards [ Wood ] 19
+      @ gen_cards [ Wheat ] 19
+      @ gen_cards [ Brick ] 19;
+    dev_cards = [];
+    points = 0;
+  }
+
+(* p2 trades ore, ore to the initial bank in exchange for wool *)
+let trade_bank_2_output = ([ Wool ], bank2.cards)
 
 (** Test suites *)
 let trade_tests =
@@ -167,14 +217,30 @@ let trade_tests =
       (p3, [ Ore ])
       (p2, [ Ore; Ore ])
       trade_5_output;
-    trade_err_test "invalid trade: p1 []" (p1, [])
+    trade_pl_test "p3 wheat for p1 wool wool"
+      (p3, [ Wheat ])
+      (p1, [ Wool; Wool ])
+      trade_6_output;
+    trade_err_test "invalid: p1 trades no cards" (p1, [])
       (p2, [ Ore; Ore ])
       Player.InvalidTrade;
-    trade_err_test "invalid trade: p2 []"
+    trade_err_test "invalid: p2 trades no cards"
       (p1, [ Ore ])
       (p2, []) Player.InvalidTrade;
-    (* trade_bank_test "p1 wool wool to bank" (p1, [ Wool; Wool ])
-       trade_bank_1_output; *)
+    trade_err_test "invalid: p1 insufficient res"
+      (p1, [ Wool; Wool; Wool ])
+      (p2, [ Ore ])
+      Player.InvalidTrade;
+    trade_err_test "invalid: p2 insufficient res"
+      (p1, [ Wool; Wool ])
+      (p2, [ Wheat ])
+      Player.InvalidTrade;
+    trade_bank_test "p1 wool to bank"
+      (p1, [ Wood ])
+      [] trade_bank_1_output;
+    trade_bank_test "p2 ore ore for wool from bank"
+      (p2, [ Ore; Ore ])
+      [ Wool ] trade_bank_2_output;
   ]
 
 let suite = "test suite for building" >::: List.flatten [ trade_tests ]
