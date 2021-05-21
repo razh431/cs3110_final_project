@@ -4,3 +4,5 @@
    already created Cannot input an impossible road Check if valid player
    name when trying to trade Check valid resource name when trying to
    trade Check valid resource card name when trying to trade *)
+(* When roll is typed, allow for phrases such as “please roll” or “yes
+   roll” *)
