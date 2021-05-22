@@ -110,9 +110,7 @@ let rec setup players_list num_players first_sec : player list =
       print_string "> ");
     (*todo: factor building road logic out*)
     let road_loc = read_line () in
-    let road_loc_list =
-      parse_road_str road_loc |> List.map (fun x -> x - 1)
-    in
+    let road_loc_list = parse_road_str road_loc in
     ignore
       (update_pl_roads pl.num
          (List.nth road_loc_list 0)
