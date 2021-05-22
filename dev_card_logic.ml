@@ -56,7 +56,8 @@ let road_building pl =
   in
   update_pl_roads pl.num
     (List.nth road_loc_list 0)
-    (List.nth road_loc_list 1)
+    (List.nth road_loc_list 1);
+  pl
 
 let rec dev_to_string (res_list : Dev_cards.t list) (acc : string) =
   match res_list with
