@@ -271,7 +271,7 @@ let trading_logic player1 player2 =
   let player_1 = fst trade in
   let player_2 = snd trade in
   print_string ("Your cards now: " ^ unmatch_input player_1.cards "");
-  (player_1, player2)
+  (player_1, player_2)
 
 (*[dist_helper corners players] check if players have a building on any
   of those corners by checking and distribute accordingly by creating
