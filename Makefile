@@ -4,7 +4,7 @@ MLS=$(MODULES:=.ml)
 MLIS=$(MODULES:=.mli)
 TEST=test.byte
 MAIN=main.byte
-OCAMLBUILD=ocamlbuild -use-ocamlfind
+OCAMLBUILD=ocamlbuild -use-ocamlfind 
 
 default: build
 	OCAMLRUNPARAM=b utop
@@ -15,6 +15,13 @@ build:
 test:
 	$(OCAMLBUILD) -tag 'debug' $(TEST) && ./$(TEST) -runner sequential
 
+bisect-test:
+	BISECT_COVERAGE=YES $(OCAMLBUILD) -tag 'debug' $(TEST) \
+		&& ./$(TEST)
+
+bisect: clean bisect-test
+	bisect-ppx-report html
+	
 play:
 	$(OCAMLBUILD) -tag 'debug' $(MAIN) && OCAMLRUNPARAM=b ./$(MAIN)
 
@@ -42,4 +49,4 @@ zip:
 
 clean:
 	ocamlbuild -clean
-	rm -rf _doc.public _doc.private catan.zip
+	rm -rf catan.zip _doc.public _doc.private _coverage bisect*.coverage

@@ -54,9 +54,10 @@ let road_building pl =
   let road_loc_list =
     parse_road_str road_loc |> List.map (fun x -> x - 1)
   in
-  update_pl_roads pl.num
-    (List.nth road_loc_list 0)
-    (List.nth road_loc_list 1);
+  ignore
+    (update_pl_roads pl.num
+       (List.nth road_loc_list 0)
+       (List.nth road_loc_list 1));
   pl
 
 let rec dev_to_string (res_list : Dev_cards.t list) (acc : string) =

@@ -1,3 +1,11 @@
+exception InvalidRoad of int * int
+
+exception OccupiedRoad of int * int
+
+exception InvalidTileId of int
+
+exception OccupiedTileId of int
+
 type id = int
 
 type dice_num = int
@@ -54,9 +62,14 @@ val init_road_mtx : road array array
 
 val curr_roads : road array array
 
-(* [update_road_mtx r c v] updates the the matrix with value [v] into
-   row [r] and column [c]. r and c ranges from [1, 54].*)
-val update_road_mtx : int -> int -> road -> unit
+(** [update_road_mtx r c v] returns the updated road matrix with value
+    [v] into row [r] and column [c] and row [c] and column [c]. r and c
+    range from [1, 54].
+
+    Raises [InvalidRoad (r,c)] if at least one is out of bounds. Raises
+    [OccupiedRoad (r,c)] if the road between [r] and [c] is already
+    occupied. *)
+val update_road_mtx : int -> int -> road -> road array array
 
 (*corners functions*)
 
@@ -67,16 +80,21 @@ val init_corners : node array
 val curr_corners : node array
 
 (** [update_corners i v] updates the corner array at tile position [i]
-    with node [v]. [i] is index from [1, 54]. *)
-val update_corners : int -> node -> unit
+    on the board with node [v]. Corner 1, as labeled on the board, has
+    index 0 in the array.
 
-(*[curr_corners] is the current corners list*)
+    Raises [InvalidTileId i] if the tile position is not in the range
+    [1,54]. Raises [OccupiedTileId i] if the tile at [i] is already
+    occupied. *)
+val update_corners : int -> node -> node array
+
+(** [curr_corners] is the current corners list*)
 val curr_corners : node array
 
-(*[dice_roll_tiles num] if we roll dice, we want a certain number, and
-  get all the tiles with that number in a list*)
+(** [dice_roll_tiles num] if we roll dice, we want a certain number, and
+    get all the tiles with that number in a list*)
 val dice_roll_tiles : int -> Yojson.Basic.t -> tile list
 
-(*[corner_to_node num] returns the node corresponding to the corner,
-  which is the int*)
+(** [corner_to_node num] returns the node corresponding to the corner,
+    which is the int*)
 val corner_to_node : int -> node

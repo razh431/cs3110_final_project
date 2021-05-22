@@ -6,7 +6,7 @@ val print_rd : Adj_matrix.road -> slash ->unit
 
 val print_tile : Adj_matrix.tile -> unit
 
-val line_1 : Adj_matrix.node -> Adj_matrix.node -> Adj_matrix.node -> int -> 
+(* val line_1 : Adj_matrix.node -> Adj_matrix.node -> Adj_matrix.node -> int -> 
   int -> int -> unit
 
 val line_2 : Adj_matrix.road -> Adj_matrix.road -> Adj_matrix.road -> 
@@ -45,5 +45,15 @@ val line_12 : Adj_matrix.road -> Adj_matrix.road -> Adj_matrix.road ->
   Adj_matrix.tile -> Adj_matrix.tile -> Adj_matrix.tile -> Adj_matrix.tile -> 
   unit
 
+val print_board_1 :  Adj_matrix.node array -> Adj_matrix.road array array -> 
+  Adj_matrix.tile list -> unit *)
+
 val print_board :  Adj_matrix.node array -> Adj_matrix.road array array -> 
-  Adj_matrix.tile list -> unit
+    Adj_matrix.tile list -> unit
+
+val print_corner_row : Adj_matrix.node array -> int -> int -> unit
+
+val print_road_row : Adj_matrix.road array array -> int -> int -> int -> unit
+
+val print_tile_row : Adj_matrix.road array array -> Adj_matrix.tile list -> int -> int -> int -> unit
+
