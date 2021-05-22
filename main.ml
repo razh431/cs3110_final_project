@@ -155,9 +155,7 @@ let player_trade list player =
 let build_rd player =
   let new_pl = fst (trade_to_bank player [ Wood; Brick ] []) in
   let road_loc = read_line () in
-  let road_loc_list =
-    parse_road_str road_loc |> List.map (fun x -> x - 1)
-  in
+  let road_loc_list = parse_road_str road_loc in
   ignore
     (update_pl_roads new_pl.num
        (List.nth road_loc_list 0)
