@@ -62,6 +62,7 @@ let print_tile tile =
     | Brick -> print_string " brk"
     | Wheat -> print_string " wht"
 
+(* 
 let line_1 corn1 corn2 corn3 c1 c2 c3 =
   print_string "                        ";
   ignore (print_corner corn1 c1);
@@ -242,7 +243,7 @@ let line_12 rd1 rd2 rd3 rd4 rd5 rd6 t1 t2 t3 t4 t5 =
   print_rd rd6 Straight;
   print_string "\n"
 
-let print_board
+let print_board_1
     (corners : node array)
     (roads : road array array)
     (tiles : tile list) =
@@ -355,4 +356,90 @@ let print_board
     roads.(49).(53)
     roads.(50).(53) Backward Forward;
   line_1 corners.(51) corners.(52) corners.(53) 52 53 54;
+  print_string "\n\n" *)
+
+let print_corner_row corners  start size = 
+  print_string "\n   ";
+  let rec print_init_space x = (
+    match (x < 6) with
+    | true -> (
+      print_string "       ";
+      print_init_space (x+1)
+    )
+    | false -> () )
+  in print_init_space (size);
+  for i = 0 to size-1 do 
+    print_corner corners.(start + i) (start + i);
+    print_string "         ";
+  done
+ 
+
+let print_road_row roads n start size = (* size is 3 4 5 *)
+  print_string "\n        ";
+  let rec print_init_space x = (
+    match size with
+    | 4 -> print_string "       "
+    | 3 -> print_string "              "
+    | _ -> ())
+  in print_init_space (size);
+  for i = 0 to size-1 do 
+    if n < 12 then (* top half *) begin
+      print_rd roads.(start+i).(start+i+size) Forward;
+      print_string "       ";
+      print_rd roads.(start+i).(start+i+size+1) Backward;
+      print_string "     "; end
+    else  begin
+      print_rd roads.(start+i).(start+i-size) Backward;
+      print_string "       ";
+      print_rd roads.(start+i).(start+i-size-1) Forward;
+      print_string "     ";end 
+  done
+  
+
+let print_tile_row roads tiles  size t_start rd_start= 
+  print_string "\n     ";
+  let rec print_init_space x = (
+    match (x < 5) with
+    | true -> (
+      print_string "       ";
+      print_init_space (x+1)
+    )
+    | false -> () )
+  in print_init_space (size);
+  (for i = 0 to size-1 do 
+    print_rd roads.(rd_start+i).(rd_start+i+size+1) Straight;
+    print_string "   ";
+    print_tile (List.nth tiles (t_start+i));
+    print_string "    "
+  done);
+  print_rd roads.(rd_start+size).(rd_start+size+1) Straight
+  
+
+
+let print_board (corners : node array)
+(roads : road array array)
+(tiles : tile list) = 
+  print_corner_row corners  1 3;
+  print_road_row roads 2 1 3 ;
+  print_corner_row corners  4 4;
+  print_tile_row roads tiles 3 0 4;
+  print_corner_row corners  8 4;
+  print_road_row roads 6 8 4;
+  print_corner_row corners 12 5;
+  print_tile_row roads tiles 4 3 12;
+  print_corner_row corners 17 5;
+  print_road_row roads 10 17 5;
+  print_corner_row corners 22 6;
+  print_tile_row roads tiles 5 7 22;
+  print_corner_row corners 28 6;
+  print_road_row roads 14 34 5;
+  print_corner_row corners 34 5;
+  print_tile_row roads tiles 4 12 34;
+  print_corner_row corners 39 5;
+  print_road_row roads 18 44 4;
+  print_corner_row corners 44 4;
+  print_tile_row roads tiles 3 16 42;
+  print_corner_row corners 48 4;
+  print_road_row roads 22 52 3;
+  print_corner_row corners 52 3;
   print_string "\n\n"
