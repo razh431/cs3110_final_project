@@ -249,7 +249,8 @@ let rec matching_input
     (acc : Resource.t list) =
   match input_filtered with
   | [] | [ "" ] -> acc
-  | h :: t -> matching_input t (Adj_matrix.resource_from_string h :: acc)
+  | h :: t ->
+      matching_input t (Adj_matrix.resource_from_string h :: acc)
 
 let input_to_list input =
   (*todo: fix spaces*)
@@ -266,8 +267,11 @@ let trading_logic player1 player2 =
   print_string " What would you like to trade for? \n ";
   print_string "> ";
   let trade2 = (player2, input_to_list (read_line ())) in
-  let player_1 = fst (trade_to_player trade1 trade2 false) in
-  print_string ("Your cards now: " ^ unmatch_input player_1.cards "")
+  let trade = trade_to_player trade1 trade2 false in
+  let player_1 = fst trade in
+  let player_2 = snd trade in
+  print_string ("Your cards now: " ^ unmatch_input player_1.cards "");
+  (player_1, player2)
 
 (*[dist_helper corners players] check if players have a building on any
   of those corners by checking and distribute accordingly by creating

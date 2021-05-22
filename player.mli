@@ -81,7 +81,9 @@ val bank : t
 (*input string into list of resource*)
 val input_to_list : string -> Resource.t list
 
-val trading_logic : t -> t -> unit
+(*[trading logic p1 p2] trades cards between player 1 and player 2 and
+  returns a tuple of p1 and p2*)
+val trading_logic : t -> t -> t * t
 
 (* [distr_res players_list num json ] is the new players_list with
    distributed resources to all players in [players_list] based on the
