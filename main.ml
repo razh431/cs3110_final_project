@@ -160,9 +160,10 @@ let build_rd player =
   let road_loc_list =
     parse_road_str road_loc |> List.map (fun x -> x - 1)
   in
-  update_pl_roads new_pl.num
-    (List.nth road_loc_list 0)
-    (List.nth road_loc_list 1);
+  ignore
+    (update_pl_roads new_pl.num
+       (List.nth road_loc_list 0)
+       (List.nth road_loc_list 1));
   new_pl
 
 let build_house player =
@@ -173,7 +174,7 @@ let build_house player =
   print_string "> ";
   (* read value and print out changed board *)
   let house_loc = read_int () in
-  update_pl_settlements new_pl.num House house_loc;
+  ignore (update_pl_settlements new_pl.num House house_loc);
   print_board curr_corners curr_roads init_tiles;
   print_string new_pl.name;
   new_pl
@@ -186,7 +187,7 @@ let build_city player =
   print_string "> ";
   (* read value and print out changed board *)
   let city_loc = read_int () in
-  update_pl_settlements new_pl.num City city_loc;
+  ignore (update_pl_settlements new_pl.num City city_loc);
   print_board curr_corners curr_roads init_tiles;
   print_string new_pl.name;
   new_pl
