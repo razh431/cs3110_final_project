@@ -2,39 +2,37 @@ open OUnit2
 open Player
 open Resource
 
-(* let cmp_set_like_lists lst1 lst2 = let uniq1 = List.sort_uniq compare
-   lst1 in let uniq2 = List.sort_uniq compare lst2 in List.length lst1 =
-   List.length uniq1 && List.length lst2 = List.length uniq2 && uniq1 =
-   uniq2 *)
+(********************************************************************
+  Our approach to testing our Catan project
 
-(* let t1 = make_tile "wheat" 6 1
+  Player module: Test cases were developed with black box and glass box
+  testing. We believe this is the best way because some functions used
+  pattern matching, so to ensure correctness, we tested cases where
+  resources being traded away were at different and extremal locations
+  in the list. Glass box testing was used to test different traversals
+  of our control flow.
 
-   let t2 = make_tile "ore" 8 2
+  Adj_matrix module: Test cases were developed using black box testing.
+  Since the functions we are testing are only updating an array or a
+  matrix, black box testing is sufficient.
 
-   let t1_edges = [ (1, 5); (5, 9); (9, 13); (8, 13); (4, 8); (1, 4) ]
+  Main module: ???????
+  ********************************************************************)
 
-   let t2_edges = [ (10, 14); (9, 14); (5, 9); (2, 5); (2, 6); (6, 10) ]
-
-   let edges_test (name : string) (position : int) (expected_output :
-   edge list) : test = name >:: fun _ -> assert_equal true
-   (cmp_set_like_lists expected_output (edges_from_pos position))
-
-   (* Test a tile's edges, neighbors, and presence of the robber *) let
-   tile_attr_tests = [ (* edges_test "tile 1's edges" 1 t1_edges; *) (*
-   edges_test "tile 2's edges" 2 t2_edges; *) (* TODO: test neighbors *)
-   assert true; ] *)
-
-(** [cmp_lists lst1 lst2] compares two lists. *)
+(** [cmp_lists lst1 lst2] compares two set-like lists. *)
 let cmp_lists lst1 lst2 =
   let sorted1 = List.sort compare lst1 in
   let sorted2 = List.sort compare lst2 in
   sorted1 = sorted2
 
-(** [cmp_tup_lists tup1 tup2] compares two tuples of resource lists.
+(** [cmp_tup_lists tup1 tup2] compares two tuples of resource lists to
+    see if the tuples are equivalent lists. The order of tuple matters,
+    but order of the list elements does not matter. Each of [tup1] and
+    [tup2] is a tuple of resource lists, representing the cards of each
+    player after a trade.
 
-    tup1 = (\[Ore; Wool; Wool; Brick\], \[Wood;Ore\]).
-
-    tup2 = (\[Wool; Wool; Brick; Ore\], \[Ore;Wood\]), result of trade. *)
+    Ex. [tup1] = (\[Ore; Wool; Wool; Brick\], \[Wood;Ore\]) and [tup2] =
+    (\[Wool; Wool; Brick; Ore\], \[Ore;Wood\]) *)
 let cmp_tup_of_lists tup1 tup2 =
   let tup1_fst = List.sort compare (fst tup1) in
   let tup1_snd = List.sort compare (snd tup1) in
@@ -44,6 +42,8 @@ let cmp_tup_of_lists tup1 tup2 =
 
 let move_robber_tests = [ assert true ]
 
+(** [pp_list pp_elt lst] pretty-prints list [lst], using [pp_elt] to
+    pretty-print each element of [lst]. *)
 let pp_list pp_elt lst =
   let pp_elts lst =
     let rec loop n acc = function
@@ -57,8 +57,9 @@ let pp_list pp_elt lst =
   in
   "[" ^ pp_elts lst ^ "]"
 
-(** Printer for a tuple composed of two lists. *)
-let pp_tup_list pp_elt lst =
+(** [pp_tup_list pp_elt lst] pretty-prints a tuple of two lists [tup],
+    using [pp_elt] to pretty-print each element of [tup]. *)
+let pp_tup_list pp_elt tup =
   let pp_elts lst =
     let rec loop n acc = function
       | [] -> acc
@@ -69,16 +70,39 @@ let pp_tup_list pp_elt lst =
     in
     loop 0 "" lst
   in
-  "([" ^ pp_elts (fst lst) ^ "], [" ^ pp_elts (snd lst) ^ "])"
+  "([" ^ pp_elts (fst tup) ^ "], [" ^ pp_elts (snd tup) ^ "])"
 
 let pp_string s = "\"" ^ s ^ "\""
 
+(** [pp_resource r] pretty-prints resource [r]. *)
 let pp_resource = function
   | Wheat -> "Wheat"
   | Ore -> "Ore"
   | Wool -> "Wool"
   | Brick -> "Brick"
   | Wood -> "Wood"
+
+let pp_building = function
+  | Adj_matrix.House -> "H"
+  | Adj_matrix.City -> "C"
+
+let pp_pnum = function
+  | 1 -> "player 1"
+  | 2 -> "player 2"
+  | 3 -> "player 3"
+  | 4 -> "player 4"
+  | _ -> failwith "only 4 players in a game"
+
+let pp_node = function
+  | None -> "None"
+  | Some (s : Adj_matrix.settlement) -> (
+      match s with
+      | { player_num = num; building = b } ->
+          pp_pnum num ^ " has " ^ pp_building b)
+
+(********************************************************************
+  Start helper functions for testing.
+  ********************************************************************)
 
 (** [cards_from_trade trade_result num] returns the cards of one of the
     players in the tuple [trade_result], resulting from a trade. [num]
@@ -102,11 +126,20 @@ let trade_pl_test name trade1 trade2 expected_output =
     ~printer:(pp_tup_list pp_resource)
     trade_result_cards
 
-(** Tests cases where [InvalidTrade] is raised. *)
-let trade_err_test name trade1 trade2 expected_output =
+(** Tests when [InvalidTrade] is raised in trades between players. *)
+let trade_pl_err_test name trade1 trade2 expected_output =
   name >:: fun _ ->
   assert_raises expected_output (fun () ->
       trade_to_player trade1 trade2 false)
+
+(** Tests when [InvalidTrade] is raised in trades between player and the
+    bank. *)
+let trade_bank_err_test name trade1 bank_res expected_output =
+  name >:: fun _ ->
+  match trade1 with
+  | player, player_res ->
+      assert_raises expected_output (fun () ->
+          trade_to_bank player player_res bank_res)
 
 (** [trade_bank_test name trade1 bank_res expected_output] tests a
     player trading resources into the bank and receiving [bank_res] in
@@ -123,7 +156,36 @@ let trade_bank_test name trade1 bank_res expected_output =
         ~printer:(pp_tup_list pp_resource)
         trade_result_cards
 
-(** Constants to be used for testing *)
+(** [update_roads_test name num v1 v2 expected_output] tests that the
+    road matrix is updated at [v1][v2] and [v2][v1] with [Some num].
+    [v1] and [v2] are valid indices in the range [1,54]. *)
+let update_roads_test name num v1 v2 expected_output =
+  name >:: fun _ ->
+  assert_equal expected_output (update_pl_roads num v1 v2)
+
+(** [update_roads_test name num v1 v2 expected_output] tests that
+    updating road matrix with out of bounds [v1] and [v2] raises
+    [InvalidRoad]. *)
+let update_roads_err_test name num v1 v2 expected_output =
+  name >:: fun _ ->
+  assert_raises expected_output (fun () -> update_pl_roads num v1 v2)
+
+(** [update_corners_test name num building index expected_output] tests
+    that the corner matrix is updated at [index] and [Some corner],
+    where corner is a record containing player number [num] and building
+    [building].
+
+    [index] is a valid index in the range [1,54]. *)
+let update_corners_test name num building index expected_output =
+  name >:: fun _ ->
+  assert_equal expected_output
+    (update_pl_settlements num building index)
+
+(* ~printer:(pp_list pp_node) *)
+
+(********************************************************************
+  Start constants for testing.
+  ********************************************************************)
 let p1 =
   { (init_player 1 "a" Blue) with cards = [ Wool; Wool; Brick; Wood ] }
 
@@ -194,8 +256,53 @@ let bank2 =
 (* p2 trades ore, ore to the initial bank in exchange for wool *)
 let trade_bank_2_output = ([ Wool ], bank2.cards)
 
-(** Test suites *)
-let trade_tests =
+let bank3 =
+  {
+    num = 0;
+    name = "Bank";
+    color = White;
+    cards =
+      gen_cards [ Wool ] 19
+      @ gen_cards [ Ore ] 17
+      @ gen_cards [ Wood ] 19
+      @ gen_cards [ Wheat ] 19
+      @ gen_cards [ Brick ] 19;
+    dev_cards = [];
+    points = 0;
+  }
+
+(* p1 receives ore ore from initial bank *)
+let trade_bank_3_output =
+  ([ Wool; Wool; Brick; Wood; Ore; Ore ], bank3.cards)
+
+(* p1 builds [1,5] *)
+let roads_1_output =
+  let empty_rd : Adj_matrix.road = None in
+  let rd : Adj_matrix.road = Some 1 in
+  let roads_init : Adj_matrix.road array array =
+    Array.make_matrix 54 54 empty_rd
+  in
+  roads_init.(1).(5) <- rd;
+  roads_init.(5).(1) <- rd;
+  roads_init
+
+(* p1 builds a House at corner 1 on the board *)
+let corners_1_output =
+  let empty_node : Adj_matrix.node = None in
+  let settlement : Adj_matrix.settlement =
+    { player_num = 1; building = House }
+  in
+  let node : Adj_matrix.node = Some settlement in
+  let corners_init : Adj_matrix.node array = Array.make 54 empty_node in
+  corners_init.(1) <- node;
+  corners_init
+
+(********************************************************************
+  Start test suites
+  ********************************************************************)
+
+(* Trade between players *)
+let trade_pl_tests =
   [
     trade_pl_test "p1 wool for p2 ore, res at start of list"
       (p1, [ Wool ])
@@ -221,28 +328,74 @@ let trade_tests =
       (p3, [ Wheat ])
       (p1, [ Wool; Wool ])
       trade_6_output;
-    trade_err_test "invalid: p1 trades no cards" (p1, [])
-      (p2, [ Ore; Ore ])
-      Player.InvalidTrade;
-    trade_err_test "invalid: p2 trades no cards"
-      (p1, [ Ore ])
-      (p2, []) Player.InvalidTrade;
-    trade_err_test "invalid: p1 insufficient res"
-      (p1, [ Wool; Wool; Wool ])
-      (p2, [ Ore ])
-      Player.InvalidTrade;
-    trade_err_test "invalid: p2 insufficient res"
-      (p1, [ Wool; Wool ])
-      (p2, [ Wheat ])
-      Player.InvalidTrade;
+  ]
+
+(* Trade between player and the bank *)
+let trade_bank_tests =
+  [
     trade_bank_test "p1 wool to bank"
       (p1, [ Wood ])
       [] trade_bank_1_output;
     trade_bank_test "p2 ore ore for wool from bank"
       (p2, [ Ore; Ore ])
       [ Wool ] trade_bank_2_output;
+    trade_bank_test "p1 receives ore ore from bank" (p1, [])
+      [ Ore; Ore ] trade_bank_3_output;
   ]
 
-let suite = "test suite for building" >::: List.flatten [ trade_tests ]
+(* Invalid trades *)
+let trade_err_tests =
+  [
+    trade_pl_err_test "invalid: p1 trades no cards" (p1, [])
+      (p2, [ Ore; Ore ])
+      Player.InvalidTrade;
+    trade_pl_err_test "invalid: p2 trades no cards"
+      (p1, [ Ore ])
+      (p2, []) Player.InvalidTrade;
+    trade_pl_err_test "invalid: p1 insufficient res"
+      (p1, [ Wool; Wool; Wool ])
+      (p2, [ Ore ])
+      Player.InvalidTrade;
+    trade_pl_err_test "invalid: p2 insufficient res"
+      (p1, [ Wool; Wool ])
+      (p2, [ Wheat ])
+      Player.InvalidTrade;
+    trade_bank_err_test "invalid: p1 insuff res to trade to bank"
+      (p1, [ Ore ])
+      [] Player.InvalidTrade;
+  ]
+
+let roads_test =
+  [
+    update_roads_test "p1 builds road [1,5]" 1 1 5 roads_1_output;
+    update_roads_err_test "fst bound too low" 1 0 2
+      (Adj_matrix.InvalidRoad (0, 2));
+    update_roads_err_test "snd bound too low" 1 1 0
+      (Adj_matrix.InvalidRoad (1, 0));
+    update_roads_err_test "both bounds too low" 1 ~-1 0
+      (Adj_matrix.InvalidRoad (~-1, 0));
+    update_roads_err_test "fst bound too high" 1 55 2
+      (Adj_matrix.InvalidRoad (55, 2));
+    update_roads_err_test "snd bound too high" 1 2 55
+      (Adj_matrix.InvalidRoad (2, 55));
+    update_roads_err_test "both bounds too high" 1 100 57
+      (Adj_matrix.InvalidRoad (100, 57));
+    (* TODO: add cases for nonexistent roads, e.g. [1,1], [1,2] *)
+  ]
+
+let corners_test =
+  [ (* update_corners_test "p1 builds house at index 1" 1 House 1
+       corners_1_output; *) ]
+
+let suite =
+  "test suite for building"
+  >::: List.flatten
+         [
+           trade_pl_tests;
+           trade_bank_tests;
+           trade_err_tests;
+           roads_test;
+           corners_test;
+         ]
 
 let _ = run_test_tt_main suite

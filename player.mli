@@ -62,15 +62,21 @@ val trade_to_player : tr -> tr -> bool -> t * t
 val update_pl_cards :
   int -> t list -> Adj_matrix.building -> Resource.t -> t list
 
-(** [update_pl_settlements pl_num building loc] updates the corner array
-    in Adj_matrix by adding a settlement [building] at the corner with
-    id [loc]. *)
-val update_pl_settlements : int -> Adj_matrix.building -> int -> unit
+(** [update_pl_settlements pl_num building loc] returns the updated
+    corner array in Adj_matrix by adding a settlement [building] at the
+    corner with id [loc].
 
-(** [update_pl_roads pl_num v1 v2] updates the road matrix in Adj_matrix
-    so that there is a road owned by player with number [pl_num] between
-    points [v1] and [v2]. *)
-val update_pl_roads : int -> int -> int -> unit
+    Raises [Adj_matrix.InvalidTileId i] if i is not in the range [1,54]. *)
+val update_pl_settlements :
+  int -> Adj_matrix.building -> int -> Adj_matrix.node array
+
+(** [update_pl_roads pl_num v1 v2] returns the updated road matrix in
+    Adj_matrix so that there is a road owned by player with number
+    [pl_num] between points [v1] and [v2].
+
+    Raises [Adj_matrix.InvalidRoad (v1,v2)] if at least one is not in
+    the range [1,54]. *)
+val update_pl_roads : int -> int -> int -> Adj_matrix.road array array
 
 (** [update_pl_points pl_num pl_list] updates the points of the player
     with number [pl_num], from a list of players [pl_list] and returns

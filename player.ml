@@ -140,16 +140,17 @@ let rec trade_out
           if r = h then trade_out t ls new_pl_res
           else trade_out t resources (h :: new_pl_res))
 
-(* [trade trade_tup gained_res] returns a list of resources resulting
-   from trading away the resources from the player, both specified in
-   the trade [trade_tup], to be replaced with the resources in
-   [gained_res].
+(** [trade trade_tup gained_res] returns a list of resources resulting
+    from trading away the resources from the player, both specified in
+    the trade [trade_tup], to be replaced with the resources in
+    [gained_res].
 
-   Raises [InvalidTrade] if one of the players is trades no cards in
-   [trade_tup]. *)
+    Raises [InvalidTrade] if one of the players is trades no cards in
+    [trade_tup]. *)
 let trade trade_tup gained_res with_bank =
   match trade_tup with
   | p, r_l ->
+      (* if not trading with the bank AND res list is empty, raise exn *)
       if with_bank || r_l <> [] then
         try
           let traded_out = trade_out p.cards r_l [] in
@@ -176,12 +177,10 @@ let trade_to_player trade_1 trade_2 with_bank =
       match trade_2 with
       | p_2, res_2 ->
           let player_1 =
-            { p_1 with cards = trade trade_1 res_2 false }
+            { p_1 with cards = trade trade_1 res_2 with_bank }
           in
           let player_2 =
-            if with_bank then
-              { p_2 with cards = trade trade_2 res_1 true }
-            else { p_2 with cards = trade trade_2 res_1 false }
+            { p_2 with cards = trade trade_2 res_1 with_bank }
           in
           (player_1, player_2))
 
@@ -229,7 +228,7 @@ let update_pl_cards pl_num pl_list building res =
 let update_pl_settlements pl_num building loc =
   Adj_matrix.update_corners loc (Some { player_num = pl_num; building })
 
-let update_pl_roads (pl_num : int) v1 v2 =
+let update_pl_roads pl_num v1 v2 =
   Adj_matrix.update_road_mtx v1 v2 (Some pl_num)
 
 let update_pl_points pl_num pl_list = failwith "TODO"

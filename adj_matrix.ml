@@ -3,6 +3,10 @@ open Resource
 
 (* open Player *)
 
+exception InvalidRoad of int * int
+
+exception InvalidTileId of int
+
 type id = int
 
 type dice_num = int
@@ -71,13 +75,21 @@ let tiles_from_json json =
 
 let curr_roads = init_road_mtx
 
-let update_road_mtx (row : int) (column : int) (value : road) =
-  curr_roads.(row).(column) <- value;
-  curr_roads.(column).(row) <- value
+(** Raises [InvalidRoad] if [row] or [column] are out of bounds. Both
+    must be in the range [1,54], inclusive. *)
+let update_road_mtx row column (value : road) =
+  if row = 0 || column = 0 || row > 54 || column > 54 then
+    raise (InvalidRoad (row, column))
+  else curr_roads.(row).(column) <- value;
+  curr_roads.(column).(row) <- value;
+  curr_roads
 
 let curr_corners = init_corners
 
-let update_corners index (c : node) = curr_corners.(index - 1) <- c
+let update_corners index (c : node) =
+  if index < 1 || index > 54 then raise (InvalidTileId index)
+  else curr_corners.(index - 1) <- c;
+  curr_corners
 
 let dice_roll_tiles num json =
   List.filter (fun x -> num = x.dice_num) (tiles_from_json json)
