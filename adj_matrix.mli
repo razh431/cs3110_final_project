@@ -67,7 +67,7 @@ val init_corners : node array
 val curr_corners : node array
 
 (** [update_corners i v] updates the corner array at tile position [i]
-    with node [v]. Corner 1 ha index 0 in the array *)
+    with node [v]. [i] is index from [1, 54]. *)
 val update_corners : int -> node -> unit
 
 (*[curr_corners] is the current corners list*)

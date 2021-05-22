@@ -92,4 +92,6 @@ val distr_res : t list -> int -> Yojson.Basic.t -> t list
 (* [distr_res_setup players_list json] is the new players_list with
    resources associated with all the homes built during the set up
    process*)
-val distr_res_setup : t list -> Yojson.Basic.t -> t list
+val distr_res_setup : t -> int -> Yojson.Basic.t -> player
+
+val unmatch_input : Resource.t list -> string -> string

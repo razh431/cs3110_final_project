@@ -83,8 +83,9 @@ let bank =
     cards =
       gen_cards [ Wool ] 19
       @ gen_cards [ Ore ] 19
-      @ gen_cards [ Wool ] 19
-      @ gen_cards [ Brick ] 19;
+      @ gen_cards [ Wood ] 19
+      @ gen_cards [ Brick ] 19
+      @ gen_cards [ Wheat ] 19;
     dev_cards = [];
     points = 0;
   }
@@ -312,7 +313,7 @@ let distr_res (players_list : t list) (num : int) json : t list =
 (* [distr_res_setup players_list] is the new players_list with resources
    associated with all the homes built during the set up process*)
 let distr_res_setup player house_loc json : player =
-  let corner = house_loc - 1 in
+  let corner = house_loc in
   let tiles = tiles_from_json json in
   let tiles =
     List.filter (fun t -> List.mem corner t.corner_positions) tiles
