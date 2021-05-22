@@ -36,11 +36,9 @@ type color =
   | White
   | Magenta
 
-(** The type [player] represents a player.
-
-    A player has a number [num], color represented by [color], a hand of
-    resource cards [cards], a hand of development cards [dev_cards], and
-    victory points [points]. *)
+(** The type [player] represents a player. A player has a number [num],
+    color represented by [color], a hand of resource cards [cards], a
+    hand of development cards [dev_cards], and victory points [points]. *)
 type player = {
   name : string;
   num : int;
@@ -163,7 +161,6 @@ let trade trade_tup gained_res with_bank =
     player specified in [trade1] and adds them to the player in
     [trade2]. [with_bank] is a bool that is true if the first player is
     trading with the bank as the second player, and false otherwise.
-
     Note: [trade_1] must be the player of the current turn. This way,
     can be used to trade with bank, which must be [trade_2].
 
@@ -188,9 +185,8 @@ let trade_to_bank player player_res bank_res =
   trade_to_player (player, player_res) (bank, bank_res) true
 
 (** [front_of_list pl_num lst] returns the elements of player list [lst]
-    up to player with number [pl_num], not inclusive.
-
-    E.g. [front_of_list 3 \[p4;p3;p2;p1\]] returns \[p4\]*)
+    up to player with number [pl_num], not inclusive. E.g.
+    [front_of_list 3 \[p4;p3;p2;p1\]] returns \[p4\]*)
 let front_of_list pl_num lst =
   let rec front_aux pl_num lst acc =
     match lst with
@@ -202,9 +198,8 @@ let front_of_list pl_num lst =
   front_aux pl_num lst []
 
 (** [back_of_list pl_num lst] returns the elements of player list [lst]
-    after player with number [pl_num], not inclusive.
-
-    E.g. [back_of_list 3 \[p4;p3;p2;p1\]] returns \[p2;p1\] *)
+    after player with number [pl_num], not inclusive. E.g.
+    [back_of_list 3 \[p4;p3;p2;p1\]] returns \[p2;p1\] *)
 let back_of_list pl_num lst =
   let rec back_aux pl_num lst acc =
     match lst with

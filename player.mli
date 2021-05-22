@@ -47,9 +47,8 @@ val trade_to_bank : t -> Resource.t list -> Resource.t list -> t * t
 
     Raises [InvalidTrade] if one or more players has insufficient
     resources for the desired trade. Also raises [InvalidTrade] if a
-    trade between players involves one player trading no cards.
-
-    Ex. If p1 wants to trade 1 wool and 2 brick for p2's 2 lumber:
+    trade between players involves one player trading no cards. Ex. If
+    p1 wants to trade 1 wool and 2 brick for p2's 2 lumber:
     trade_to_player (p1,\[Wool, Brick, Brick\]) (p2, \[Lumber, Lumber\]) *)
 val trade_to_player : tr -> tr -> bool -> t * t
 
@@ -57,7 +56,6 @@ val trade_to_player : tr -> tr -> bool -> t * t
     player with number [pl_num] from a list of players [pl_list].
     Returns an updated list of players. If [building] is [House], then
     they get one of [res]. If it is [City], they get two [res] cards.
-
     [pl_list] stores the players in decreasing order, i.e. [p3;p2;p1]*)
 val update_pl_cards :
   int -> t list -> Adj_matrix.building -> Resource.t -> t list

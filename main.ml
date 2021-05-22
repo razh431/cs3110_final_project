@@ -303,19 +303,14 @@ let play_game num_pl json =
      t ("Ore " ^ acc) else if h = Wood then unmatch_input t ("Wood " ^
      acc) else if h = Brick then unmatch_input t ("Brick " ^ acc) else
      if h = Wheat then unmatch_input t ("Wheat " ^ acc) else failwith
-     "incorrect command"
-
-     let rec matching_input (input_filtered : string list) (acc :
-     Resource.t list) = match input_filtered with | [] | [ "" ] -> acc |
-     h :: t -> matching_input t (Adj_matrix.resource_from_string h ::
-     acc)
-
-     let input_to_list input = (*input string into list of string
-     words*) (*todo: fix spaces*) let filtered_input = input |>
-     String.split_on_char ' ' in
-
-     (* |> List.filter (fun l -> l <> "") in List.filter (fun s -> s <>
-     "") filtered_input in *) matching_input filtered_input [] *)
+     "incorrect command" let rec matching_input (input_filtered : string
+     list) (acc : Resource.t list) = match input_filtered with | [] | [
+     "" ] -> acc | h :: t -> matching_input t
+     (Adj_matrix.resource_from_string h :: acc) let input_to_list input
+     = (*input string into list of string words*) (*todo: fix spaces*)
+     let filtered_input = input |> String.split_on_char ' ' in (* |>
+     List.filter (fun l -> l <> "") in List.filter (fun s -> s <> "")
+     filtered_input in *) matching_input filtered_input [] *)
   let num =
     if num_pl = "4" then 4
     else if num_pl = "3" then 3

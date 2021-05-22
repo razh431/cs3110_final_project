@@ -12,9 +12,12 @@ open Resource
   in the list. Glass box testing was used to test different traversals
   of our control flow.
 
-  Adj_matrix module: Test cases were developed using black box testing.
-  Since the functions we are testing are only updating an array or a
-  matrix, black box testing is sufficient.
+  Adj_matrix module: Test cases were developed using black box and glass
+  box testing. Glass box testing was used to check that the different
+  errors, raised in different if statements, were correctly raised. The
+  constants for testing the matrix and the array are long because if the
+  mutable array or adjacency matrix is not inside of each output
+  constant, the output would be incorrect.
 
   Main module: ???????
   ********************************************************************)
@@ -82,10 +85,28 @@ let pp_resource = function
   | Brick -> "Brick"
   | Wood -> "Wood"
 
+(** [pp_array pp_elt arr] pretty-prints array [arr], using [pp_elt] to
+    pretty-print each element of [arr]. *)
+let pp_array pp_elt arr =
+  let pp_elts lst =
+    let rec loop n acc = function
+      | [] -> acc
+      | [ h ] -> acc ^ pp_elt h
+      | h1 :: (h2 :: t as t') ->
+          if n = 100 then acc ^ "..." (* stop printing long list *)
+          else loop (n + 1) (acc ^ pp_elt h1 ^ "; ") t'
+    in
+    loop 0 "" lst
+  in
+  let l = Array.to_list arr in
+  "[" ^ pp_elts l ^ "]"
+
+(** [pp_building b] pretty-prints building [b]. *)
 let pp_building = function
   | Adj_matrix.House -> "H"
   | Adj_matrix.City -> "C"
 
+(** [pp_pnum num] pretty-prints a player number [num]. *)
 let pp_pnum = function
   | 1 -> "player 1"
   | 2 -> "player 2"
@@ -93,7 +114,9 @@ let pp_pnum = function
   | 4 -> "player 4"
   | _ -> failwith "only 4 players in a game"
 
-let pp_node = function
+(** [pp_node node] pretty-prints a node [node]. *)
+let pp_node (n : Adj_matrix.node) =
+  match n with
   | None -> "None"
   | Some (s : Adj_matrix.settlement) -> (
       match s with
@@ -163,9 +186,9 @@ let update_roads_test name num v1 v2 expected_output =
   name >:: fun _ ->
   assert_equal expected_output (update_pl_roads num v1 v2)
 
-(** [update_roads_test name num v1 v2 expected_output] tests that
+(** [update_roads_err_test name num v1 v2 expected_output] tests that
     updating road matrix with out of bounds [v1] and [v2] raises
-    [InvalidRoad]. *)
+    [Adj_matrix.InvalidRoad (v1,v2)]. *)
 let update_roads_err_test name num v1 v2 expected_output =
   name >:: fun _ ->
   assert_raises expected_output (fun () -> update_pl_roads num v1 v2)
@@ -173,15 +196,19 @@ let update_roads_err_test name num v1 v2 expected_output =
 (** [update_corners_test name num building index expected_output] tests
     that the corner matrix is updated at [index] and [Some corner],
     where corner is a record containing player number [num] and building
-    [building].
-
-    [index] is a valid index in the range [1,54]. *)
+    [building]. [index] is a valid index in the range [1,54]. *)
 let update_corners_test name num building index expected_output =
   name >:: fun _ ->
-  assert_equal expected_output
+  assert_equal expected_output ~printer:(pp_array pp_node)
     (update_pl_settlements num building index)
 
-(* ~printer:(pp_list pp_node) *)
+(** [update_corners_err_test name num building index expected_output]
+    tests that updating the corner matrix with out of bounds [i] raises
+    [Adj_matrix.InvalidTileId i]. *)
+let update_corners_err_test name num building index expected_output =
+  name >:: fun _ ->
+  assert_raises expected_output (fun () ->
+      update_pl_settlements num building index)
 
 (********************************************************************
   Start constants for testing.
@@ -275,26 +302,92 @@ let bank3 =
 let trade_bank_3_output =
   ([ Wool; Wool; Brick; Wood; Ore; Ore ], bank3.cards)
 
+let empty_rd : Adj_matrix.road = None
+
+let p1_rd : Adj_matrix.road = Some 1
+
+let p2_rd : Adj_matrix.road = Some 2
+
+let p3_rd : Adj_matrix.road = Some 3
+
 (* p1 builds [1,5] *)
 let roads_1_output =
-  let empty_rd : Adj_matrix.road = None in
-  let rd : Adj_matrix.road = Some 1 in
   let roads_init : Adj_matrix.road array array =
-    Array.make_matrix 54 54 empty_rd
+    Array.make_matrix 55 55 empty_rd
   in
-  roads_init.(1).(5) <- rd;
-  roads_init.(5).(1) <- rd;
+  roads_init.(1).(5) <- p1_rd;
+  roads_init.(5).(1) <- p1_rd;
   roads_init
 
-(* p1 builds a House at corner 1 on the board *)
+(* p2 builds [2,6] after p1 builds [1,5] *)
+let roads_2_output =
+  let roads_init : Adj_matrix.road array array =
+    Array.make_matrix 55 55 empty_rd
+  in
+  roads_init.(1).(5) <- p1_rd;
+  roads_init.(5).(1) <- p1_rd;
+  roads_init.(2).(6) <- p2_rd;
+  roads_init.(6).(2) <- p2_rd;
+  roads_init
+
+(* p3 builds [51,54] after p1 builds [1,5] and p2 builds [2,6] *)
+let roads_3_output =
+  let roads_init : Adj_matrix.road array array =
+    Array.make_matrix 55 55 empty_rd
+  in
+  roads_init.(1).(5) <- p1_rd;
+  roads_init.(5).(1) <- p1_rd;
+  roads_init.(2).(6) <- p2_rd;
+  roads_init.(6).(2) <- p2_rd;
+  roads_init.(51).(54) <- p3_rd;
+  roads_init.(54).(51) <- p3_rd;
+  roads_init
+
+let p1_node : Adj_matrix.node =
+  Some { player_num = 1; building = House }
+
+let p2_node : Adj_matrix.node =
+  Some { player_num = 2; building = House }
+
+let p3_node : Adj_matrix.node = Some { player_num = 3; building = City }
+
+let p4_node : Adj_matrix.node = Some { player_num = 4; building = City }
+
+(* p1 builds a house at corner 1 on the board, equiv to being at index 1
+   of the array *)
 let corners_1_output =
   let empty_node : Adj_matrix.node = None in
-  let settlement : Adj_matrix.settlement =
-    { player_num = 1; building = House }
-  in
-  let node : Adj_matrix.node = Some settlement in
-  let corners_init : Adj_matrix.node array = Array.make 54 empty_node in
-  corners_init.(1) <- node;
+  let corners_init : Adj_matrix.node array = Array.make 55 empty_node in
+  corners_init.(1) <- p1_node;
+  corners_init
+
+(* p2 builds a house at corner 4 after p1 builds a house at corner 1 *)
+let corners_2_output =
+  let empty_node : Adj_matrix.node = None in
+  let corners_init : Adj_matrix.node array = Array.make 55 empty_node in
+  corners_init.(1) <- p1_node;
+  corners_init.(4) <- p2_node;
+  corners_init
+
+(* p3 builds a city at corner 2 after p2 builds a house at corner 4 and
+   p1 builds a house at corner 1 *)
+let corners_3_output =
+  let empty_node : Adj_matrix.node = None in
+  let corners_init : Adj_matrix.node array = Array.make 55 empty_node in
+  corners_init.(1) <- p1_node;
+  corners_init.(4) <- p2_node;
+  corners_init.(2) <- p3_node;
+  corners_init
+
+(* p4 builds a city at corner 54 after p3 builds a city at corner 2
+   after p2 builds a house at corner 4 and p1 builds a house at corner 1 *)
+let corners_4_output =
+  let empty_node : Adj_matrix.node = None in
+  let corners_init : Adj_matrix.node array = Array.make 55 empty_node in
+  corners_init.(1) <- p1_node;
+  corners_init.(4) <- p2_node;
+  corners_init.(2) <- p3_node;
+  corners_init.(54) <- p4_node;
   corners_init
 
 (********************************************************************
@@ -368,6 +461,8 @@ let trade_err_tests =
 let roads_test =
   [
     update_roads_test "p1 builds road [1,5]" 1 1 5 roads_1_output;
+    update_roads_test "p2 builds road [2,6]" 2 2 6 roads_2_output;
+    update_roads_test "p3 builds road [51,54]" 3 51 54 roads_3_output;
     update_roads_err_test "fst bound too low" 1 0 2
       (Adj_matrix.InvalidRoad (0, 2));
     update_roads_err_test "snd bound too low" 1 1 0
@@ -380,12 +475,34 @@ let roads_test =
       (Adj_matrix.InvalidRoad (2, 55));
     update_roads_err_test "both bounds too high" 1 100 57
       (Adj_matrix.InvalidRoad (100, 57));
+    update_roads_err_test "[1,5] already occupied" 1 1 5
+      (Adj_matrix.OccupiedRoad (1, 5));
     (* TODO: add cases for nonexistent roads, e.g. [1,1], [1,2] *)
   ]
 
 let corners_test =
-  [ (* update_corners_test "p1 builds house at index 1" 1 House 1
-       corners_1_output; *) ]
+  [
+    update_corners_test "p1 builds house at corner 1" 1 House 1
+      corners_1_output;
+    update_corners_test "p2 builds house at corner 4" 2 House 4
+      corners_2_output;
+    update_corners_test "p3 builds city at corner 2" 3 City 2
+      corners_3_output;
+    update_corners_test "p4 builds city at corner 54" 4 City 54
+      corners_4_output;
+    update_corners_err_test "p1 builds house at corner 0" 1 House 0
+      (Adj_matrix.InvalidTileId 0);
+    update_corners_err_test "p1 builds city at corner 0" 1 City 0
+      (Adj_matrix.InvalidTileId 0);
+    update_corners_err_test "p2 builds house at corner 55" 2 House 55
+      (Adj_matrix.InvalidTileId 55);
+    update_corners_err_test "p2 builds city at corner 55" 2 City 55
+      (Adj_matrix.InvalidTileId 55);
+    update_corners_err_test "corner 1 already occupied" 2 House 1
+      (Adj_matrix.OccupiedTileId 1);
+    update_corners_err_test "corner 54 already occupied" 2 City 54
+      (Adj_matrix.OccupiedTileId 54);
+  ]
 
 let suite =
   "test suite for building"

@@ -1,6 +1,10 @@
 exception InvalidRoad of int * int
 
+exception OccupiedRoad of int * int
+
 exception InvalidTileId of int
+
+exception OccupiedTileId of int
 
 type id = int
 
@@ -62,7 +66,9 @@ val curr_roads : road array array
     [v] into row [r] and column [c] and row [c] and column [c]. r and c
     range from [1, 54].
 
-    Raises [InvalidRoad (r,c)] if at least one is out of bounds. *)
+    Raises [InvalidRoad (r,c)] if at least one is out of bounds. Raises
+    [OccupiedRoad (r,c)] if the road between [r] and [c] is already
+    occupied. *)
 val update_road_mtx : int -> int -> road -> road array array
 
 (*corners functions*)
@@ -77,16 +83,18 @@ val curr_corners : node array
     on the board with node [v]. Corner 1, as labeled on the board, has
     index 0 in the array.
 
-    Raises [InvalidTileId i] if the tile position *)
+    Raises [InvalidTileId i] if the tile position is not in the range
+    [1,54]. Raises [OccupiedTileId i] if the tile at [i] is already
+    occupied. *)
 val update_corners : int -> node -> node array
 
-(*[curr_corners] is the current corners list*)
+(** [curr_corners] is the current corners list*)
 val curr_corners : node array
 
-(*[dice_roll_tiles num] if we roll dice, we want a certain number, and
-  get all the tiles with that number in a list*)
+(** [dice_roll_tiles num] if we roll dice, we want a certain number, and
+    get all the tiles with that number in a list*)
 val dice_roll_tiles : int -> Yojson.Basic.t -> tile list
 
-(*[corner_to_node num] returns the node corresponding to the corner,
-  which is the int*)
+(** [corner_to_node num] returns the node corresponding to the corner,
+    which is the int*)
 val corner_to_node : int -> node
