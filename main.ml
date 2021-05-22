@@ -93,7 +93,7 @@ let rec setup players_list num_players first_sec : player list =
     (* read value and print out changed board *)
     let house_loc = read_int () in
     let new_pl = distr_res_setup pl house_loc json in
-    update_pl_settlements new_pl.num House house_loc;
+    ignore (update_pl_settlements pl.num House house_loc);
     print_board curr_corners curr_roads init_tiles;
     print_string pl_name;
     if first_sec == 1 then (
@@ -108,10 +108,15 @@ let rec setup players_list num_players first_sec : player list =
          [*corner location*, *corner location*] ex: [1,4]\n";
       print_string "> ");
     let road_loc = read_line () in
-    let road_loc_list = parse_road_str road_loc in
-    update_pl_roads pl.num
-      (List.nth road_loc_list 0)
-      (List.nth road_loc_list 1);
+    let road_loc_list =
+      parse_road_str road_loc |> List.map (fun x -> x - 1)
+    in
+    ignore
+      (update_pl_roads pl.num
+         (List.nth road_loc_list 0)
+         (List.nth road_loc_list 1));
+    (* if curr_roads.(List.nth road_loc_list 0).(List.nth road_loc_list
+       1) != None then print_string "there is a road here"; *)
     print_board curr_corners curr_roads init_tiles;
     let new_list = replace_players new_pl players_list in
     setup new_list (num_players - 1) first_sec

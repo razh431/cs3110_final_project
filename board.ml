@@ -6,10 +6,8 @@ open Adj_matrix
 (* TODO: unimplemented *)
 type port = None
 
-(** The type representing a Catan board.
-
-    It has the tiles on the map [tiles], undrawn development cards
-    [dev_cards], and ports [ports]. *)
+(** The type representing a Catan board. It has the tiles on the map
+    [tiles], undrawn development cards [dev_cards], and ports [ports]. *)
 type board = {
   tiles : Adj_matrix.tile list;
   dev_cards : Dev_cards.t list;
