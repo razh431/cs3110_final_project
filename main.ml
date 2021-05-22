@@ -17,8 +17,16 @@ exception BadNumber
 (* [json] is of the abstract type t that represents our board *)
 let json = Yojson.Basic.from_file "board.json"
 
-(* [init_tiles] is the default board the game will be played on *)
+(* [board_default] is the default board the game will be played on and
+   will only be 2 tiles for now*)
+
+let json = Yojson.Basic.from_file "board.json"
+
+(* [board_default] is the default board the game will be played on and
+   will only be 2 tiles for now*)
 let init_tiles = tiles_from_json json
+
+let parse (str : string) = failwith "TODO"
 
 (* [create_player_list num_pl total_num_pl pl_list] returns a list of
    players depending on user inputs for the players names. [num_pl] is
@@ -64,8 +72,7 @@ let rec setup players_list num_players first_sec =
     print_string "> ";
     (* read value and print out changed board *)
     let house_loc = read_int () in
-    (* let new_pl = distr_res_setup pl house_loc json *)
-    (* TODO: update the player list to have new_pl and delete old player *)
+    let new_pl = distr_res_setup pl house_loc json in
     update_pl_settlements pl.num House house_loc;
     print_board curr_corners curr_roads init_tiles;
     print_string pl_name;
@@ -87,8 +94,12 @@ let rec setup players_list num_players first_sec =
     update_pl_roads pl.num
       (List.nth road_loc_list 0)
       (List.nth road_loc_list 1);
+
+    (* if curr_roads.(List.nth road_loc_list 0).(List.nth road_loc_list
+       1) != None then print_string "there is a road here"; *)
     print_board curr_corners curr_roads init_tiles;
-    setup players_list (num_players - 1) first_sec
+    setup players_list (num_players - 1) first_sec;
+    print_string (" You currently have " ^ unmatch_input new_pl.cards "")
 
 (* [get_player list name] is the player in the player list [list] with
    the name [name]*)
