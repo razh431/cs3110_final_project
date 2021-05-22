@@ -124,6 +124,8 @@ let rec trade_out
           if r = h then trade_out t ls new_pl_res
           else trade_out t resources (h :: new_pl_res))
 
+let update_pl_points pl_num pl_list = failwith "todo: delete"
+
 (* [trade trade_tup gained_res] returns a list of resources resulting
    from trading away the resources from the player, both specified in
    the trade [trade_tup], to be replaced with the resources in
@@ -223,8 +225,6 @@ let update_pl_settlements pl_num building loc =
 let update_pl_roads (pl_num : int) v1 v2 =
   Adj_matrix.update_road_mtx v1 v2 (Some pl_num)
 
-let update_pl_points pl_num pl_list = failwith "TODO"
-
 let player1 =
   {
     (init_player 1 "allison" Blue) with
@@ -266,8 +266,11 @@ let trading_logic player1 player2 =
   print_string " What would you like to trade for? \n ";
   print_string "> ";
   let trade2 = (player2, input_to_list (read_line ())) in
-  let player_1 = fst (trade_to_player trade1 trade2 false) in
-  print_string ("Your cards now: " ^ unmatch_input player_1.cards "")
+  let trade = trade_to_player trade1 trade2 false in
+  let player_1 = fst trade in
+  let player_2 = snd trade in
+  print_string ("Your cards now: " ^ unmatch_input player_1.cards "");
+  (player_1, player_2)
 
 (*[dist_helper corners players] check if players have a building on any
   of those corners by checking and distribute accordingly by creating
@@ -280,7 +283,7 @@ let rec dist_helper corners players res =
       (*checks which player has that corner, generate a new list of
         players by replacing the player. [players_on_corner] should be a
         list of players that have new resources*)
-      let node = corner_to_node h in
+      let node = Adj_matrix.corner_to_node h in
       match node with
       | Some settlement ->
           let new_player_list =
@@ -324,3 +327,6 @@ let distr_res_setup player house_loc json : player =
   in
   let new_cards = distr_tiles tiles [] in
   { player with cards = new_cards }
+
+(* TODO: move to parse *)
+(* [get_resources player_res] is the list of resources required to build *)

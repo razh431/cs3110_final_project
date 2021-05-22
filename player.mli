@@ -71,17 +71,14 @@ val update_pl_settlements : int -> Adj_matrix.building -> int -> unit
     points [v1] and [v2]. *)
 val update_pl_roads : int -> int -> int -> unit
 
-(** [update_pl_points pl_num pl_list] updates the points of the player
-    with number [pl_num], from a list of players [pl_list] and returns
-    an updated list of players. *)
-val update_pl_points : int -> t list -> t list
-
 val bank : t
 
 (*input string into list of resource*)
 val input_to_list : string -> Resource.t list
 
-val trading_logic : t -> t -> unit
+(*[trading logic p1 p2] trades cards between player 1 and player 2 and
+  returns a tuple of p1 and p2*)
+val trading_logic : t -> t -> t * t
 
 (* [distr_res players_list num json ] is the new players_list with
    distributed resources to all players in [players_list] based on the
