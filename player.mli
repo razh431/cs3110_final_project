@@ -71,11 +71,6 @@ val update_pl_settlements : int -> Adj_matrix.building -> int -> unit
     points [v1] and [v2]. *)
 val update_pl_roads : int -> int -> int -> unit
 
-(** [update_pl_points pl_num pl_list] updates the points of the player
-    with number [pl_num], from a list of players [pl_list] and returns
-    an updated list of players. *)
-val update_pl_points : int -> t list -> t list
-
 val bank : t
 
 (*input string into list of resource*)

@@ -9,6 +9,7 @@ open State
 open Adj_matrix
 open Print_board
 open Dev_card_logic
+open Parse
 
 exception Illegal
 
@@ -87,6 +88,7 @@ let rec setup players_list num_players first_sec =
         ", where would you like to build your second road? Format: \
          [*corner location*, *corner location*] ex: [1,4]\n";
       print_string "> ");
+    (*todo: factor building road logic out*)
     let road_loc = read_line () in
     let road_loc_list =
       parse_road_str road_loc |> List.map (fun x -> x - 1)
@@ -297,16 +299,3 @@ let main () =
   else inval_num_player input_num_pl
 
 let () = main ()
-
-(*[replace_players new_players old_player_list] replacing players in
-  [new_players] with ones in [old_player] that correspond to the same
-  number. For example, if [new_players] were [1, 3] and
-  [old_player_list] was [1, 2, 3, 4] then the returning result should be
-  [1', 2, 3', 4] *)
-(* let rec replace_players new_players old_player_list = match
-   new_players with | [] -> old_player_list | h :: t -> let new_pl =   
-   match List.filter (fun new_p -> h.num = new_p.num)
-   old_player_list with | [ x ] -> x (*should return player one*) | _ ->
-   failwith "2 players with the same number somehow " in let new_pl_list
-   = (*[1', 2, 3, 4]*) new_pl :: List.filter (fun new_p -> h.num <>
-   new_p.num) old_player_list in replace_players t new_pl_list *)

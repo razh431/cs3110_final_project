@@ -1,4 +1,4 @@
-MODULES=board player resource dev_cards state main author adj_matrix dev_card_logic
+MODULES=board player resource dev_cards state main author adj_matrix dev_card_logic parse
 OBJECTS=$(MODULES:=.cmo)
 MLS=$(MODULES:=.ml)
 MLIS=$(MODULES:=.mli)

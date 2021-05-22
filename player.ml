@@ -223,8 +223,6 @@ let update_pl_settlements pl_num building loc =
 let update_pl_roads (pl_num : int) v1 v2 =
   Adj_matrix.update_road_mtx v1 v2 (Some pl_num)
 
-let update_pl_points pl_num pl_list = failwith "TODO"
-
 let player1 =
   {
     (init_player 1 "allison" Blue) with
@@ -284,7 +282,7 @@ let rec dist_helper corners players res =
       (*checks which player has that corner, generate a new list of
         players by replacing the player. [players_on_corner] should be a
         list of players that have new resources*)
-      let node = corner_to_node h in
+      let node = Adj_matrix.corner_to_node h in
       match node with
       | Some settlement ->
           let new_player_list =
@@ -328,3 +326,6 @@ let distr_res_setup player house_loc json : player =
   in
   let new_cards = distr_tiles tiles [] in
   { player with cards = new_cards }
+
+(* TODO: move to parse *)
+(* [get_resources player_res] is the list of resources required to build *)
