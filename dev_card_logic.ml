@@ -54,9 +54,10 @@ let road_building pl =
   let road_loc_list =
     parse_road_str road_loc |> List.map (fun x -> x - 1)
   in
-  update_pl_roads pl.num
-    (List.nth road_loc_list 0)
-    (List.nth road_loc_list 1);
+  ignore
+    (update_pl_roads pl.num
+       (List.nth road_loc_list 0)
+       (List.nth road_loc_list 1));
   pl
 
 let rec dev_to_string (res_list : Dev_cards.t list) (acc : string) =
@@ -80,8 +81,7 @@ let rec dev_logic dev_card pl : player =
   | "Knight" -> failwith ""
   | "Road_Building" ->
       (*returns the same player*)
-      road_building pl;
-      pl
+      road_building pl
   | "Year_Of_Plenty" -> year_of_plenty pl
   | _ ->
       print_string "Please choose one of your cards to use. ";
