@@ -47,9 +47,8 @@ val trade_to_bank : t -> Resource.t list -> Resource.t list -> t * t
 
     Raises [InvalidTrade] if one or more players has insufficient
     resources for the desired trade. Also raises [InvalidTrade] if a
-    trade between players involves one player trading no cards.
-
-    Ex. If p1 wants to trade 1 wool and 2 brick for p2's 2 lumber:
+    trade between players involves one player trading no cards. Ex. If
+    p1 wants to trade 1 wool and 2 brick for p2's 2 lumber:
     trade_to_player (p1,\[Wool, Brick, Brick\]) (p2, \[Lumber, Lumber\]) *)
 val trade_to_player : tr -> tr -> bool -> t * t
 
@@ -57,7 +56,6 @@ val trade_to_player : tr -> tr -> bool -> t * t
     player with number [pl_num] from a list of players [pl_list].
     Returns an updated list of players. If [building] is [House], then
     they get one of [res]. If it is [City], they get two [res] cards.
-
     [pl_list] stores the players in decreasing order, i.e. [p3;p2;p1]*)
 val update_pl_cards :
   int -> t list -> Adj_matrix.building -> Resource.t -> t list
@@ -88,4 +86,19 @@ val bank : t
 (*input string into list of resource*)
 val input_to_list : string -> Resource.t list
 
-val trading_logic : t -> t -> unit
+(*[trading logic p1 p2] trades cards between player 1 and player 2 and
+  returns a tuple of p1 and p2*)
+val trading_logic : t -> t -> t * t
+
+(* [distr_res players_list num json ] is the new players_list with
+   distributed resources to all players in [players_list] based on the
+   num rolled by the dice [num]. Returns of list of players with updated
+   cards in the same order*)
+val distr_res : t list -> int -> Yojson.Basic.t -> t list
+
+(* [distr_res_setup players_list json] is the new players_list with
+   resources associated with all the homes built during the set up
+   process*)
+val distr_res_setup : t -> int -> Yojson.Basic.t -> player
+
+val unmatch_input : Resource.t list -> string -> string
