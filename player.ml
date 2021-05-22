@@ -115,9 +115,10 @@ type tr = t * Resource.t list
 (** [trade_out player_cards resources new_pl_res] returns a list of
     cards that removes the cards that a player wants to trade away.
     [player_cards] is the cards owned. [resources] is list of resources
-    they're trading in. [new_pl_res] is an accumulator. Raises
-    [InvalidTrade] if the player has insufficient resources for the
-    trade they want to make. *)
+    they're trading in. [new_pl_res] is an accumulator.
+
+    Raises [InvalidTrade] if the player has insufficient resources for
+    the trade they want to make. *)
 let rec trade_out
     (player_cards : Resource.t list)
     (resources : Resource.t list)
@@ -140,8 +141,10 @@ let rec trade_out
 (** [trade trade_tup gained_res] returns a list of resources resulting
     from trading away the resources from the player, both specified in
     the trade [trade_tup], to be replaced with the resources in
-    [gained_res]. Raises [InvalidTrade] if one of the players is trades
-    no cards in [trade_tup]. *)
+    [gained_res].
+
+    Raises [InvalidTrade] if one of the players is trades no cards in
+    [trade_tup]. *)
 let trade trade_tup gained_res with_bank =
   match trade_tup with
   | p, r_l ->
@@ -159,9 +162,10 @@ let trade trade_tup gained_res with_bank =
     [trade2]. [with_bank] is a bool that is true if the first player is
     trading with the bank as the second player, and false otherwise.
     Note: [trade_1] must be the player of the current turn. This way,
-    can be used to trade with bank, which must be [trade_2]. Raises
-    [InvalidTrade] if one of the players is trading no cards, and the
-    trade is not being conducted with the bank. *)
+    can be used to trade with bank, which must be [trade_2].
+
+    Raises [InvalidTrade] if one of the players is trading no cards, and
+    the trade is not being conducted with the bank. *)
 let trade_to_player trade_1 trade_2 with_bank =
   (*need to trade out-- remove the cards that player currently has, then
     trade in-- add in cards they want*)
