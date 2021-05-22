@@ -389,9 +389,9 @@ let print_road_row roads n start size = (* size is 3 4 5 *)
       print_rd roads.(start+i).(start+i+size+1) Backward;
       print_string "     "; end
     else  begin
-      print_rd roads.(start+i).(start+i-size) Backward;
+      print_rd roads.(start+i).(start+i-size-1) Backward;
       print_string "       ";
-      print_rd roads.(start+i).(start+i-size-1) Forward;
+      print_rd roads.(start+i).(start+i-size) Forward;
       print_string "     ";end 
   done
   
