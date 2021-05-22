@@ -17,8 +17,16 @@ exception BadNumber
 (* [json] is of the abstract type t that represents our board *)
 let json = Yojson.Basic.from_file "board.json"
 
-(* [init_tiles] is the default board the game will be played on *)
+(* [board_default] is the default board the game will be played on and
+   will only be 2 tiles for now*)
+
+let json = Yojson.Basic.from_file "board.json"
+
+(* [board_default] is the default board the game will be played on and
+   will only be 2 tiles for now*)
 let init_tiles = tiles_from_json json
+
+let parse (str : string) = failwith "TODO"
 
 (* [create_player_list num_pl total_num_pl pl_list] returns a list of
    players depending on user inputs for the players names. [num_pl] is
@@ -39,18 +47,38 @@ let rec create_player_list num_pl total_num_pl pl_list =
     create_player_list (num_pl - 1) total_num_pl (new_pl :: pl_list))
   else pl_list
 
-(* [setup players_list num_players first_sec] sets up the game before
-   players start rolling dice by giving each player the ability to build
-   a home and 2 roads twice. [players_list] is the list of players.
+(*[replace_players new_players old_player_list] replacing players in
+  [new_players] with ones in [old_player] that correspond to the same
+  number. For example, if [new_players] were [3'] and [old_player_list]
+  was [1, 2, 3, 4] then the returning result should be [1, 2, 3', 4] *)
+let replace_players new_player old_player_list : player list =
+  let rec replace_helper pl_list acc =
+    match pl_list with
+    | [] -> List.rev acc
+    | h :: t ->
+        if h.num = new_player.num then
+          replace_helper t (new_player :: acc)
+        else replace_helper t (h :: acc)
+  in
+  replace_helper old_player_list []
+
+(* [setup players_list num_players first_sec] is a new list of players
+   after the players set up the game giving each player the ability to
+   build a home and 2 roads twice. This is all before actual game play
+   happens such as rolling dice[players_list] is the list of players.
    [num_players] is the number of players in players_list. [first_sec]
    is 1 if we are on the first round of home building and 2 is if we are
    on the second round of home building.*)
-let rec setup players_list num_players first_sec =
-  if num_players < 0 && first_sec == 2 then
-    print_string "Let's start the game!"
-  else if num_players < 0 && first_sec == 1 then
+let rec setup players_list num_players first_sec : player list =
+  if num_players < 0 && first_sec == 2 then (
+    print_string "Let's start the game!";
+    let new_list = players_list in
+    new_list)
+  else if num_players < 0 && first_sec == 1 then (
     print_string
-      "Now, we will build the second round of homes and roads! \n"
+      "Now, we will build the second round of homes and roads! \n";
+    let new_list = players_list in
+    new_list)
   else
     let pl = List.nth players_list num_players in
     let pl_name = pl.name in
@@ -64,9 +92,8 @@ let rec setup players_list num_players first_sec =
     print_string "> ";
     (* read value and print out changed board *)
     let house_loc = read_int () in
-    (* let new_pl = distr_res_setup pl house_loc json *)
-    (* TODO: update the player list to have new_pl and delete old player *)
-    update_pl_settlements pl.num House house_loc;
+    let new_pl = distr_res_setup pl house_loc json in
+    ignore (update_pl_settlements pl.num House house_loc);
     print_board curr_corners curr_roads init_tiles;
     print_string pl_name;
     if first_sec == 1 then (
@@ -84,11 +111,18 @@ let rec setup players_list num_players first_sec =
     let road_loc_list =
       parse_road_str road_loc |> List.map (fun x -> x - 1)
     in
-    update_pl_roads pl.num
-      (List.nth road_loc_list 0)
-      (List.nth road_loc_list 1);
+    ignore
+      (update_pl_roads pl.num
+         (List.nth road_loc_list 0)
+         (List.nth road_loc_list 1));
+    (* if curr_roads.(List.nth road_loc_list 0).(List.nth road_loc_list
+       1) != None then print_string "there is a road here"; *)
     print_board curr_corners curr_roads init_tiles;
-    setup players_list (num_players - 1) first_sec
+    let new_list = replace_players new_pl players_list in
+    setup new_list (num_players - 1) first_sec
+
+(* print_string (" You currently have " ^ unmatch_input new_pl.cards
+   ""); *)
 
 (* [get_player list name] is the player in the player list [list] with
    the name [name]*)
@@ -118,20 +152,81 @@ let player_trade list player =
   in
   trading_logic player player_2
 
+let build_rd player =
+  let new_pl = fst (trade_to_bank player [ Wood; Brick ] []) in
+  let road_loc = read_line () in
+  let road_loc_list =
+    parse_road_str road_loc |> List.map (fun x -> x - 1)
+  in
+  update_pl_roads new_pl.num
+    (List.nth road_loc_list 0)
+    (List.nth road_loc_list 1);
+  new_pl
+
+let build_house player =
+  let new_pl =
+    fst (trade_to_bank player [ Wool; Brick; Wool; Wheat ] [])
+  in
+  print_string "Where would you like to place your house? \n ";
+  print_string "> ";
+  (* read value and print out changed board *)
+  let house_loc = read_int () in
+  update_pl_settlements new_pl.num House house_loc;
+  print_board curr_corners curr_roads init_tiles;
+  print_string new_pl.name;
+  new_pl
+
+let build_city player =
+  let new_pl =
+    fst (trade_to_bank player [ Wheat; Wheat; Ore; Ore; Ore ] [])
+  in
+  print_string "Where would you like to place your city? \n ";
+  print_string "> ";
+  (* read value and print out changed board *)
+  let city_loc = read_int () in
+  update_pl_settlements new_pl.num City city_loc;
+  print_board curr_corners curr_roads init_tiles;
+  print_string new_pl.name;
+  new_pl
+
+let build_from_input (build_type : string) player =
+  match build_type with
+  | "road" -> build_rd player
+  | "house" -> build_house player
+  | "city" -> build_city player
+  | "developement card" ->
+      {
+        (* TODO: Get Random dev card *)
+        player with
+        cards = failwith "random dev card [ Wool; Wheat; Ore ]";
+      }
+  | _ -> player
+
+let rec bank_trade (players_list : player list) (player : player) :
+    player list =
+  (* TODO: Use parse to parse through the input*)
+  print_string
+    "Please type \"road\", \"settlement\", \"city\", or \"developement \
+     card\" to build \n\
+    \ Road: 1 wood, 1 brick\n\
+    \ House: 1 wood, 1 brick, 1 wool, 1 wheat\n\
+    \ City: 2 wheat, 3 ore\n\
+    \ Developement Card: 1 Wool, 1 wheat, 1 ore";
+  print_string "> ";
+  let build_type_s = read_line () in
+  let new_pl = build_from_input build_type_s player in
+  replace_players new_pl players_list
+
 (* TODO: figure out what happens if the random int selected is 0 *)
 (* [roll_dice] is a random integer 1-12 *)
 let rec roll_dice = Random.int 13
-
-let distr_res players_list num = failwith "use rachels code"
-
-let bank_trade players_list player = failwith "TODO"
 
 let resource_trade player = failwith "TODO"
 
 (* [trade pl_list player] is the new player list after the player has
    chosen to trade with player, trade with bank, use resource cards, or
    end turn*)
-let rec trade pl_list player =
+let rec trade_main pl_list player =
   print_string
     "Type \"player\" to trade with player,\n\
     \      type \"bank\" to trade with resource, type \"resource \
@@ -143,43 +238,37 @@ let rec trade pl_list player =
       (* TODO: fix player_trade must make trading_logic return something
          so we can update*)
       let new_pl_list = bank_trade pl_list player in
-      trade new_pl_list player
+      trade_main new_pl_list player
   | "bank" ->
       let new_pl_list = bank_trade pl_list player in
-      trade new_pl_list player
+      trade_main new_pl_list player
   | "resource cards" ->
       let new_pl_list = resource_trade player in
-      trade new_pl_list player
+      trade_main new_pl_list player
   | "end turn" -> pl_list
   (* TODO: Figure out how to quit the game *)
   (* | "QUIT" -> exit 0 *)
-  | _ ->
-      print_string
-        "Type \"player\" to trade with player,\n\
-        \        type \"bank\" to trade with resource, type \"resource \
-         cards\" to use \n\
-        \        resource cards, or type \"end turn\" to end turn.";
-      trade pl_list player
+  | _ -> trade_main pl_list player
 
 (* [play_turn player] is a new player list updated after the specified
    player [player] has gone. First, they roll a dice and everyone gets
    their resources, then [player] can choose to trade with players,
    trade with bank, or end turn. The function ends when they select end
    turn. *)
-let rec play_turn players_list player =
+let rec play_turn players_list player json =
   print_string "Type \"roll\" to roll dice";
   (* Todo: parse input *)
   let input = read_line () in
   if input = "roll" then
     let num = roll_dice in
-    let new_pl_list = distr_res players_list num in
-    trade new_pl_list player
-  else play_turn players_list player
+    let new_pl_list = distr_res players_list num json in
+    trade_main new_pl_list player
+  else play_turn players_list player json
 
 (* [play_turns players_list] will continuously carry out the turns of
    each player until someone has 10 victory points, meaning they have
    won the game *)
-let rec play_turns players_list (player : player) n =
+let rec play_turns players_list (player : player) n json =
   if player.points == 10 then (
     print_string player.name;
     print_string "\n   has won the game. Congratulation!")
@@ -187,11 +276,11 @@ let rec play_turns players_list (player : player) n =
     let num_players = List.length players_list in
     play_turns players_list
       (List.nth players_list num_players)
-      num_players
-  else (
-    play_turn players_list player;
+      num_players json
+  else
+    let pl_list_new_turn = play_turn players_list player json in
     let new_n = n + 1 in
-    play_turns players_list (List.nth players_list new_n) new_n)
+    play_turns pl_list_new_turn (List.nth players_list new_n) new_n json
 
 (* ****ALLISON VERSION****** *)
 (* let rec play_turns players_list = match players_list with | a :: b ->
@@ -205,7 +294,7 @@ let rec play_turns players_list (player : player) n =
    in play_turns" *)
 
 (* [play_game num_pl pl_list] runs the rest of the game *)
-let play_game num_pl =
+let play_game num_pl json =
   print_string "\nWelcome to Catan 3110. \n\n";
 
   (* let rec unmatch_input (res_list : Resource.t list) (acc : string) =
@@ -236,8 +325,9 @@ let play_game num_pl =
   let players = create_player_list num num [] in
   print_board curr_corners curr_roads init_tiles;
 
-  setup players (List.length players - 1) 1;
-  setup players (List.length players - 1) 2
+  let new_list = setup players (List.length players - 1) 1 in
+  let new_list_2 = setup new_list (List.length players - 1) 2 in
+  play_turns new_list_2 (List.hd players) 0 json
 
 (* Distribute resources *)
 (* let pl = List.nth players 0 in let pl_name = pl.name in print_string
@@ -264,14 +354,14 @@ let rec num_pl_checker input_num_pl =
 
 (* [inval_num_player str_input] is called when a user enters an invalid
    number of players [inval_input] *)
-let rec inval_num_player inval_input =
+let rec inval_num_player inval_input json =
   print_string "Your input ";
   print_string inval_input;
   print_string " is not valid. \n Please enter 2, 3, or 4. \n";
   print_string "> ";
   let input_num_pl = read_line () in
-  if num_pl_checker input_num_pl then play_game input_num_pl
-  else inval_num_player input_num_pl
+  if num_pl_checker input_num_pl then play_game input_num_pl json
+  else inval_num_player input_num_pl json
 
 (* [main] runs the beginning of the game that asks for the input for the
    number of players and asks you to input another number if the number
@@ -282,20 +372,7 @@ let main () =
   print_endline "\nInstructions: Please enter the number of players 2-4";
   print_string "> ";
   let input_num_pl = read_line () |> String.trim in
-  if num_pl_checker input_num_pl then play_game input_num_pl
-  else inval_num_player input_num_pl
+  if num_pl_checker input_num_pl then play_game input_num_pl json
+  else inval_num_player input_num_pl json
 
 let () = main ()
-
-(*[replace_players new_players old_player_list] replacing players in
-  [new_players] with ones in [old_player] that correspond to the same
-  number. For example, if [new_players] were [1, 3] and
-  [old_player_list] was [1, 2, 3, 4] then the returning result should be
-  [1', 2, 3', 4] *)
-(* let rec replace_players new_players old_player_list = match
-   new_players with | [] -> old_player_list | h :: t -> let new_pl =   
-   match List.filter (fun new_p -> h.num = new_p.num)
-   old_player_list with | [ x ] -> x (*should return player one*) | _ ->
-   failwith "2 players with the same number somehow " in let new_pl_list
-   = (*[1', 2, 3, 4]*) new_pl :: List.filter (fun new_p -> h.num <>
-   new_p.num) old_player_list in replace_players t new_pl_list *)

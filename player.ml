@@ -7,6 +7,26 @@ exception UnknownBuilding
 
 exception InvalidTrade
 
+let pp_list pp_elt lst =
+  let pp_elts lst =
+    let rec loop n acc = function
+      | [] -> acc
+      | [ h ] -> acc ^ pp_elt h
+      | h1 :: (h2 :: t as t') ->
+          if n = 100 then acc ^ "..." (* stop printing long list *)
+          else loop (n + 1) (acc ^ pp_elt h1 ^ "; ") t'
+    in
+    loop 0 "" lst
+  in
+  "[" ^ pp_elts lst ^ "]"
+
+let pp_resource = function
+  | Wheat -> "Wheat"
+  | Ore -> "Ore"
+  | Wool -> "Wool"
+  | Brick -> "Brick"
+  | Wood -> "Wood"
+
 (** The type [color] represents the colors of players. *)
 type color =
   | Blue
@@ -83,7 +103,8 @@ let bank =
     cards =
       gen_cards [ Wool ] 19
       @ gen_cards [ Ore ] 19
-      @ gen_cards [ Wool ] 19
+      @ gen_cards [ Wood ] 19
+      @ gen_cards [ Wheat ] 19
       @ gen_cards [ Brick ] 19;
     dev_cards = [];
     points = 0;
@@ -96,56 +117,45 @@ type tr = t * Resource.t list
 (** [trade_out player_cards resources new_pl_res] returns a list of
     cards that removes the cards that a player wants to trade away.
     [player_cards] is the cards owned. [resources] is list of resources
-    they're trading in. [new_pl_res] is an accumulator. *)
+    they're trading in. [new_pl_res] is an accumulator.
+
+    Raises [InvalidTrade] if the player has insufficient resources for
+    the trade they want to make. *)
 let rec trade_out
     (player_cards : Resource.t list)
     (resources : Resource.t list)
     (new_pl_res : Resource.t list) =
-  (* print_string ("player cards before match " ^ pp_list pp_resource
-     player_cards ^ "\n"); *)
   match player_cards with
   | [] ->
-      (* print_string ("acc when [] " ^ pp_list pp_resource new_pl_res ^
-         "\n"); *)
-      (*player has no cards, but exists cards needed to be traded in*)
-      (* if new_pl_res <> [] then new_pl_res else raise InvalidTrade *)
-      new_pl_res
+      (* if the player still wants to trade resources, but player has
+         insufficient cards, raise exn *)
+      if List.length resources > 0 then raise InvalidTrade
+      else new_pl_res
   | h :: t -> (
       match resources with
-      | [] ->
-          (* print_string ("acc1 " ^ pp_list pp_resource new_pl_res ^
-             "\n"); *)
-          new_pl_res @ player_cards
+      | [] -> new_pl_res @ player_cards
       | r :: ls ->
-          (* print_string ("acc2 " ^ pp_list pp_resource new_pl_res ^
-             "\n"); *)
-          (*shorten list of res to trade in, check rest of cards*)
+          (* if the player has the res, shorten list of res to trade in;
+             check rest of cards*)
           if r = h then trade_out t ls new_pl_res
           else trade_out t resources (h :: new_pl_res))
 
-(* [trade trade_tup gained_res] returns a list of resources resulting
-   from trading away the resources from the player, both specified in
-   the trade [trade_tup], to be replaced with the resources in
-   [gained_res].
+(** [trade trade_tup gained_res] returns a list of resources resulting
+    from trading away the resources from the player, both specified in
+    the trade [trade_tup], to be replaced with the resources in
+    [gained_res].
 
-   Raises [InvalidTrade] if one of the players is trades no cards in
-   [trade_tup]. *)
+    Raises [InvalidTrade] if one of the players is trades no cards in
+    [trade_tup]. *)
 let trade trade_tup gained_res with_bank =
   match trade_tup with
   | p, r_l ->
-      if
-        (* print_string ("player" ^ string_of_int p.num ^ " wants to
-           trade away " ^ pp_list pp_resource r_l ^ "\n"); *)
-        (* print_string ("player's cards are " ^ pp_list pp_resource
-           p.cards ^ "\n"); *)
-        with_bank || r_l <> []
-      then
-        (* print_string ("for trade out, cards are " ^ pp_list
-           pp_resource p.cards ^ "\n"); *)
-        let traded_out = trade_out p.cards r_l [] in
-        (* print_string ("after replacing: " ^ pp_list pp_resource
-           (traded_out @ gained_res) ^ "\n"); *)
-        traded_out @ gained_res
+      (* if not trading with the bank AND res list is empty, raise exn *)
+      if with_bank || r_l <> [] then
+        try
+          let traded_out = trade_out p.cards r_l [] in
+          traded_out @ gained_res
+        with InvalidTrade -> raise InvalidTrade
       else raise InvalidTrade
 
 (** [trade_to_player trade_1 trade_2 with_bank] returns a tuple of two
@@ -157,21 +167,20 @@ let trade trade_tup gained_res with_bank =
     Note: [trade_1] must be the player of the current turn. This way,
     can be used to trade with bank, which must be [trade_2].
 
-    Raises [InvalidTrade] if one of the players is trading no cards. *)
+    Raises [InvalidTrade] if one of the players is trading no cards, and
+    the trade is not being conducted with the bank. *)
 let trade_to_player trade_1 trade_2 with_bank =
-  (*need to trade out-- remove the cards that currently has, then trade
-    in-- add in cards they want*)
+  (*need to trade out-- remove the cards that player currently has, then
+    trade in-- add in cards they want*)
   match trade_1 with
   | p_1, res_1 -> (
       match trade_2 with
       | p_2, res_2 ->
           let player_1 =
-            { p_1 with cards = trade trade_1 res_2 false }
+            { p_1 with cards = trade trade_1 res_2 with_bank }
           in
           let player_2 =
-            if with_bank then
-              { p_2 with cards = trade trade_2 res_1 true }
-            else { p_2 with cards = trade trade_2 res_1 false }
+            { p_2 with cards = trade trade_2 res_1 with_bank }
           in
           (player_1, player_2))
 
@@ -219,10 +228,8 @@ let update_pl_cards pl_num pl_list building res =
 let update_pl_settlements pl_num building loc =
   Adj_matrix.update_corners loc (Some { player_num = pl_num; building })
 
-let update_pl_roads (pl_num : int) v1 v2 =
+let update_pl_roads pl_num v1 v2 =
   Adj_matrix.update_road_mtx v1 v2 (Some pl_num)
-
-let update_pl_points pl_num pl_list = failwith "TODO"
 
 let player1 =
   {
@@ -248,8 +255,7 @@ let rec matching_input
     (acc : Resource.t list) =
   match input_filtered with
   | [] | [ "" ] -> acc
-  | h :: t ->
-      matching_input t (Adj_matrix.resource_from_string h :: acc)
+  | h :: t -> matching_input t (Adj_matrix.resource_from_string h :: acc)
 
 let input_to_list input =
   (*todo: fix spaces*)
@@ -266,5 +272,67 @@ let trading_logic player1 player2 =
   print_string " What would you like to trade for? \n ";
   print_string "> ";
   let trade2 = (player2, input_to_list (read_line ())) in
-  let player_1 = fst (trade_to_player trade1 trade2 false) in
-  print_string ("Your cards now: " ^ unmatch_input player_1.cards "")
+  let trade = trade_to_player trade1 trade2 false in
+  let player_1 = fst trade in
+  let player_2 = snd trade in
+  print_string ("Your cards now: " ^ unmatch_input player_1.cards "");
+  (player_1, player_2)
+
+(*[dist_helper corners players] check if players have a building on any
+  of those corners by checking and distribute accordingly by creating
+  new players with those resources. [corners] is the corners of a tile.
+  [players] is a player list. *)
+let rec dist_helper corners players res =
+  match corners with
+  | [] -> players
+  | h :: t -> (
+      (*checks which player has that corner, generate a new list of
+        players by replacing the player. [players_on_corner] should be a
+        list of players that have new resources*)
+      let node = Adj_matrix.corner_to_node h in
+      match node with
+      | Some settlement ->
+          let new_player_list =
+            update_pl_cards settlement.player_num players
+              settlement.building res
+          in
+          dist_helper t new_player_list res
+      | None -> dist_helper t players res)
+
+(* [distr_res players_list rum] is the new players_list with distributed
+   resources to all players in [players_list] based on the num rolled by
+   the dice [num]*)
+let distr_res (players_list : t list) (num : int) json : t list =
+  (*Check which tiles have the same dice number (from tile list) *)
+  let tiles = dice_roll_tiles num json in
+  (*Find all the corners of those tiles *)
+  let rec distr_per_tile tile_list new_pl_list =
+    match tile_list with
+    | [] ->
+        List.rev new_pl_list
+        (*Check if players have a building on any of those corners and
+          distribute accordingly*)
+    | h :: t ->
+        distr_per_tile t
+          (dist_helper h.corner_positions players_list h.resource)
+  in
+  distr_per_tile tiles []
+
+(* [distr_res_setup players_list] is the new players_list with resources
+   associated with all the homes built during the set up process*)
+let distr_res_setup player house_loc json : player =
+  let corner = house_loc in
+  let tiles = tiles_from_json json in
+  let tiles =
+    List.filter (fun t -> List.mem corner t.corner_positions) tiles
+  in
+  let rec distr_tiles tile cards =
+    match tile with
+    | [] -> cards
+    | h :: t -> distr_tiles t (h.resource :: cards)
+  in
+  let new_cards = distr_tiles tiles [] in
+  { player with cards = new_cards }
+
+(* TODO: move to parse *)
+(* [get_resources player_res] is the list of resources required to build *)
