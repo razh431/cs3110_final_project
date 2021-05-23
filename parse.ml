@@ -91,15 +91,23 @@ let rec name_player n pl_list : string =
 (** [conn_with_road player v1 v2] returns true if the road denoted by
     [v1], [v2] is connected to a road owned by [player]. *)
 let conn_with_road player v1 v2 =
-  (* check road matrix: is there v1, _ or _, v2 owned by player? *)
-  (* while loop? *)
-  false
+  let has_connection = ref false in
+  for i = 1 to 54 do
+    match Adj_matrix.curr_roads.(i).(v2) with
+    | None -> ()
+    | Some n -> if n = player.num then has_connection := true else ()
+  done;
+  for j = 1 to 54 do
+    match Adj_matrix.curr_roads.(v1).(j) with
+    | None -> ()
+    | Some n -> if n = player.num then has_connection := true else ()
+  done;
+  !has_connection
 
 (** [conn_with_corner player v1 v2] returns true the road denoted by
     [v1], [v2] is connected to a corner of a tile that has one of
     [player]'s buildings. *)
 let conn_with_corner player v1 v2 =
-  (* check corner array: is there v1 or v2 owned by player? *)
   let node1 = Adj_matrix.curr_corners.(v1) in
   let node2 = Adj_matrix.curr_corners.(v2) in
   match (node1, node2) with

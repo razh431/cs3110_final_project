@@ -339,6 +339,8 @@ let p2_rd : Adj_matrix.road = Some 2
 
 let p3_rd : Adj_matrix.road = Some 3
 
+let p4_rd : Adj_matrix.road = Some 4
+
 (* p1 builds [1,5] *)
 let roads_1_output =
   let roads_init : Adj_matrix.road array array =
@@ -359,7 +361,7 @@ let roads_2_output =
   roads_init.(8).(4) <- p2_rd;
   roads_init
 
-(* p3 builds [50,54] after p1 builds [1,5] and p2 builds [4,8] *)
+(* p3 builds [2,5] after p1 [1,5] and p2 [4,8] *)
 let roads_3_output =
   let roads_init : Adj_matrix.road array array =
     Array.make_matrix 55 55 empty_rd
@@ -368,8 +370,23 @@ let roads_3_output =
   roads_init.(5).(1) <- p1_rd;
   roads_init.(4).(8) <- p2_rd;
   roads_init.(8).(4) <- p2_rd;
-  roads_init.(50).(54) <- p3_rd;
-  roads_init.(54).(50) <- p3_rd;
+  roads_init.(2).(5) <- p3_rd;
+  roads_init.(5).(2) <- p3_rd;
+  roads_init
+
+(* p4 builds [50,54] after p3 [2,5], p1 [1,5], and p2 [4,8] *)
+let roads_4_output =
+  let roads_init : Adj_matrix.road array array =
+    Array.make_matrix 55 55 empty_rd
+  in
+  roads_init.(1).(5) <- p1_rd;
+  roads_init.(5).(1) <- p1_rd;
+  roads_init.(4).(8) <- p2_rd;
+  roads_init.(8).(4) <- p2_rd;
+  roads_init.(2).(5) <- p3_rd;
+  roads_init.(5).(2) <- p3_rd;
+  roads_init.(50).(54) <- p4_rd;
+  roads_init.(54).(50) <- p4_rd;
   roads_init
 
 let p1_node : Adj_matrix.node =
@@ -488,7 +505,7 @@ let trade_err_tests =
   ]
 
 (* built corners on [1], [2], [4], [54] *)
-(* [1H] - p1, [2C] - p3, [4H] - p2, [54C] - p4 *)
+(* [1H] - p1 // [4H] - p2 // [2C] - p3 // [54C] - p4*)
 let corners_test =
   [
     update_corners_test "p1 builds house at corner 1" 1 House 1
@@ -513,6 +530,34 @@ let corners_test =
       (Adj_matrix.OccupiedTileId 54);
   ]
 
+(** Note: we cannot test roads that are tested in cases using
+    parse_rd_test in the parse_test suite because otherwise
+    [OccupiedRoad] will be falsely raised.
+
+    build valid roads: p1 [1,5], p2 [4,8], p3 [2,5], p4 [50,54] *)
+let roads_test =
+  [
+    update_roads_test "p1 builds road [1,5]" 1 1 5 roads_1_output;
+    update_roads_test "p2 builds road [4,8]" 2 4 8 roads_2_output;
+    update_roads_test "p3 builds road [2,5]" 3 2 5 roads_3_output;
+    update_roads_test "p4 builds road [50,54]" 4 50 54 roads_4_output;
+    update_roads_err_test "fst bound too low" 1 0 2
+      (Adj_matrix.InvalidRoadId (0, 2));
+    update_roads_err_test "snd bound too low" 1 1 0
+      (Adj_matrix.InvalidRoadId (1, 0));
+    update_roads_err_test "both bounds too low" 1 ~-1 0
+      (Adj_matrix.InvalidRoadId (~-1, 0));
+    update_roads_err_test "fst bound too high" 1 55 2
+      (Adj_matrix.InvalidRoadId (55, 2));
+    update_roads_err_test "snd bound too high" 1 2 55
+      (Adj_matrix.InvalidRoadId (2, 55));
+    update_roads_err_test "both bounds too high" 1 100 57
+      (Adj_matrix.InvalidRoadId (100, 57));
+    update_roads_err_test "[1,5] already occupied" 1 1 5
+      (Adj_matrix.OccupiedRoad (1, 5));
+    (* TODO: add cases for nonexistent roads, e.g. [1,1], [1,2] *)
+  ]
+
 (* p1: [1H] // p2: [4H] // p3: [2C] // p4: [54C] *)
 let parse_tests =
   [
@@ -522,13 +567,24 @@ let parse_tests =
     parse_rd_test "p3 [2,6] connected to [2C]" p3 "[2,6]" "[2,6]";
     parse_rd_test "p4 [54,51] connected to [54C]" p4 "[54,51]" "[54,51]";
     (* road connected to a road *)
+    parse_rd_test "p1 [5,9] connected to p1 [1,5]" p1 "[5,9]" "[5,9]";
+    parse_rd_test "p2 [8,12] connected to p2 [4,8]" p2 "[ 8 ,12] "
+      "[8,12]";
+    parse_rd_test "p2 [8,13] connected to p2 [4,8]" p2 "[8,13] "
+      "[8,13]";
+    parse_rd_test "p4 [51,54] connected to p4 [50,54]" p4 "[51,54]"
+      "[51,54]";
+    parse_rd_test "p1 [5,9] connected to p1 [1,5]" p1 "[5,9]" "[5,9]";
+    parse_rd_test "p3 [5,9] also connected to p2 [2,5]" p3 "[5,9]"
+      "[5,9]";
+    (* valid parse inputs *)
     parse_rd_test "beg spaces" p1 " [1,4]" "[1,4]";
     parse_rd_test "middle spaces" p1 "[ 1 , 4 ]" "[1,4]";
     parse_rd_test "end spaces" p1 "[1,4] " "[1,4]";
     parse_rd_test "no brackets" p1 "1,4" "[1,4]";
     parse_rd_test "extra start brackets" p1 "[[[1,4]" "[1,4]";
     parse_rd_test "end bracket before comma" p1 "[1 ,]4" "[1,4]";
-    (* note: some weird inputs are parsable *)
+    (* parse road errors *)
     parse_rd_err_test "rd too long" p1 "[1,5,4]" Parse.RoadLength;
     parse_rd_err_test "rd too short" p1 "[1]" Parse.RoadLength;
     parse_rd_err_test "rd with fst too low" p1 "[0,5]"
@@ -551,42 +607,18 @@ let parse_tests =
       Dev_card_logic.InvalidRoadFormat;
     parse_rd_err_test "comma after v2" p1 "[1 4,]"
       Dev_card_logic.InvalidRoadFormat;
-    parse_rd_err_test "p3 road (1,4) not connected" p3 "[1,4]"
+    parse_rd_err_test "p3's road (1,4) not connected to p3 house" p3
+      "[1,4]"
       (Adj_matrix.RoadNotConnected (1, 4));
-    parse_rd_err_test "p2 road (1,4) not connected" p2 "[1,4]"
-      (Adj_matrix.RoadNotConnected (1, 4));
+    parse_rd_err_test "p3's road (8,12) only connected to p2 road" p3
+      "[8,12]"
+      (Adj_matrix.RoadNotConnected (8, 12));
     (************ corner input tests ************)
     parse_cn_test "unoccupied corner 23" 23 23;
     parse_cn_err_test "occupied corner 2" 2
       (Adj_matrix.OccupiedTileId 2);
     parse_cn_err_test "corner id < 1" ~-1 (Adj_matrix.InvalidTileId ~-1);
     parse_cn_err_test "corner id > 54" 55 (Adj_matrix.InvalidTileId 55);
-  ]
-
-(* build valid roads: p1 [1,5], p2 [4,8], p3 [51,54] *)
-(* note: cannot test roads that are being tested in cases using
-   parse_rd_test because otherwise exception will be raised. *)
-let roads_test =
-  [
-    (* TODO: not passing? *)
-    update_roads_test "p1 builds road [1,5]" 1 1 5 roads_1_output;
-    update_roads_test "p2 builds road [4,8]" 2 4 8 roads_2_output;
-    update_roads_test "p3 builds road [50,54]" 3 50 54 roads_3_output;
-    update_roads_err_test "fst bound too low" 1 0 2
-      (Adj_matrix.InvalidRoadId (0, 2));
-    update_roads_err_test "snd bound too low" 1 1 0
-      (Adj_matrix.InvalidRoadId (1, 0));
-    update_roads_err_test "both bounds too low" 1 ~-1 0
-      (Adj_matrix.InvalidRoadId (~-1, 0));
-    update_roads_err_test "fst bound too high" 1 55 2
-      (Adj_matrix.InvalidRoadId (55, 2));
-    update_roads_err_test "snd bound too high" 1 2 55
-      (Adj_matrix.InvalidRoadId (2, 55));
-    update_roads_err_test "both bounds too high" 1 100 57
-      (Adj_matrix.InvalidRoadId (100, 57));
-    (* update_roads_err_test "[1,5] already occupied" 1 1 5
-       (Adj_matrix.OccupiedRoad (1, 5)); *)
-    (* TODO: add cases for nonexistent roads, e.g. [1,1], [1,2] *)
   ]
 
 let suite =
