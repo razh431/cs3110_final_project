@@ -92,7 +92,7 @@ let rec setup players_list num_players first_sec : player list =
         ", where would you like to place your second house? \n ";
     print_string "> ";
     (* read value and print out changed board *)
-    let house_loc = read_int () in
+    let house_loc = Parse.check_corner_input (read_int ()) in
     let new_pl = distr_res_setup pl house_loc json in
     ignore (update_pl_settlements pl.num House house_loc);
     print_board curr_corners curr_roads init_tiles;
@@ -109,7 +109,7 @@ let rec setup players_list num_players first_sec : player list =
          [*corner location*, *corner location*] ex: [1,4]\n";
       print_string "> ");
     (*todo: factor building road logic out*)
-    let road_loc = read_line () in
+    let road_loc = Parse.check_road_input (read_line ()) in
     let road_loc_list = parse_road_str road_loc in
     ignore
       (update_pl_roads pl.num
@@ -169,7 +169,7 @@ let build_house player =
   print_string "Where would you like to place your house? \n ";
   print_string "> ";
   (* read value and print out changed board *)
-  let house_loc = read_int () in
+  let house_loc = Parse.check_corner_input (read_int ()) in
   ignore (update_pl_settlements new_pl.num House house_loc);
   print_board curr_corners curr_roads init_tiles;
   print_string new_pl.name;
