@@ -7,6 +7,8 @@ exception InvalidRoadId of int * int
 
 exception OccupiedRoad of int * int
 
+exception RoadNotConnected of int * int
+
 exception InvalidTileId of int
 
 exception OccupiedTileId of int

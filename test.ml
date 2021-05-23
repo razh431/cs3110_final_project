@@ -213,15 +213,16 @@ let update_corners_err_test name num building index expected_output =
 
 (** [parse_rd_test name str expected_output] tests that a valid string
     specifying a road can be parsed. *)
-let parse_rd_test name str expected_output =
+let parse_rd_test name player str expected_output =
   name >:: fun _ ->
-  assert_equal expected_output (Parse.check_road_input str)
+  assert_equal expected_output (Parse.check_road_input player str)
 
 (** [parse_rd_err_test name str expected_output] tests that a string
     specifying a road raises an error. *)
-let parse_rd_err_test name str expected_output =
+let parse_rd_err_test name player str expected_output =
   name >:: fun _ ->
-  assert_raises expected_output (fun () -> Parse.check_road_input str)
+  assert_raises expected_output (fun () ->
+      Parse.check_road_input player str)
 
 (** [parse_cn_test name index expected_output] tests that a valid corner
     id [i] can be parsed. *)
@@ -250,6 +251,8 @@ let p3 =
     cards =
       [ Wheat; Wheat; Ore; Ore; Wool; Wool; Brick; Brick; Wood; Wood ];
   }
+
+let p4 = { (init_player 4 "d" Yellow) with cards = [] }
 
 (* trading p1 wool for p2 ore *)
 let trade_1_output = ([ Wool; Brick; Ore; Wood ], [ Ore; Wool ])
@@ -336,6 +339,8 @@ let p2_rd : Adj_matrix.road = Some 2
 
 let p3_rd : Adj_matrix.road = Some 3
 
+let p4_rd : Adj_matrix.road = Some 4
+
 (* p1 builds [1,5] *)
 let roads_1_output =
   let roads_init : Adj_matrix.road array array =
@@ -345,28 +350,43 @@ let roads_1_output =
   roads_init.(5).(1) <- p1_rd;
   roads_init
 
-(* p2 builds [2,6] after p1 builds [1,5] *)
+(* p2 builds [4,8] after p1 builds [1,5] *)
 let roads_2_output =
   let roads_init : Adj_matrix.road array array =
     Array.make_matrix 55 55 empty_rd
   in
   roads_init.(1).(5) <- p1_rd;
   roads_init.(5).(1) <- p1_rd;
-  roads_init.(2).(6) <- p2_rd;
-  roads_init.(6).(2) <- p2_rd;
+  roads_init.(4).(8) <- p2_rd;
+  roads_init.(8).(4) <- p2_rd;
   roads_init
 
-(* p3 builds [51,54] after p1 builds [1,5] and p2 builds [2,6] *)
+(* p3 builds [2,5] after p1 [1,5] and p2 [4,8] *)
 let roads_3_output =
   let roads_init : Adj_matrix.road array array =
     Array.make_matrix 55 55 empty_rd
   in
   roads_init.(1).(5) <- p1_rd;
   roads_init.(5).(1) <- p1_rd;
-  roads_init.(2).(6) <- p2_rd;
-  roads_init.(6).(2) <- p2_rd;
-  roads_init.(51).(54) <- p3_rd;
-  roads_init.(54).(51) <- p3_rd;
+  roads_init.(4).(8) <- p2_rd;
+  roads_init.(8).(4) <- p2_rd;
+  roads_init.(2).(5) <- p3_rd;
+  roads_init.(5).(2) <- p3_rd;
+  roads_init
+
+(* p4 builds [50,54] after p3 [2,5], p1 [1,5], and p2 [4,8] *)
+let roads_4_output =
+  let roads_init : Adj_matrix.road array array =
+    Array.make_matrix 55 55 empty_rd
+  in
+  roads_init.(1).(5) <- p1_rd;
+  roads_init.(5).(1) <- p1_rd;
+  roads_init.(4).(8) <- p2_rd;
+  roads_init.(8).(4) <- p2_rd;
+  roads_init.(2).(5) <- p3_rd;
+  roads_init.(5).(2) <- p3_rd;
+  roads_init.(50).(54) <- p4_rd;
+  roads_init.(54).(50) <- p4_rd;
   roads_init
 
 let p1_node : Adj_matrix.node =
@@ -379,6 +399,9 @@ let p3_node : Adj_matrix.node = Some { player_num = 3; building = City }
 
 let p4_node : Adj_matrix.node = Some { player_num = 4; building = City }
 
+let p4_node_h : Adj_matrix.node =
+  Some { player_num = 4; building = House }
+
 (* p1 builds a house at corner 1 on the board, equiv to being at index 1
    of the array *)
 let corners_1_output =
@@ -387,7 +410,7 @@ let corners_1_output =
   corners_init.(1) <- p1_node;
   corners_init
 
-(* p2 builds a house at corner 4 after p1 builds a house at corner 1 *)
+(* p2 builds a house at corner 4 after p1 [1H].*)
 let corners_2_output =
   let empty_node : Adj_matrix.node = None in
   let corners_init : Adj_matrix.node array = Array.make 55 empty_node in
@@ -395,8 +418,7 @@ let corners_2_output =
   corners_init.(4) <- p2_node;
   corners_init
 
-(* p3 builds a city at corner 2 after p2 builds a house at corner 4 and
-   p1 builds a house at corner 1 *)
+(* p3 builds a city at corner 2 after p2 [4H] and p1 [1H]. *)
 let corners_3_output =
   let empty_node : Adj_matrix.node = None in
   let corners_init : Adj_matrix.node array = Array.make 55 empty_node in
@@ -405,8 +427,7 @@ let corners_3_output =
   corners_init.(2) <- p3_node;
   corners_init
 
-(* p4 builds a city at corner 54 after p3 builds a city at corner 2
-   after p2 builds a house at corner 4 and p1 builds a house at corner 1 *)
+(* p4 builds a city at corner 54 p3 [2C], p2 [4H], and p1 [1H]. *)
 let corners_4_output =
   let empty_node : Adj_matrix.node = None in
   let corners_init : Adj_matrix.node array = Array.make 55 empty_node in
@@ -414,6 +435,18 @@ let corners_4_output =
   corners_init.(4) <- p2_node;
   corners_init.(2) <- p3_node;
   corners_init.(54) <- p4_node;
+  corners_init
+
+(* p4 builds a house at corner 18 after p4 [54C], p3 [2C], p2 [4H], and
+   p1 [1H]. *)
+let corners_5_output =
+  let empty_node : Adj_matrix.node = None in
+  let corners_init : Adj_matrix.node array = Array.make 55 empty_node in
+  corners_init.(1) <- p1_node;
+  corners_init.(4) <- p2_node;
+  corners_init.(2) <- p3_node;
+  corners_init.(54) <- p4_node;
+  corners_init.(18) <- p4_node_h;
   corners_init
 
 (********************************************************************
@@ -484,12 +517,45 @@ let trade_err_tests =
       [] Player.InvalidTrade;
   ]
 
-(* built roads from [1,5], [2,6], [51,54] *)
+(* built corners on [1], [2], [4], [54] *)
+(* [1H] - p1 // [4H] - p2 // [2C] - p3 // [18H], [54C] - p4*)
+let corners_test =
+  [
+    update_corners_test "p1 builds house at corner 1" 1 House 1
+      corners_1_output;
+    update_corners_test "p2 builds house at corner 4" 2 House 4
+      corners_2_output;
+    update_corners_test "p3 builds city at corner 2" 3 City 2
+      corners_3_output;
+    update_corners_test "p4 builds city at corner 54" 4 City 54
+      corners_4_output;
+    update_corners_test "p4 builds house at corner 18" 4 House 18
+      corners_5_output;
+    update_corners_err_test "p1 builds house at corner 0" 1 House 0
+      (Adj_matrix.InvalidTileId 0);
+    update_corners_err_test "p1 builds city at corner 0" 1 City 0
+      (Adj_matrix.InvalidTileId 0);
+    update_corners_err_test "p2 builds house at corner 55" 2 House 55
+      (Adj_matrix.InvalidTileId 55);
+    update_corners_err_test "p2 builds city at corner 55" 2 City 55
+      (Adj_matrix.InvalidTileId 55);
+    update_corners_err_test "corner 1 already occupied" 2 House 1
+      (Adj_matrix.OccupiedTileId 1);
+    update_corners_err_test "corner 54 already occupied" 2 City 54
+      (Adj_matrix.OccupiedTileId 54);
+  ]
+
+(** Note: we cannot test roads that are tested in cases using
+    parse_rd_test in the parse_test suite because otherwise
+    [OccupiedRoad] will be falsely raised.
+
+    build valid roads: p1 [1,5], p2 [4,8], p3 [2,5], p4 [50,54] *)
 let roads_test =
   [
     update_roads_test "p1 builds road [1,5]" 1 1 5 roads_1_output;
-    update_roads_test "p2 builds road [2,6]" 2 2 6 roads_2_output;
-    update_roads_test "p3 builds road [51,54]" 3 51 54 roads_3_output;
+    update_roads_test "p2 builds road [4,8]" 2 4 8 roads_2_output;
+    update_roads_test "p3 builds road [2,5]" 3 2 5 roads_3_output;
+    update_roads_test "p4 builds road [50,54]" 4 50 54 roads_4_output;
     update_roads_err_test "fst bound too low" 1 0 2
       (Adj_matrix.InvalidRoadId (0, 2));
     update_roads_err_test "snd bound too low" 1 1 0
@@ -507,64 +573,72 @@ let roads_test =
     (* TODO: add cases for nonexistent roads, e.g. [1,1], [1,2] *)
   ]
 
-(* built corners on [1], [2], [4], [54] *)
-let corners_test =
-  [
-    update_corners_test "p1 builds house at corner 1" 1 House 1
-      corners_1_output;
-    update_corners_test "p2 builds house at corner 4" 2 House 4
-      corners_2_output;
-    update_corners_test "p3 builds city at corner 2" 3 City 2
-      corners_3_output;
-    update_corners_test "p4 builds city at corner 54" 4 City 54
-      corners_4_output;
-    update_corners_err_test "p1 builds house at corner 0" 1 House 0
-      (Adj_matrix.InvalidTileId 0);
-    update_corners_err_test "p1 builds city at corner 0" 1 City 0
-      (Adj_matrix.InvalidTileId 0);
-    update_corners_err_test "p2 builds house at corner 55" 2 House 55
-      (Adj_matrix.InvalidTileId 55);
-    update_corners_err_test "p2 builds city at corner 55" 2 City 55
-      (Adj_matrix.InvalidTileId 55);
-    update_corners_err_test "corner 1 already occupied" 2 House 1
-      (Adj_matrix.OccupiedTileId 1);
-    update_corners_err_test "corner 54 already occupied" 2 City 54
-      (Adj_matrix.OccupiedTileId 54);
-  ]
-
+(* p1: [1H] // p2: [4H] // p3: [2C] // p4: [18H], [54C] *)
 let parse_tests =
   [
     (************ road input tests ************)
-    parse_rd_test "rd no spaces" "[1,4]" "[1,4]";
-    parse_rd_test "rd beg spaces" "   [1,4]" "[1,4]";
-    parse_rd_test "rd middle spaces" "[ 1 ,   4 ]" "[1,4]";
-    parse_rd_test "rd end spaces" "[1,4 ]   " "[1,4]";
-    parse_rd_test "rd with extra brackets" "[[1,4]]" "[1,4]";
-    parse_rd_test "rd no brackets" "1,4    " "[1,4]";
-    parse_rd_test "end bracket before comma" "[1 ,]4" "[1,4]";
-    (* some weird inputs are parsable -- is this fine? *)
-    parse_rd_err_test "rd too long" "[1,5,4]" Parse.RoadLength;
-    parse_rd_err_test "rd too short" "[1]" Parse.RoadLength;
-    parse_rd_err_test "rd with fst too low" "[0,5]"
+    (* road connected to a corner *)
+    parse_rd_test "p1 [1,4] connected to [1H]" p1 "[1,4]" "[1,4]";
+    parse_rd_test "p3 [2,6] connected to [2C]" p3 "[2,6]" "[2,6]";
+    parse_rd_test "p4 [54,51] connected to [54C]" p4 "[54,51]" "[54,51]";
+    (* road connected to a road *)
+    parse_rd_test "p1 [5,9] connected to p1 [1,5]" p1 "[5,9]" "[5,9]";
+    parse_rd_test "p2 [8,12] connected to p2 [4,8]" p2 "[ 8 ,12] "
+      "[8,12]";
+    parse_rd_test "p2 [8,13] connected to p2 [4,8]" p2 "[8,13] "
+      "[8,13]";
+    parse_rd_test "p4 [51,54] connected to p4 [50,54]" p4 "[51,54]"
+      "[51,54]";
+    parse_rd_test "p1 [5,9] connected to p1 [1,5]" p1 "[5,9]" "[5,9]";
+    parse_rd_test "p3 [5,9] also connected to p2 [2,5]" p3 "[5,9]"
+      "[5,9]";
+    (* valid parse inputs *)
+    parse_rd_test "beg spaces" p1 " [1,4]" "[1,4]";
+    parse_rd_test "middle spaces" p1 "[ 1 , 4 ]" "[1,4]";
+    parse_rd_test "end spaces" p1 "[1,4] " "[1,4]";
+    parse_rd_test "no brackets" p1 "1,4" "[1,4]";
+    parse_rd_test "extra start brackets" p1 "[[[1,4]" "[1,4]";
+    parse_rd_test "end bracket before comma" p1 "[1 ,]4" "[1,4]";
+    (* parse road errors *)
+    parse_rd_err_test "rd too long" p1 "[1,5,4]" Parse.RoadLength;
+    parse_rd_err_test "rd too short" p1 "[1]" Parse.RoadLength;
+    parse_rd_err_test "rd with fst too low" p1 "[0,5]"
       (Adj_matrix.InvalidRoadId (0, 5));
-    parse_rd_err_test "rd with snd too low" "[5,0]"
+    parse_rd_err_test "rd with snd too low" p1 "[5,0]"
       (Adj_matrix.InvalidRoadId (5, 0));
-    parse_rd_err_test "rd with fst too high" "[55,4]"
+    parse_rd_err_test "rd with fst too high" p1 "[55,4]"
       (Adj_matrix.InvalidRoadId (55, 4));
-    parse_rd_err_test "rd with snd too high" "[1,56]"
+    parse_rd_err_test "rd with snd too high" p1 "[1,56]"
       (Adj_matrix.InvalidRoadId (1, 56));
-    parse_rd_err_test "int_of_string fails" "[x,34]"
+    parse_rd_err_test "int_of_string fails" p1 "[x,34]"
       Dev_card_logic.InvalidRoadFormat;
-    parse_rd_err_test "include char that is not [ ] ," "[3,. 4]"
+    parse_rd_err_test "include char that is not [ ] ," p1 "[3,. 4]"
       Dev_card_logic.InvalidRoadFormat;
-    parse_rd_err_test "too many commas" "[1,,,,4]"
+    parse_rd_err_test "too many commas" p1 "[1,,,,4]"
       Dev_card_logic.InvalidRoadFormat;
-    parse_rd_err_test "comma before v1 and between" "[,1,4]"
+    parse_rd_err_test "comma before v1 and between" p1 "[,1,4]"
       Dev_card_logic.InvalidRoadFormat;
-    parse_rd_err_test "comma before v1" "[,1 4]"
+    parse_rd_err_test "comma befor v1" p1 "[,1 4]"
       Dev_card_logic.InvalidRoadFormat;
-    parse_rd_err_test "comma after v2" "[1 4,]"
+    parse_rd_err_test "comma after v2" p1 "[1 4,]"
       Dev_card_logic.InvalidRoadFormat;
+    (* connection errors *)
+    parse_rd_err_test "p4's road [24,30] connected to nothing" p4
+      "[24,30]"
+      (Adj_matrix.RoadNotConnected (24, 30));
+    (* roads connected to other people's settlements, roads, or both,
+       are not valid *)
+    parse_rd_err_test
+      "p3's road (1,4) connected to p1 road and p1 house but not valid"
+      p3 "[1,4]"
+      (Adj_matrix.RoadNotConnected (1, 4));
+    parse_rd_err_test
+      "p3's road (51,54) connected to p4 city but not valid" p3
+      "[51,54]"
+      (Adj_matrix.RoadNotConnected (51, 54));
+    parse_rd_err_test
+      "p3's road (8,12) connected to p2 road but not valid" p3 "[8,12]"
+      (Adj_matrix.RoadNotConnected (8, 12));
     (************ corner input tests ************)
     parse_cn_test "unoccupied corner 23" 23 23;
     parse_cn_err_test "occupied corner 2" 2

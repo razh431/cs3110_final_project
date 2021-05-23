@@ -133,21 +133,7 @@ let rec setup players_list num_players first_sec : player list =
       print_string "> ");
 
     (*todo: factor building road logic out*)
-    let rec get_valid_road_loc str_rd =
-      print_string
-        "This is not a valid input. Please enter a road in the format: \
-         [*corner location*, *corner location*] ex: [1,4]\n";
-      print_string ">";
-      let new_rd = read_line () in
-      try Parse.check_road_input new_rd
-      with _ -> get_valid_road_loc new_rd
-    in
-
-    let road_str = read_line () in
-    let road_loc =
-      try Parse.check_road_input road_str
-      with _ -> get_valid_road_loc road_str
-    in
+    let road_loc = Parse.check_road_input new_pl (read_line ()) in
     let road_loc_list = parse_road_str road_loc in
     ignore
       (update_pl_roads new_pl.num
@@ -173,7 +159,7 @@ let rec get_player list name =
       let player_2 = read_line () in
       get_player list player_2
 
-(* [player_trade pl_list player ] trades a resource between [player] and
+(* [player_trade pl_list player trades a resource between [player] and
    player_2 which the user inputs. pl_list is the list of players *)
 let player_trade pl_list player =
   print_string "You can trade with these players: ";
