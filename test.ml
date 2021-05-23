@@ -1,6 +1,7 @@
 open OUnit2
 open Player
 open Resource
+open Parse
 
 (********************************************************************
   Our approach to testing our Catan project
@@ -188,7 +189,7 @@ let update_roads_test name num v1 v2 expected_output =
 
 (** [update_roads_err_test name num v1 v2 expected_output] tests that
     updating road matrix with out of bounds [v1] and [v2] raises
-    [Adj_matrix.InvalidRoad (v1,v2)]. *)
+    [Adj_matrix.InvalidRoadId (v1,v2)]. *)
 let update_roads_err_test name num v1 v2 expected_output =
   name >:: fun _ ->
   assert_raises expected_output (fun () -> update_pl_roads num v1 v2)
@@ -209,6 +210,31 @@ let update_corners_err_test name num building index expected_output =
   name >:: fun _ ->
   assert_raises expected_output (fun () ->
       update_pl_settlements num building index)
+
+(** [parse_rd_test name str expected_output] tests that a valid string
+    specifying a road can be parsed. *)
+let parse_rd_test name str expected_output =
+  name >:: fun _ ->
+  assert_equal expected_output (Parse.check_road_input str)
+
+(** [parse_rd_err_test name str expected_output] tests that a string
+    specifying a road raises an error. *)
+let parse_rd_err_test name str expected_output =
+  name >:: fun _ ->
+  assert_raises expected_output (fun () -> Parse.check_road_input str)
+
+(** [parse_cn_test name index expected_output] tests that a valid corner
+    id [i] can be parsed. *)
+let parse_cn_test name index expected_output =
+  name >:: fun _ ->
+  assert_equal expected_output (Parse.check_corner_input index)
+
+(** [parse_cn_err_test name index expected_output] tests that a corner
+    id [i] raises an error. *)
+let parse_cn_err_test name index expected_output =
+  name >:: fun _ ->
+  assert_raises expected_output (fun () ->
+      Parse.check_corner_input index)
 
 (********************************************************************
   Start constants for testing.
@@ -458,28 +484,30 @@ let trade_err_tests =
       [] Player.InvalidTrade;
   ]
 
+(* built roads from [1,5], [2,6], [51,54] *)
 let roads_test =
   [
     update_roads_test "p1 builds road [1,5]" 1 1 5 roads_1_output;
     update_roads_test "p2 builds road [2,6]" 2 2 6 roads_2_output;
     update_roads_test "p3 builds road [51,54]" 3 51 54 roads_3_output;
     update_roads_err_test "fst bound too low" 1 0 2
-      (Adj_matrix.InvalidRoad (0, 2));
+      (Adj_matrix.InvalidRoadId (0, 2));
     update_roads_err_test "snd bound too low" 1 1 0
-      (Adj_matrix.InvalidRoad (1, 0));
+      (Adj_matrix.InvalidRoadId (1, 0));
     update_roads_err_test "both bounds too low" 1 ~-1 0
-      (Adj_matrix.InvalidRoad (~-1, 0));
+      (Adj_matrix.InvalidRoadId (~-1, 0));
     update_roads_err_test "fst bound too high" 1 55 2
-      (Adj_matrix.InvalidRoad (55, 2));
+      (Adj_matrix.InvalidRoadId (55, 2));
     update_roads_err_test "snd bound too high" 1 2 55
-      (Adj_matrix.InvalidRoad (2, 55));
+      (Adj_matrix.InvalidRoadId (2, 55));
     update_roads_err_test "both bounds too high" 1 100 57
-      (Adj_matrix.InvalidRoad (100, 57));
+      (Adj_matrix.InvalidRoadId (100, 57));
     update_roads_err_test "[1,5] already occupied" 1 1 5
       (Adj_matrix.OccupiedRoad (1, 5));
     (* TODO: add cases for nonexistent roads, e.g. [1,1], [1,2] *)
   ]
 
+(* built corners on [1], [2], [4], [54] *)
 let corners_test =
   [
     update_corners_test "p1 builds house at corner 1" 1 House 1
@@ -504,6 +532,47 @@ let corners_test =
       (Adj_matrix.OccupiedTileId 54);
   ]
 
+let parse_tests =
+  [
+    (************ road input tests ************)
+    parse_rd_test "rd no spaces" "[1,4]" "[1,4]";
+    parse_rd_test "rd beg spaces" "   [1,4]" "[1,4]";
+    parse_rd_test "rd middle spaces" "[ 1 ,   4 ]" "[1,4]";
+    parse_rd_test "rd end spaces" "[1,4 ]   " "[1,4]";
+    parse_rd_test "rd with extra brackets" "[[1,4]]" "[1,4]";
+    parse_rd_test "rd no brackets" "1,4    " "[1,4]";
+    parse_rd_test "end bracket before comma" "[1 ,]4" "[1,4]";
+    (* some weird inputs are parsable -- is this fine? *)
+    parse_rd_err_test "rd too long" "[1,5,4]" Parse.RoadLength;
+    parse_rd_err_test "rd too short" "[1]" Parse.RoadLength;
+    parse_rd_err_test "rd with fst too low" "[0,5]"
+      (Adj_matrix.InvalidRoadId (0, 5));
+    parse_rd_err_test "rd with snd too low" "[5,0]"
+      (Adj_matrix.InvalidRoadId (5, 0));
+    parse_rd_err_test "rd with fst too high" "[55,4]"
+      (Adj_matrix.InvalidRoadId (55, 4));
+    parse_rd_err_test "rd with snd too high" "[1,56]"
+      (Adj_matrix.InvalidRoadId (1, 56));
+    parse_rd_err_test "int_of_string fails" "[x,34]"
+      Dev_card_logic.InvalidRoadFormat;
+    parse_rd_err_test "include char that is not [ ] ," "[3,. 4]"
+      Dev_card_logic.InvalidRoadFormat;
+    parse_rd_err_test "too many commas" "[1,,,,4]"
+      Dev_card_logic.InvalidRoadFormat;
+    parse_rd_err_test "comma before v1 and between" "[,1,4]"
+      Dev_card_logic.InvalidRoadFormat;
+    parse_rd_err_test "comma before v1" "[,1 4]"
+      Dev_card_logic.InvalidRoadFormat;
+    parse_rd_err_test "comma after v2" "[1 4,]"
+      Dev_card_logic.InvalidRoadFormat;
+    (************ corner input tests ************)
+    parse_cn_test "unoccupied corner 23" 23 23;
+    parse_cn_err_test "occupied corner 2" 2
+      (Adj_matrix.OccupiedTileId 2);
+    parse_cn_err_test "corner id < 1" ~-1 (Adj_matrix.InvalidTileId ~-1);
+    parse_cn_err_test "corner id > 54" 55 (Adj_matrix.InvalidTileId 55);
+  ]
+
 let suite =
   "test suite for building"
   >::: List.flatten
@@ -513,6 +582,7 @@ let suite =
            trade_err_tests;
            roads_test;
            corners_test;
+           parse_tests;
          ]
 
 let _ = run_test_tt_main suite
