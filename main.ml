@@ -266,10 +266,9 @@ let rec trade_main pl_list player =
   print_string
     "Type \"player\" to trade with player, type \"bank\" to build or \
      get a \n\
-     developement card, type \"use\" development cards\" to use \
-     developement \n\
-     cards, or type \"end turn\" to end turn.\n";
-  print_string ">";
+     developement card, type \"use development card\" to use \
+     developement cards, or type \"end turn\" to end turn.\n";
+  print_string "> ";
   let input2 = read_line () in
   match input2 with
   | "player" ->
@@ -314,19 +313,19 @@ let rec play_turn players_list player json =
    won the game *)
 let rec play_turns (players_list : player list) (player : player) n json
     =
+  let num_players = List.length players_list in
   if player.points = 10 then (
     print_string player.name;
     print_string "\n   has won the game. Congratulation!")
-  else if n = 0 then
-    let num_players = List.length players_list - 1 in
-    let pl_list_new_turn = play_turn players_list player json in
-    play_turns pl_list_new_turn
-      (List.nth players_list num_players)
+  else if n >= num_players then
+    let pl_list_new_list = play_turn players_list player json in
+    play_turns pl_list_new_list
+      (List.nth players_list 0)
       num_players json
   else
-    let pl_list_new_turn = play_turn players_list player json in
-    let new_n = n - 1 in
-    play_turns pl_list_new_turn (List.nth players_list new_n) new_n json
+    let pl_list_new_list = play_turn players_list player json in
+    let new_n = n + 1 in
+    play_turns pl_list_new_list (List.nth players_list new_n) new_n json
 
 (* [play_game num_pl pl_list] runs the rest of the game *)
 let play_game num_pl json =

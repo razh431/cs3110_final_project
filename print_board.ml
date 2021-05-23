@@ -120,7 +120,7 @@ let print_tile_row roads tiles size t_start rd_start =
     print_tile (List.nth tiles (t_start + i));
     print_string "    "
   done;
-  print_rd roads.(rd_start + size).(rd_start + size + 1) Straight
+  print_rd roads.(rd_start + size).(rd_start + size + size + 1) Straight
 
 let print_board
     (corners : node array)
@@ -145,7 +145,7 @@ let print_board
   print_corner_row corners 39 5;
   print_road_row roads 18 44 4;
   print_corner_row corners 44 4;
-  print_tile_row roads tiles 3 16 42;
+  print_tile_row roads tiles 3 16 44;
   print_corner_row corners 48 4;
   print_road_row roads 22 52 3;
   print_corner_row corners 52 3;

@@ -211,7 +211,7 @@ let back_of_list pl_num lst =
 
 (* Get the front and back of the list; update the cards of the player
    with number pl_num; reconstruct the list of players *)
-let update_pl_cards pl_num pl_list building res =
+let update_pl_cards_failed pl_num pl_list building res =
   let front = front_of_list pl_num pl_list in
   let back = back_of_list pl_num pl_list in
   let player = List.nth pl_list pl_num in
@@ -219,6 +219,19 @@ let update_pl_cards pl_num pl_list building res =
   | House -> front @ [ fst (trade_to_bank player [] [ res ]) ] @ back
   | City ->
       front @ [ fst (trade_to_bank player [] [ res; res ]) ] @ back
+
+let update_pl_cards player_num pl_list building res =
+  let player =
+    List.hd (List.filter (fun p -> p.num = player_num) pl_list)
+  in
+  let new_player =
+    match building with
+    | House -> fst (trade_to_bank player [] [ res ])
+    | City -> fst (trade_to_bank player [] [ res; res ])
+  in
+  List.map
+    (fun p -> if p.num = player_num then new_player else p)
+    pl_list
 
 let update_pl_settlements pl_num building loc =
   Adj_matrix.update_corners loc (Some { player_num = pl_num; building })
