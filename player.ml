@@ -316,6 +316,9 @@ let rec dist_helper corners players res =
 let distr_res (players_list : t list) (num : int) json : t list =
   (*Check which tiles have the same dice number (from tile list) *)
   let tiles = dice_roll_tiles num json in
+  print_string
+    ("The number rolled = " ^ string_of_int num ^ "and the length is"
+    ^ string_of_int (List.length tiles));
   (*Find all the corners of those tiles *)
   let rec distr_per_tile tile_list new_pl_list =
     match tile_list with

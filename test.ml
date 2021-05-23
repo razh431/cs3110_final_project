@@ -573,6 +573,8 @@ let parse_tests =
     parse_cn_err_test "corner id > 54" 55 (Adj_matrix.InvalidTileId 55);
   ]
 
+let distr_res_tests = []
+
 let suite =
   "test suite for building"
   >::: List.flatten
@@ -583,6 +585,7 @@ let suite =
            roads_test;
            corners_test;
            parse_tests;
+           distr_res_tests;
          ]
 
 let _ = run_test_tt_main suite

@@ -147,3 +147,8 @@ let rec check_corner_input index =
         print_string "> ";
         check_corner_input (read_int ()))
       else raise (Adj_matrix.OccupiedTileId i)
+  | _ ->
+      print_string
+        "Please enter a number of an unoccupied corner in the range of \
+         [1,54]. \n";
+      check_corner_input (read_int ())

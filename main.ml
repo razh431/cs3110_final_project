@@ -101,7 +101,20 @@ let rec setup players_list num_players first_sec : player list =
         ", where would you like to place your second house? \n ";
     print_string "> ";
     (* read value and print out changed board *)
-    let house_loc = Parse.check_corner_input (read_int ()) in
+    let new_str = read_line () in
+    let rec get_valid_house_loc str_num =
+      print_string
+        "This is not a valid input. Please enter a number of an \
+         unoccupied corner in the range of [1,54]. \n";
+      print_string ">";
+      let new_str = read_line () in
+      try int_of_string new_str with _ -> get_valid_house_loc new_str
+    in
+    let house_num =
+      try int_of_string new_str with _ -> get_valid_house_loc new_str
+    in
+    let house_loc = Parse.check_corner_input house_num in
+
     let new_pl = distr_res_setup pl house_loc json in
     ignore (update_pl_settlements new_pl.num House house_loc);
     print_board curr_corners curr_roads init_tiles;
@@ -118,8 +131,23 @@ let rec setup players_list num_players first_sec : player list =
         ", where would you like to build your second road? Format: \
          [*corner location*, *corner location*] ex: [1,4]\n";
       print_string "> ");
+
     (*todo: factor building road logic out*)
-    let road_loc = Parse.check_road_input (read_line ()) in
+    let rec get_valid_road_loc str_rd =
+      print_string
+        "This is not a valid input. Please enter a road in the format: \
+         [*corner location*, *corner location*] ex: [1,4]\n";
+      print_string ">";
+      let new_rd = read_line () in
+      try Parse.check_road_input new_rd
+      with _ -> get_valid_road_loc new_rd
+    in
+
+    let road_str = read_line () in
+    let road_loc =
+      try Parse.check_road_input road_str
+      with _ -> get_valid_road_loc road_str
+    in
     let road_loc_list = parse_road_str road_loc in
     ignore
       (update_pl_roads new_pl.num
@@ -140,7 +168,7 @@ let rec get_player list name =
   | [] ->
       print_string
         " ,please type the name of the player you would like to trade \
-         with.\n"; 
+         with.\n";
       print_string "> ";
       let player_2 = read_line () in
       get_player list player_2
@@ -247,15 +275,17 @@ let rec bank_trade (players_list : player list) (player : player) :
   (* TODO: Use parse to parse through the input*)
   print_string
     "Please type \"road\", \"settlement\", \"city\", or \"developement \
-     card\" to build \n\
+     card\" to build.  Type \"back\" to go back. \n\
     \ Road: 1 wood, 1 brick\n\
     \ House: 1 wood, 1 brick, 1 wool, 1 wheat\n\
     \ City: 2 wheat, 3 ore\n\
     \ Developement Card: 1 Wool, 1 wheat, 1 ore";
   print_string "> ";
   let build_type_s = read_line () in
-  let new_pl = build_from_input build_type_s player in
-  replace_players new_pl players_list
+  if build_type_s = "back" then players_list
+  else
+    let new_pl = build_from_input build_type_s player in
+    replace_players new_pl players_list
 
 (* [roll_dice] is a random integer 1-12 *)
 let rec roll_dice = Random.int 12 + 1
@@ -356,23 +386,24 @@ let rec play_turns (players_list : player list) (player : player) n json
 (* [play_game num_pl pl_list] runs the rest of the game *)
 let play_game num_pl json =
   if num_pl = "QUIT" then (
-    print_string "Thank you for playing OCatan."; 
+    print_string "Thank you for playing OCatan.";
     exit 0)
-  else (
-  let num =
-    if num_pl = "4" then 4
-    else if num_pl = "3" then 3
-    else if num_pl = "2" then 2
-    else 0
-  in
-  print_string "\nPlease name the players. \n\n";
-  let players = create_player_list num num [] in
-  print_board curr_corners curr_roads init_tiles;
+  else
+    let num =
+      if num_pl = "4" then 4
+      else if num_pl = "3" then 3
+      else if num_pl = "2" then 2
+      else 0
+    in
+    print_string "\nPlease name the players. \n\n";
+    let players = create_player_list num num [] in
+    print_board curr_corners curr_roads init_tiles;
 
-  let new_list = setup players (List.length players - 1) 1 in
-  let new_list_2 =List.rev (setup new_list (List.length players - 1) 2) in
-  play_turns new_list_2 (List.hd new_list_2) 0 json
-  )
+    let new_list = setup players (List.length players - 1) 1 in
+    let new_list_2 =
+      List.rev (setup new_list (List.length players - 1) 2)
+    in
+    play_turns new_list_2 (List.hd new_list_2) 0 json
 
 (* Distribute resources *)
 (* let pl = List.nth players 0 in let pl_name = pl.name in print_string
