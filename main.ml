@@ -94,9 +94,10 @@ let rec setup players_list num_players first_sec : player list =
     (* read value and print out changed board *)
     let house_loc = Parse.check_corner_input (read_int ()) in
     let new_pl = distr_res_setup pl house_loc json in
-    ignore (update_pl_settlements pl.num House house_loc);
+    ignore (update_pl_settlements new_pl.num House house_loc);
     print_board curr_corners curr_roads init_tiles;
     print_string pl_name;
+    print_string (" You currently have " ^ unmatch_input new_pl.cards "");
     if first_sec == 1 then (
       print_string
         ", where would you like to build your first road? Format: \
@@ -112,7 +113,7 @@ let rec setup players_list num_players first_sec : player list =
     let road_loc = Parse.check_road_input (read_line ()) in
     let road_loc_list = parse_road_str road_loc in
     ignore
-      (update_pl_roads pl.num
+      (update_pl_roads new_pl.num
          (List.nth road_loc_list 0)
          (List.nth road_loc_list 1));
     (* if curr_roads.(List.nth road_loc_list 0).(List.nth road_loc_list
@@ -120,9 +121,6 @@ let rec setup players_list num_players first_sec : player list =
     print_board curr_corners curr_roads init_tiles;
     let new_list = replace_players new_pl players_list in
     setup new_list (num_players - 1) first_sec
-
-(* print_string (" You currently have " ^ unmatch_input new_pl.cards
-   ""); *)
 
 (* [get_player list name] is the player in the player list [list] with
    the name [name]*)
@@ -218,8 +216,10 @@ let rec bank_trade (players_list : player list) (player : player) :
 
 (* TODO: figure out what happens if the random int selected is 0 *)
 (* [roll_dice] is a random integer 1-12 *)
-let rec roll_dice = Random.int 13
+let rec roll_dice = Random.int 12 + 1
 
+(* [resource_trade player] is the new player list after the player
+   trades their resources to the bank for a resource card*)
 let resource_trade player = failwith "TODO"
 
 (* [trade pl_list player] is the new player list after the player has
