@@ -129,6 +129,7 @@ let rec check_corner_input index =
       raise (Adj_matrix.OccupiedTileId idx)
     else idx
   in
+  (* set [use_print] to false for testing *)
   let use_print = false in
   try check_corner_input_aux index with
   | Adj_matrix.InvalidTileId i ->
