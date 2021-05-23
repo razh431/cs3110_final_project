@@ -1,3 +1,5 @@
+exception InvalidRoadFormat
+
 val monopoly : Player.player -> Player.t
 
 val victory_points : Player.t -> Player.t

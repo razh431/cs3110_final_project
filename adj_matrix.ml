@@ -3,7 +3,7 @@ open Resource
 
 (* open Player *)
 
-exception InvalidRoad of int * int
+exception InvalidRoadId of int * int
 
 exception OccupiedRoad of int * int
 
@@ -79,13 +79,13 @@ let tiles_from_json json =
 
 let curr_roads = init_road_mtx
 
-(** Raises [InvalidRoad (row, column)] if [row] or [column] are out of
+(** Raises [InvalidRoadId (row, column)] if [row] or [column] are out of
     bounds. Both must be in the range [1,54], inclusive. Raises
     [OccupiedRoad (row, column)] if the road between [row] and [column]
     is already occupied. *)
 let update_road_mtx row column (value : road) =
   if row = 0 || column = 0 || row > 54 || column > 54 then
-    raise (InvalidRoad (row, column))
+    raise (InvalidRoadId (row, column))
   else if
     curr_roads.(row).(column) <> None
     && curr_roads.(column).(row) <> None

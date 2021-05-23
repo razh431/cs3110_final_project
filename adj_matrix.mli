@@ -1,4 +1,4 @@
-exception InvalidRoad of int * int
+exception InvalidRoadId of int * int
 
 exception OccupiedRoad of int * int
 
@@ -66,9 +66,9 @@ val curr_roads : road array array
     [v] into row [r] and column [c] and row [c] and column [c]. r and c
     range from [1, 54].
 
-    Raises [InvalidRoad (r,c)] if at least one is out of bounds. Raises
-    [OccupiedRoad (r,c)] if the road between [r] and [c] is already
-    occupied. *)
+    Raises [InvalidRoadId (r,c)] if at least one is out of bounds.
+    Raises [OccupiedRoad (r,c)] if the road between [r] and [c] is
+    already occupied. *)
 val update_road_mtx : int -> int -> road -> road array array
 
 (*corners functions*)

@@ -12,3 +12,35 @@
    when trying to trade *)
 (* When roll is typed, allow for phrases such as “please roll” or “yes
    roll” *)
+exception Empty_Name
+
+exception Repeated_Name
+
+exception Letters_Name
+
+exception RoadLength
+
+val is_alpha : char -> bool
+
+val name_player : string -> Player.player list -> string
+
+(** [check_road_input str] returns the string [str] if it is valid to
+    build the road specified in [str], which is a string of the form
+    ["\[v1,v2\]"], containing two indices that represent a road. [str]
+    is valid if the road is unoccupied, or if the road indices are out
+    of the bounds [1,54].
+
+    Raises [RoadLength] if the input string does not have two indices.
+    Raises [Adj_matrix.InvalidRoad (v1,v2)] if at least one index is out
+    of range [1,54]. Raises [Adj_matrix.OccupiedRoad (v1,v2)] if the
+    road specified is already occupied. *)
+val check_road_input : string -> string
+
+(** [check_road_input index] returns corner index [i] if it is valid to
+    build a house or city on that corner, i.e. it is in the bounds
+    [1,54] and that index is not already occupied.
+
+    Raises [Adj_matrix.OccupiedTileId idx] if corner [i] is already
+    occupied. Raises [Adj_matrix.InvalidTileId i] if [i] is not in the
+    bounds of [1,54]. *)
+val check_corner_input : int -> int

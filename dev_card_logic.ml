@@ -1,5 +1,7 @@
 open Player
 
+exception InvalidRoadFormat
+
 let monopoly (pl : player) =
   (*calculating how many [res] cards are out there, named res_num *)
   print_string "What resource would you like to monopolize?";
@@ -38,12 +40,10 @@ let parse_road_str (s : string) =
     |> String.concat ""
     |> String.split_on_char ','
     |> List.map String.trim |> List.map int_of_string
-  with e ->
-    print_string
-      "\n\
-       Please write in the appropriate format. Format: \n\
-      \    [*corner location*, *corner location*] ex: [1,4] \n";
-    exit 0
+  with e -> raise InvalidRoadFormat
+
+(* print_string "\n\ Please write in the appropriate format. Format: \n\
+   \ [*corner location*, *corner location*] ex: [1,4] \n"; exit 0 *)
 
 let road_building pl =
   print_string
