@@ -1,4 +1,4 @@
-(*generating board would create a list of 19 tiles, and assign resources
+ (*generating board would create a list of 19 tiles, and assign resources
   and dice roll number to it*)
 (** [play_game f] starts the adventure in file [f]. *)
 
@@ -218,9 +218,20 @@ let rec bank_trade (players_list : player list) (player : player) :
 (* [roll_dice] is a random integer 1-12 *)
 let rec roll_dice = Random.int 12 + 1
 
-(* [resource_trade player] is the new player list after the player
+(* [developementevelopement_trade player] is the new player list after the player
    trades their resources to the bank for a resource card*)
-let resource_trade player = failwith "TODO"
+let development_trade player = failwith "TODO"
+
+
+  (* init_player (number : int) (pl_name : string) (col : color)
+    num = number;
+    name = pl_name;
+    color = col;
+    cards = [];
+    dev_cards = [];
+    points = 0;
+    *)
+  
 
 (* [trade pl_list player] is the new player list after the player has
    chosen to trade with player, trade with bank, use resource cards, or
@@ -228,9 +239,9 @@ let resource_trade player = failwith "TODO"
 let rec trade_main pl_list player =
   print_string
     "Type \"player\" to trade with player,\n\
-    \      type \"bank\" to trade with resource, type \"resource \
+    \      type \"bank\" to trade with resource, type \"development \
      cards\" to use \n\
-    \      resource cards, or type \"end turn\" to end turn.";
+    \      developement cards, or type \"end turn\" to end turn.";
   let input2 = read_line () in
   match input2 with
   | "player" ->
@@ -241,8 +252,8 @@ let rec trade_main pl_list player =
   | "bank" ->
       let new_pl_list = bank_trade pl_list player in
       trade_main new_pl_list player
-  | "resource cards" ->
-      let new_pl_list = resource_trade player in
+  | "developement cards" ->
+      let new_pl_list = develop_trade player in
       trade_main new_pl_list player
   | "end turn" -> pl_list
   (* TODO: Figure out how to quit the game *)
@@ -259,7 +270,7 @@ let rec play_turn players_list player json =
   (* Todo: parse input *)
   let input = read_line () in
   if input = "roll" then
-    let num = roll_dice in
+    let num = (Random.int 12 + 1) in
     let new_pl_list = distr_res players_list num json in
     trade_main new_pl_list player
   else play_turn players_list player json

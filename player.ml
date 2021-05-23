@@ -327,7 +327,7 @@ let distr_res_setup player house_loc json : player =
     | h :: t -> distr_tiles t (h.resource :: cards)
   in
   let new_cards = distr_tiles tiles [] in
-  { player with cards = new_cards }
+  { player with cards = new_cards @ player.cards }
 
 (* TODO: move to parse *)
 (* [get_resources player_res] is the list of resources required to build *)
