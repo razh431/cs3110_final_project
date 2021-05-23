@@ -140,7 +140,7 @@ let rec get_player list name =
   | [] ->
       print_string
         " ,please type the name of the player you would like to trade \
-         with.\n";
+         with.\n"; 
       print_string "> ";
       let player_2 = read_line () in
       get_player list player_2
@@ -355,19 +355,24 @@ let rec play_turns (players_list : player list) (player : player) n json
 
 (* [play_game num_pl pl_list] runs the rest of the game *)
 let play_game num_pl json =
-  print_string "\nWelcome to Catan 3110. \n\n";
+  if num_pl = "QUIT" then (
+    print_string "Thank you for playing OCatan."; 
+    exit 0)
+  else (
   let num =
     if num_pl = "4" then 4
     else if num_pl = "3" then 3
     else if num_pl = "2" then 2
     else 0
   in
+  print_string "\nPlease name the players. \n\n";
   let players = create_player_list num num [] in
   print_board curr_corners curr_roads init_tiles;
 
   let new_list = setup players (List.length players - 1) 1 in
-  let new_list_2 = setup new_list (List.length players - 1) 2 in
-  play_turns new_list_2 (List.hd players) 0 json
+  let new_list_2 =List.rev (setup new_list (List.length players - 1) 2) in
+  play_turns new_list_2 (List.hd new_list_2) 0 json
+  )
 
 (* Distribute resources *)
 (* let pl = List.nth players 0 in let pl_name = pl.name in print_string
@@ -391,6 +396,7 @@ let rec num_pl_checker input_num_pl =
   String.equal input_num_pl "2"
   || String.equal input_num_pl "3"
   || String.equal input_num_pl "4"
+  || String.equal input_num_pl "QUIT"
 
 (* [inval_num_player str_input] is called when a user enters an invalid
    number of players [inval_input] *)
