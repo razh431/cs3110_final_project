@@ -1,6 +1,7 @@
 type t =
   | Monopoly
   | Victory_Points
-  | Knight
   | Road_Building
   | Year_Of_Plenty
+
+val match_dev_string : t -> string

@@ -250,7 +250,8 @@ let rec matching_input
     (acc : Resource.t list) =
   match input_filtered with
   | [] | [ "" ] -> acc
-  | h :: t -> matching_input t (Adj_matrix.resource_from_string h :: acc)
+  | h :: t ->
+      matching_input t (Adj_matrix.resource_from_string h :: acc)
 
 let input_to_list input =
   (*todo: fix spaces*)

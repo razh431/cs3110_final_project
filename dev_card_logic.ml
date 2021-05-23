@@ -67,7 +67,6 @@ let rec dev_to_string (res_list : Dev_cards.t list) (acc : string) =
       match h with
       | Monopoly -> dev_to_string t ("Monopoly " ^ acc)
       | Victory_Points -> dev_to_string t ("Victory Points " ^ acc)
-      | Knight -> dev_to_string t ("Knight " ^ acc)
       | Road_Building -> dev_to_string t ("Road building " ^ acc)
       | Year_Of_Plenty -> dev_to_string t ("Year of plenty " ^ acc))
 
@@ -78,7 +77,6 @@ let rec dev_logic dev_card pl : player =
   match dev_card with
   | "Monopoly" -> monopoly pl
   | "Victory_Points" -> victory_points pl
-  | "Knight" -> failwith ""
   | "Road_Building" ->
       (*returns the same player*)
       road_building pl
@@ -91,7 +89,7 @@ let rec dev_logic dev_card pl : player =
 let dev_card_logic player : player =
   print_string
     (" You currently have "
-    ^ dev_to_string player.dev_cards "."
+    ^ dev_to_string player.dev_cards " ,"
     ^ "What would you like to use? \n ");
   print_string "> ";
   let dev_card = read_line () in

@@ -1,4 +1,4 @@
- (*generating board would create a list of 19 tiles, and assign resources
+(*generating board would create a list of 19 tiles, and assign resources
   and dice roll number to it*)
 (** [play_game f] starts the adventure in file [f]. *)
 
@@ -10,6 +10,7 @@ open Adj_matrix
 open Print_board
 open Dev_card_logic
 open Parse
+open Dev_cards
 
 exception Illegal
 
@@ -34,7 +35,6 @@ let parse (str : string) = failwith "TODO"
    the number of the player being added to the list of players.
    [total_num_pl] is the total number of players. *)
 
-(* TODO: check if players have the same name *)
 let rec create_player_list num_pl total_num_pl pl_list =
   (* append into list *)
   if num_pl > 0 then (
@@ -72,7 +72,7 @@ let replace_players new_player old_player_list : player list =
    on the second round of home building.*)
 let rec setup players_list num_players first_sec : player list =
   if num_players < 0 && first_sec == 2 then (
-    print_string "Let's start the game!";
+    print_string "Let's start the game! ";
     let new_list = players_list in
     new_list)
   else if num_players < 0 && first_sec == 1 then (
@@ -122,6 +122,7 @@ let rec setup players_list num_players first_sec : player list =
     let new_list = replace_players new_pl players_list in
     setup new_list (num_players - 1) first_sec
 
+(* TODO: Change to list.filter *)
 (* [get_player list name] is the player in the player list [list] with
    the name [name]*)
 let rec get_player list name =
@@ -129,25 +130,31 @@ let rec get_player list name =
   | h :: t -> if h.name == name then h else get_player t name
   | [] ->
       print_string
-        "Please type the name of the player you would like to trade \
+        " ,please type the name of the player you would like to trade \
          with.\n";
       print_string "> ";
       let player_2 = read_line () in
       get_player list player_2
 
-(* [player_trade player] trades a resource between [player] and player_2
-   which the user inputs*)
-let player_trade list player =
-  (* TODO: Print all the names of the players they can trade with *)
+(* [player_trade pl_list player ] trades a resource between [player] and
+   player_2 which the user inputs. pl_list is the list of players *)
+let player_trade pl_list player =
+  print_string "You can trade with these players: ";
+  (* TODO: print everything in the list except the current player *)
+  (* TODO: print a space and comma between each player *)
+  let other_players =
+    List.filter (fun x -> x.name <> player.name) pl_list
+  in
+  List.map (fun x -> print_string (x.name ^ " ")) other_players;
   print_string
     "Please type the name of the player you would like to trade with.\n";
   print_string "> ";
   let name = read_line () in
   let player_2 =
-    get_player list name
-    (* TODO: make sure trading logic checks if the resource inputted is
-       valid *)
+    List.hd (List.filter (fun x -> x.name = name) other_players)
   in
+  (* get_player pl_list name (* TODO: make sure trading logic checks if
+     the resource inputted is valid *) in *)
   trading_logic player player_2
 
 let build_rd player =
@@ -186,17 +193,43 @@ let build_city player =
   print_string new_pl.name;
   new_pl
 
+let create_dev player : player =
+  let new_pl = fst (trade_to_bank player [ Wool; Wheat; Ore ] []) in
+  let dev_cards_list =
+    [ Monopoly; Victory_Points; Road_Building; Year_Of_Plenty ]
+  in
+  let new_card = List.nth dev_cards_list (Random.int 4) in
+  print_string ("You received a " ^ match_dev_string new_card ^ "!");
+  { new_pl with dev_cards = new_card :: new_pl.dev_cards }
+
 let build_from_input (build_type : string) player =
   match build_type with
-  | "road" -> build_rd player
-  | "house" -> build_house player
-  | "city" -> build_city player
-  | "developement card" ->
-      {
-        (* TODO: Get Random dev card *)
-        player with
-        cards = failwith "random dev card [ Wool; Wheat; Ore ]";
-      }
+  | "road" -> (
+      try build_rd player
+      with Player.InvalidTrade ->
+        print_string
+          " Sorry, you do not have sufficient resources to build a road";
+        player)
+  | "house" -> (
+      try build_house player
+      with Player.InvalidTrade ->
+        print_string
+          " Sorry, you do not have sufficient resources to build a \
+           house";
+        player)
+  | "city" -> (
+      try build_city player
+      with Player.InvalidTrade ->
+        print_string
+          " Sorry, you do not have sufficient resources to build a city";
+        player)
+  | "developement card" -> (
+      try create_dev player
+      with Player.InvalidTrade ->
+        print_string
+          " Sorry, you do not have sufficient resources to build a \
+           development card";
+        player)
   | _ -> player
 
 let rec bank_trade (players_list : player list) (player : player) :
@@ -214,50 +247,47 @@ let rec bank_trade (players_list : player list) (player : player) :
   let new_pl = build_from_input build_type_s player in
   replace_players new_pl players_list
 
-(* TODO: figure out what happens if the random int selected is 0 *)
 (* [roll_dice] is a random integer 1-12 *)
 let rec roll_dice = Random.int 12 + 1
 
-(* [developementevelopement_trade player] is the new player list after the player
-   trades their resources to the bank for a resource card*)
-let development_trade player = failwith "TODO"
+(* [use_dev_card] is the new player list after *)
+let use_dev_card player player_list =
+  let new_player = dev_card_logic player in
+  replace_players new_player player_list
 
-
-  (* init_player (number : int) (pl_name : string) (col : color)
-    num = number;
-    name = pl_name;
-    color = col;
-    cards = [];
-    dev_cards = [];
-    points = 0;
-    *)
-  
+(* init_player (number : int) (pl_name : string) (col : color) num =
+   number; name = pl_name; color = col; cards = []; dev_cards = [];
+   points = 0; *)
 
 (* [trade pl_list player] is the new player list after the player has
    chosen to trade with player, trade with bank, use resource cards, or
    end turn*)
 let rec trade_main pl_list player =
   print_string
-    "Type \"player\" to trade with player,\n\
-    \      type \"bank\" to trade with resource, type \"development \
-     cards\" to use \n\
-    \      developement cards, or type \"end turn\" to end turn.";
+    "Type \"player\" to trade with player, type \"bank\" to build or \
+     get a \n\
+     developement card, type \"use\" development cards\" to use \
+     developement \n\
+     cards, or type \"end turn\" to end turn.\n";
+  print_string ">";
   let input2 = read_line () in
   match input2 with
   | "player" ->
-      (* TODO: fix player_trade must make trading_logic return something
-         so we can update*)
-      let new_pl_list = bank_trade pl_list player in
+      let pl_trade_tup = player_trade pl_list player in
+      let new_pl_list =
+        replace_players (fst pl_trade_tup) pl_list
+        |> replace_players (fst pl_trade_tup)
+      in
       trade_main new_pl_list player
   | "bank" ->
       let new_pl_list = bank_trade pl_list player in
       trade_main new_pl_list player
-  | "developement cards" ->
-      let new_pl_list = develop_trade player in
+  | "use developement card" ->
+      let new_pl_list = use_dev_card player pl_list in
       trade_main new_pl_list player
   | "end turn" -> pl_list
   (* TODO: Figure out how to quit the game *)
-  (* | "QUIT" -> exit 0 *)
+  | "QUIT" -> exit 0
   | _ -> trade_main pl_list player
 
 (* [play_turn player] is a new player list updated after the specified
@@ -266,61 +296,41 @@ let rec trade_main pl_list player =
    trade with bank, or end turn. The function ends when they select end
    turn. *)
 let rec play_turn players_list player json =
-  print_string "Type \"roll\" to roll dice";
+  print_string player.name;
+  print_string ", type \"roll\" to roll dice\n > ";
   (* Todo: parse input *)
   let input = read_line () in
-  if input = "roll" then
-    let num = (Random.int 12 + 1) in
+  if input = "roll" then begin
+    print_string "rolling...\n";
+    let num = Random.int 12 + 1 in
+    print_string ("rolled " ^ string_of_int num ^ "!\n");
     let new_pl_list = distr_res players_list num json in
     trade_main new_pl_list player
+  end
   else play_turn players_list player json
 
 (* [play_turns players_list] will continuously carry out the turns of
    each player until someone has 10 victory points, meaning they have
    won the game *)
-let rec play_turns players_list (player : player) n json =
-  if player.points == 10 then (
+let rec play_turns (players_list : player list) (player : player) n json
+    =
+  if player.points = 10 then (
     print_string player.name;
     print_string "\n   has won the game. Congratulation!")
-  else if n == 0 then
-    let num_players = List.length players_list in
-    play_turns players_list
+  else if n = 0 then
+    let num_players = List.length players_list - 1 in
+    let pl_list_new_turn = play_turn players_list player json in
+    play_turns pl_list_new_turn
       (List.nth players_list num_players)
       num_players json
   else
     let pl_list_new_turn = play_turn players_list player json in
-    let new_n = n + 1 in
+    let new_n = n - 1 in
     play_turns pl_list_new_turn (List.nth players_list new_n) new_n json
-
-(* ****ALLISON VERSION****** *)
-(* let rec play_turns players_list = match players_list with | a :: b ->
-   let player = n in let new_players_list = b :: a( if player.points ==
-   10 then ( print_string player.name; print_string "\n has won the
-   game. Congratulation!") else if n == 0 then let num_players =
-   List.length players_list in play_turns players_list (List.nth
-   players_list num_players) num_players else ( play_turn players_list
-   player; let new_n = n + 1 in play_turns players_list (List.nth
-   players_list new_n) new_n)) | _ -> failwith "this should never happen
-   in play_turns" *)
 
 (* [play_game num_pl pl_list] runs the rest of the game *)
 let play_game num_pl json =
   print_string "\nWelcome to Catan 3110. \n\n";
-
-  (* let rec unmatch_input (res_list : Resource.t list) (acc : string) =
-     match res_list with | [] -> acc | h :: t -> if h = Wool then
-     unmatch_input t ("Wool " ^ acc) else if h = Ore then unmatch_input
-     t ("Ore " ^ acc) else if h = Wood then unmatch_input t ("Wood " ^
-     acc) else if h = Brick then unmatch_input t ("Brick " ^ acc) else
-     if h = Wheat then unmatch_input t ("Wheat " ^ acc) else failwith
-     "incorrect command" let rec matching_input (input_filtered : string
-     list) (acc : Resource.t list) = match input_filtered with | [] | [
-     "" ] -> acc | h :: t -> matching_input t
-     (Adj_matrix.resource_from_string h :: acc) let input_to_list input
-     = (*input string into list of string words*) (*todo: fix spaces*)
-     let filtered_input = input |> String.split_on_char ' ' in (* |>
-     List.filter (fun l -> l <> "") in List.filter (fun s -> s <> "")
-     filtered_input in *) matching_input filtered_input [] *)
   let num =
     if num_pl = "4" then 4
     else if num_pl = "3" then 3
