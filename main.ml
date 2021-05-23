@@ -110,7 +110,7 @@ let rec setup players_list num_players first_sec : player list =
          [*corner location*, *corner location*] ex: [1,4]\n";
       print_string "> ");
     (*todo: factor building road logic out*)
-    let road_loc = Parse.check_road_input (read_line ()) in
+    let road_loc = Parse.check_road_input new_pl (read_line ()) in
     let road_loc_list = parse_road_str road_loc in
     ignore
       (update_pl_roads new_pl.num
@@ -136,7 +136,7 @@ let rec get_player list name =
       let player_2 = read_line () in
       get_player list player_2
 
-(* [player_trade pl_list player ] trades a resource between [player] and
+(* [player_trade pl_list player trades a resource between [player] and
    player_2 which the user inputs. pl_list is the list of players *)
 let player_trade pl_list player =
   print_string "You can trade with these players: ";
@@ -145,7 +145,7 @@ let player_trade pl_list player =
   let other_players =
     List.filter (fun x -> x.name <> player.name) pl_list
   in
-  List.map (fun x -> print_string (x.name ^ " ")) other_players;
+  List.iter (fun x -> print_string (x.name ^ " ")) other_players;
   print_string
     "Please type the name of the player you would like to trade with.\n";
   print_string "> ";
@@ -295,6 +295,7 @@ let rec trade_main pl_list player =
    trade with bank, or end turn. The function ends when they select end
    turn. *)
 let rec play_turn players_list player json =
+  Random.self_init ();
   print_string player.name;
   print_string ", type \"roll\" to roll dice\n > ";
   (* Todo: parse input *)
