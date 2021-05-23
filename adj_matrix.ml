@@ -110,4 +110,4 @@ let dice_roll_tiles num json =
     (fun x -> num = x.dice_num && x.robber == false)
     (tiles_from_json json)
 
-let corner_to_node num = curr_corners.(num - 1)
+let corner_to_node num = curr_corners.(num)

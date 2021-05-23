@@ -226,7 +226,9 @@ let update_pl_cards player_num pl_list building res =
   in
   let new_player =
     match building with
-    | House -> fst (trade_to_bank player [] [ res ])
+    | House ->
+        print_string "here in update player house";
+        fst (trade_to_bank player [] [ res ])
     | City -> fst (trade_to_bank player [] [ res; res ])
   in
   List.map

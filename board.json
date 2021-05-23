@@ -268,7 +268,7 @@
           "player": -1
         }
       ],
-      "robber": true
+      "robber": false
     },
     {
       "id": 11,
@@ -380,7 +380,7 @@
     },
     {
       "id": 15,
-      "dice num": 4,
+      "dice num": 7,
       "resource": "wheat",
       "corners": [
         31,
@@ -488,7 +488,7 @@
     },
     {
       "id": 19,
-      "dice num": 11,
+      "dice num": 7,
       "resource": "wool",
       "corners": [
         42,

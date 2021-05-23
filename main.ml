@@ -55,7 +55,16 @@ let rec create_player_list num_pl total_num_pl pl_list =
 let replace_players new_player old_player_list : player list =
   let rec replace_helper pl_list acc =
     match pl_list with
-    | [] -> List.rev acc
+    | [] ->
+        List.iter
+          (fun x ->
+            print_string
+              ("replace players: " ^ x.name ^ ": " ^ "you current have "
+              ^ unmatch_input x.cards " ,"
+              ^ " . \n"))
+          acc;
+
+        List.rev acc
     | h :: t ->
         if h.num = new_player.num then
           replace_helper t (new_player :: acc)
@@ -145,7 +154,7 @@ let player_trade pl_list player =
   let other_players =
     List.filter (fun x -> x.name <> player.name) pl_list
   in
-  List.map (fun x -> print_string (x.name ^ " ")) other_players;
+  List.iter (fun x -> print_string (x.name ^ " ")) other_players;
   print_string
     "Please type the name of the player you would like to trade with.\n";
   print_string "> ";
@@ -153,6 +162,7 @@ let player_trade pl_list player =
   let player_2 =
     List.hd (List.filter (fun x -> x.name = name) other_players)
   in
+  print_string (dev_to_string player_2.dev_cards ", ");
   (* get_player pl_list name (* TODO: make sure trading logic checks if
      the resource inputted is valid *) in *)
   trading_logic player player_2
@@ -264,6 +274,10 @@ let use_dev_card player player_list =
    end turn*)
 let rec trade_main pl_list player =
   print_string
+    (player.name ^ " , you currently have "
+    ^ unmatch_input player.cards " ."
+    ^ " . \n");
+  print_string
     "Type \"player\" to trade with player, type \"bank\" to build or \
      get a \n\
      developement card, type \"use development card\" to use \
@@ -295,6 +309,7 @@ let rec trade_main pl_list player =
    trade with bank, or end turn. The function ends when they select end
    turn. *)
 let rec play_turn players_list player json =
+  Random.self_init ();
   print_string player.name;
   print_string ", type \"roll\" to roll dice\n > ";
   (* Todo: parse input *)
@@ -304,7 +319,18 @@ let rec play_turn players_list player json =
     let num = Random.int 12 + 1 in
     print_string ("rolled " ^ string_of_int num ^ "!\n");
     let new_pl_list = distr_res players_list num json in
-    trade_main new_pl_list player
+    let new_pl =
+      List.hd (List.filter (fun p -> p.name = player.name) new_pl_list)
+    in
+    List.iter
+      (fun x ->
+        print_string
+          ("play turn dist resource--  player: " ^ x.name ^ ": "
+         ^ "you current have "
+          ^ unmatch_input x.cards " ,"
+          ^ " . \n"))
+      new_pl_list;
+    trade_main new_pl_list new_pl
   end
   else play_turn players_list player json
 
