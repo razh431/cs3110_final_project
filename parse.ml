@@ -127,27 +127,30 @@ let is_connected_rd player v1 v2 =
      ("\n" ^ pp_array pp_node Adj_matrix.curr_corners); *)
   conn_with_road player v1 v2 || conn_with_corner player v1 v2
 
-(** [check_road_list_aux player lst] checks the validity of player
-    [player] building a road denoted by a list of integers [lst].
+(** [check_road_list_aux player lst json] checks the validity of player
+    [player] building a road denoted by a list of integers [lst], using
+    [json] as the list of valid roads.
 
     Raises [Adj_matrix.InvalidRoadId (v1, v2)] if the road id is out of
     bounds. Raises [Adj_matrix.OccupiedRoad (v1, v2)] if the road is
     already occupied. Raises [Adj_matrix.RoadNotConnected (v1, v2)] if
     the road is not connected another road or corner owned by the
     player. *)
-let check_road_list_aux (player : Player.t) (lst : int list) =
+let check_road_list_aux (player : Player.t) (lst : int list) json =
+  let valid_roads = Adj_matrix.roads_from_json json in
   if List.length lst <> 2 then raise RoadLength
   else
     match lst with
     | [ v1; v2 ] ->
         if
-          (* check road in bounds *)
-          v1 < 1 || v2 < 1 || v1 > 54 || v2 > 54
-        then raise (Adj_matrix.InvalidRoadId (v1, v2))
+          (* check valid road ids *)
+          (not (List.mem (v1, v2) valid_roads))
+          && not (List.mem (v2, v1) valid_roads)
+        then raise (InvalidRoadId (v1, v2))
         else if
           (* check road is unoccupied *)
           Adj_matrix.curr_roads.(v1).(v2) <> Adj_matrix.None
-          || Adj_matrix.curr_roads.(v2).(v1) <> Adj_matrix.None
+          && Adj_matrix.curr_roads.(v2).(v1) <> Adj_matrix.None
         then raise (Adj_matrix.OccupiedRoad (v1, v2))
         else if
           (* check road is connected *)
@@ -159,10 +162,15 @@ let check_road_list_aux (player : Player.t) (lst : int list) =
 (** [check_road_input player str] returns the string [str] if it is
     valid for player [player] to build the road specified in [str],
     which is a string of the form ["\[v1,v2\]"], containing two indices
-    that represent a road. See [parse.mli] for what makes a road valid.
+    that represent a road.
 
-    Note: for testing purposes, the [use_print] constant can be switched
-    to [false].
+    [str] is valid if the road is not yet occupied, the road indices are
+    in the bounds [1,54], and the road is represented in [json]. Also,
+    the road a player builds must be connected to another road owned by
+    that player or one of the houses/cities owned by that player.
+
+    NOTE: for testing purposes, the [use_print] constant should be
+    switched to [false].
 
     Ex. [check_road_input "\[0,2\]"] raises
     [Adj_matrix.InvalidRoadId (0,2)]
@@ -170,52 +178,58 @@ let check_road_list_aux (player : Player.t) (lst : int list) =
     Ex. [check_road_input "\[2,3,4\]"] raises [InvalidRoadFormat]
 
     Ex. [check_road_input "\[1,5\]"] returns ["\[1,5\]"] *)
-let rec check_road_input (player : Player.t) (str : string) : string =
+let rec check_road_input (player : Player.t) (str : string) json :
+    string =
   (* set [use_print] to false for testing *)
   let use_print = false in
   try
-    check_road_list_aux player (Dev_card_logic.parse_road_str str)
+    check_road_list_aux player (Dev_card_logic.parse_road_str str) json
   with
   | RoadLength ->
-      if use_print then (
-        print_string
-          "Please enter two points in the correct format. Format: \
-           [*corner location*, *corner location*]\n";
-        print_string "> ";
-        check_road_input player (read_line ()))
+      if use_print then
+        (print_string
+           "Please enter two points in the correct format. Format: \
+            [*corner location*, *corner location*]\n";
+         print_string "> ";
+         check_road_input player (read_line ()))
+          json
       else raise RoadLength
   | Adj_matrix.InvalidRoadId (v1, v2) ->
-      if use_print then (
-        print_string
-          "Please enter two points within the range of [1,54]. Format: \
-           [*corner location*, *corner location*]\n";
-        print_string "> ";
-        check_road_input player (read_line ()))
+      if use_print then
+        (print_string
+           "Please enter two points within the range of [1,54]. \
+            Format: [*corner location*, *corner location*]\n";
+         print_string "> ";
+         check_road_input player (read_line ()))
+          json
       else raise (Adj_matrix.InvalidRoadId (v1, v2))
   | Adj_matrix.OccupiedRoad (v1, v2) ->
-      if use_print then (
-        print_string
-          "Please enter the points of a road that is unoccupied. \
-           Format: [*corner location*, *corner location*]\n";
-        print_string "> ";
-        check_road_input player (read_line ()))
+      if use_print then
+        (print_string
+           "Please enter the points of a road that is unoccupied. \
+            Format: [*corner location*, *corner location*]\n";
+         print_string "> ";
+         check_road_input player (read_line ()))
+          json
       else raise (Adj_matrix.OccupiedRoad (v1, v2))
   | Adj_matrix.RoadNotConnected (v1, v2) ->
-      if use_print then (
-        print_string
-          "Please enter the points of a road that is connected to your \
-           other roads, houses, or cities. Format: [*corner location*, \
-           *corner location*]\n";
-        print_string "> ";
-        check_road_input player (read_line ()))
+      if use_print then
+        (print_string
+           "Please enter the points of a road that is connected to \
+            your other roads, houses, or cities. Format: [*corner \
+            location*, *corner location*]\n";
+         print_string "> ";
+         check_road_input player (read_line ()))
+          json
       else raise (Adj_matrix.RoadNotConnected (v1, v2))
   | Dev_card_logic.InvalidRoadFormat ->
-      if use_print then (
-        print_string
-          "Please write in the appropriate format. Format: [*corner \
-           location*, *corner location*] ex: [1,4] \n";
-        print_string "> ";
-        check_road_input player (read_line ()))
+      if use_print then
+        (print_string
+           "Please write in the appropriate format. Format: [*corner \
+            location*, *corner location*] ex: [1,4] \n";
+         print_string "> ";
+         check_road_input player (read_line ()))
+          json
       else raise Dev_card_logic.InvalidRoadFormat
 
 (** [check_corner_input index] returns corner index [i] if it is valid

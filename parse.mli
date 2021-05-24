@@ -24,21 +24,16 @@ val is_alpha : char -> bool
 
 val name_player : string -> Player.player list -> string
 
-(** [check_road_input player str] returns the string [str] if it is
+(** [check_road_input player str json] returns the string [str] if it is
     valid for player [player] to build the road specified in [str],
     which is a string of the form ["\[v1,v2\]"], containing two indices
-    that represent a road.
-
-    [str] is valid if the road is not yet occupied and if the road
-    indices are in the bounds [1,54]. Also, the road a player builds
-    must be connected to another road owned by that player or one of the
-    houses/cities owned by that player.
+    that represent a road. [json] represents valid roads.
 
     Raises [RoadLength] if the input string does not have two indices.
     Raises [Adj_matrix.InvalidRoad (v1,v2)] if at least one index is out
     of range [1,54]. Raises [Adj_matrix.OccupiedRoad (v1,v2)] if the
     road specified is already occupied. *)
-val check_road_input : Player.t -> string -> string
+val check_road_input : Player.t -> string -> Yojson.Basic.t -> string
 
 (** [check_road_input index] returns corner index [i] if it is valid to
     build a house or city on that corner, i.e. it is in the bounds

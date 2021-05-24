@@ -45,7 +45,7 @@ let parse_road_str (s : string) =
 (* print_string "\n\ Please write in the appropriate format. Format: \n\
    \ [*corner location*, *corner location*] ex: [1,4] \n"; exit 0 *)
 
-let road_building pl =
+let road_building pl json =
   print_string
     ", where would you like to build your first road? Format: [*corner \
      location*, *corner location*] ex: [1,4] \n\
@@ -57,7 +57,8 @@ let road_building pl =
   ignore
     (update_pl_roads pl.num
        (List.nth road_loc_list 0)
-       (List.nth road_loc_list 1));
+       (List.nth road_loc_list 1)
+       json);
   pl
 
 let rec dev_to_string (res_list : Dev_cards.t list) (acc : string) =
@@ -73,24 +74,25 @@ let rec dev_to_string (res_list : Dev_cards.t list) (acc : string) =
 let rm_used_dev dev_card (pl_cards_list : Dev_cards.t list) acc =
   failwith ""
 
-let rec dev_logic dev_card pl : player =
+let rec dev_logic dev_card pl json : player =
   match dev_card with
   | "Monopoly" -> monopoly pl
   | "Victory_Points" -> victory_points pl
   | "Road_Building" ->
       (*returns the same player*)
-      road_building pl
+      road_building pl json
   | "Year_Of_Plenty" -> year_of_plenty pl
   | _ ->
       print_string "Please choose one of your cards to use. ";
       print_string ">";
-      dev_logic (read_line ()) pl
+      dev_logic (read_line ()) pl json
 
-let dev_card_logic player : player =
+(* [json] represents the json of valid roads *)
+let dev_card_logic player json : player =
   print_string
     (" You currently have "
     ^ dev_to_string player.dev_cards " ,"
     ^ "What would you like to use? \n ");
   print_string "> ";
   let dev_card = read_line () in
-  dev_logic dev_card player
+  dev_logic dev_card player json

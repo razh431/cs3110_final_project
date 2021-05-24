@@ -19,14 +19,10 @@ exception BadNumber
 (* [json] is of the abstract type t that represents our board *)
 let json = Yojson.Basic.from_file "board.json"
 
-(* [board_default] is the default board the game will be played on and
-   will only be 2 tiles for now*)
-
-let json = Yojson.Basic.from_file "board.json"
-
-(* [board_default] is the default board the game will be played on and
-   will only be 2 tiles for now*)
 let init_tiles = tiles_from_json json
+
+(** [roads_json] is a list of tuples representing valid roads. *)
+let roads_json = Yojson.Basic.from_file "roads.json"
 
 let parse (str : string) = failwith "TODO"
 
@@ -114,7 +110,6 @@ let rec setup players_list num_players first_sec : player list =
       try int_of_string new_str with _ -> get_valid_house_loc new_str
     in
     let house_loc = Parse.check_corner_input house_num in
-
     let new_pl = distr_res_setup pl house_loc json in
     ignore (update_pl_settlements new_pl.num House house_loc);
     print_board curr_corners curr_roads init_tiles;
@@ -133,12 +128,15 @@ let rec setup players_list num_players first_sec : player list =
       print_string "> ");
 
     (*todo: factor building road logic out*)
-    let road_loc = Parse.check_road_input new_pl (read_line ()) in
+    let road_loc =
+      Parse.check_road_input new_pl (read_line ()) roads_json
+    in
     let road_loc_list = parse_road_str road_loc in
     ignore
       (update_pl_roads new_pl.num
          (List.nth road_loc_list 0)
-         (List.nth road_loc_list 1));
+         (List.nth road_loc_list 1)
+         roads_json);
     (* if curr_roads.(List.nth road_loc_list 0).(List.nth road_loc_list
        1) != None then print_string "there is a road here"; *)
     print_board curr_corners curr_roads init_tiles;
@@ -181,14 +179,15 @@ let player_trade pl_list player =
      the resource inputted is valid *) in *)
   trading_logic player player_2
 
-let build_rd player =
+let build_rd player json =
   let new_pl = fst (trade_to_bank player [ Wood; Brick ] []) in
   let road_loc = read_line () in
   let road_loc_list = parse_road_str road_loc in
   ignore
     (update_pl_roads new_pl.num
        (List.nth road_loc_list 0)
-       (List.nth road_loc_list 1));
+       (List.nth road_loc_list 1)
+       json);
   new_pl
 
 let build_house player =
@@ -229,7 +228,7 @@ let create_dev player : player =
 let build_from_input (build_type : string) player =
   match build_type with
   | "road" -> (
-      try build_rd player
+      try build_rd player json
       with Player.InvalidTrade ->
         print_string
           " Sorry, you do not have sufficient resources to build a road";
@@ -277,8 +276,8 @@ let rec bank_trade (players_list : player list) (player : player) :
 let rec roll_dice = Random.int 12 + 1
 
 (* [use_dev_card] is the new player list after *)
-let use_dev_card player player_list =
-  let new_player = dev_card_logic player in
+let use_dev_card player player_list roads_json =
+  let new_player = dev_card_logic player roads_json in
   replace_players new_player player_list
 
 (* init_player (number : int) (pl_name : string) (col : color) num =
@@ -288,7 +287,7 @@ let use_dev_card player player_list =
 (* [trade pl_list player] is the new player list after the player has
    chosen to trade with player, trade with bank, use resource cards, or
    end turn*)
-let rec trade_main pl_list player =
+let rec trade_main pl_list player roads_json =
   print_string
     (player.name ^ " , you currently have "
     ^ unmatch_input player.cards " ."
@@ -307,24 +306,24 @@ let rec trade_main pl_list player =
         replace_players (fst pl_trade_tup) pl_list
         |> replace_players (fst pl_trade_tup)
       in
-      trade_main new_pl_list player
+      trade_main new_pl_list player roads_json
   | "bank" ->
       let new_pl_list = bank_trade pl_list player in
-      trade_main new_pl_list player
+      trade_main new_pl_list player roads_json
   | "use developement card" ->
-      let new_pl_list = use_dev_card player pl_list in
-      trade_main new_pl_list player
+      let new_pl_list = use_dev_card player pl_list roads_json in
+      trade_main new_pl_list player roads_json
   | "end turn" -> pl_list
   (* TODO: Figure out how to quit the game *)
   | "QUIT" -> exit 0
-  | _ -> trade_main pl_list player
+  | _ -> trade_main pl_list player roads_json
 
 (* [play_turn player] is a new player list updated after the specified
    player [player] has gone. First, they roll a dice and everyone gets
    their resources, then [player] can choose to trade with players,
    trade with bank, or end turn. The function ends when they select end
    turn. *)
-let rec play_turn players_list player json =
+let rec play_turn players_list player json roads_json =
   Random.self_init ();
   print_string player.name;
   print_string ", type \"roll\" to roll dice\n > ";
@@ -346,31 +345,41 @@ let rec play_turn players_list player json =
           ^ unmatch_input x.cards " ,"
           ^ " . \n"))
       new_pl_list;
-    trade_main new_pl_list new_pl
+    trade_main new_pl_list new_pl roads_json
   end
-  else play_turn players_list player json
+  else play_turn players_list player json roads_json
 
 (* [play_turns players_list] will continuously carry out the turns of
    each player until someone has 10 victory points, meaning they have
    won the game *)
-let rec play_turns (players_list : player list) (player : player) n json
-    =
+let rec play_turns
+    (players_list : player list)
+    (player : player)
+    n
+    json
+    roads_json =
   let num_players = List.length players_list in
   if player.points = 10 then (
     print_string player.name;
     print_string "\n   has won the game. Congratulation!")
   else if n >= num_players then
-    let pl_list_new_list = play_turn players_list player json in
+    let pl_list_new_list =
+      play_turn players_list player json roads_json
+    in
     play_turns pl_list_new_list
       (List.nth players_list 0)
-      num_players json
+      num_players json roads_json
   else
-    let pl_list_new_list = play_turn players_list player json in
+    let pl_list_new_list =
+      play_turn players_list player json roads_json
+    in
     let new_n = n + 1 in
-    play_turns pl_list_new_list (List.nth players_list new_n) new_n json
+    play_turns pl_list_new_list
+      (List.nth players_list new_n)
+      new_n json roads_json
 
 (* [play_game num_pl pl_list] runs the rest of the game *)
-let play_game num_pl json =
+let play_game num_pl json roads_json =
   if num_pl = "QUIT" then (
     print_string "Thank you for playing OCatan.";
     exit 0)
@@ -389,7 +398,7 @@ let play_game num_pl json =
     let new_list_2 =
       List.rev (setup new_list (List.length players - 1) 2)
     in
-    play_turns new_list_2 (List.hd new_list_2) 0 json
+    play_turns new_list_2 (List.hd new_list_2) 0 json roads_json
 
 (* Distribute resources *)
 (* let pl = List.nth players 0 in let pl_name = pl.name in print_string
@@ -415,16 +424,17 @@ let rec num_pl_checker input_num_pl =
   || String.equal input_num_pl "4"
   || String.equal input_num_pl "QUIT"
 
-(* [inval_num_player str_input] is called when a user enters an invalid
-   number of players [inval_input] *)
-let rec inval_num_player inval_input json =
+(* [inval_num_player input json roads_json] is called when a user enters
+   an invalid number of players [input]. *)
+let rec inval_num_player inval_input json roads_json =
   print_string "Your input ";
   print_string inval_input;
   print_string " is not valid. \n Please enter 2, 3, or 4. \n";
   print_string "> ";
   let input_num_pl = read_line () in
-  if num_pl_checker input_num_pl then play_game input_num_pl json
-  else inval_num_player input_num_pl json
+  if num_pl_checker input_num_pl then
+    play_game input_num_pl json roads_json
+  else inval_num_player input_num_pl json roads_json
 
 (* [main] runs the beginning of the game that asks for the input for the
    number of players and asks you to input another number if the number
@@ -435,7 +445,8 @@ let main () =
   print_endline "\nInstructions: Please enter the number of players 2-4";
   print_string "> ";
   let input_num_pl = read_line () |> String.trim in
-  if num_pl_checker input_num_pl then play_game input_num_pl json
-  else inval_num_player input_num_pl json
+  if num_pl_checker input_num_pl then
+    play_game input_num_pl json roads_json
+  else inval_num_player input_num_pl json roads_json
 
 let () = main ()

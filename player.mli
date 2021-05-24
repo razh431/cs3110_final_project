@@ -68,13 +68,15 @@ val update_pl_cards :
 val update_pl_settlements :
   int -> Adj_matrix.building -> int -> Adj_matrix.node array
 
-(** [update_pl_roads pl_num v1 v2] returns the updated road matrix in
-    Adj_matrix so that there is a road owned by player with number
-    [pl_num] between points [v1] and [v2].
+(** [update_pl_roads pl_num v1 v2 json] returns the updated road matrix
+    in Adj_matrix so that there is a road owned by player with number
+    [pl_num] between points [v1] and [v2]. [json] is a list of valid
+    roads.
 
     Raises [Adj_matrix.InvalidRoad (v1,v2)] if at least one is not in
     the range [1,54]. *)
-val update_pl_roads : int -> int -> int -> Adj_matrix.road array array
+val update_pl_roads :
+  int -> int -> int -> Yojson.Basic.t -> Adj_matrix.road array array
 
 val bank : t
 

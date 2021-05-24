@@ -238,8 +238,8 @@ let update_pl_cards player_num pl_list building res =
 let update_pl_settlements pl_num building loc =
   Adj_matrix.update_corners loc (Some { player_num = pl_num; building })
 
-let update_pl_roads pl_num v1 v2 =
-  Adj_matrix.update_road_mtx v1 v2 (Some pl_num)
+let update_pl_roads pl_num v1 v2 json =
+  Adj_matrix.update_road_mtx v1 v2 (Some pl_num) json
 
 let player1 =
   {
@@ -265,8 +265,7 @@ let rec matching_input
     (acc : Resource.t list) =
   match input_filtered with
   | [] | [ "" ] -> acc
-  | h :: t ->
-      matching_input t (Adj_matrix.resource_from_string h :: acc)
+  | h :: t -> matching_input t (Adj_matrix.resource_from_string h :: acc)
 
 let input_to_list input =
   (*todo: fix spaces*)
