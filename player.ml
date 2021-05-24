@@ -292,7 +292,7 @@ let trading_logic player1 player2 =
 (*[dist_helper corners players] check if players have a building on any
   of those corners by checking and distribute accordingly by creating
   new players with those resources. [corners] is the corners of a tile.
-  [players] is a player list. *)
+  [players] is a list of all the players that are playing. *)
 let rec dist_helper corners players res =
   match corners with
   | [] -> players
@@ -327,8 +327,11 @@ let distr_res (players_list : t list) (num : int) json : t list =
         (*Check if players have a building on any of those corners and
           distribute accordingly*)
     | h :: t ->
-        distr_per_tile t
-          (dist_helper h.corner_positions players_list h.resource)
+        (*for each tile, distribute resources on the*)
+        let distributed_pl_list =
+          dist_helper h.corner_positions players_list h.resource
+        in
+        distr_per_tile t distributed_pl_list
   in
   distr_per_tile tiles []
 

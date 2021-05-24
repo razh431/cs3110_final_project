@@ -189,7 +189,7 @@ let build_rd player =
     (update_pl_roads new_pl.num
        (List.nth road_loc_list 0)
        (List.nth road_loc_list 1));
-  new_pl
+  { new_pl with points = new_pl.points + 1 }
 
 let build_house player =
   let new_pl =
@@ -202,7 +202,7 @@ let build_house player =
   ignore (update_pl_settlements new_pl.num House house_loc);
   print_board curr_corners curr_roads init_tiles;
   print_string new_pl.name;
-  new_pl
+  { new_pl with points = new_pl.points + 1 }
 
 let build_city player =
   let new_pl =
@@ -226,8 +226,24 @@ let create_dev player : player =
   print_string ("You received a " ^ match_dev_string new_card ^ "!");
   { new_pl with dev_cards = new_card :: new_pl.dev_cards }
 
+let trade_4_1_card player : player =
+  print_string "> ";
+  print_string
+    " What resource would you like to trade in? Must have 4 of this \
+     resource! ";
+  print_string "> ";
+  let res = input_to_list (read_line ()) in
+  let res_in = gen_cards res 3 in
+  print_string " What would you like to trade for? \n ";
+  print_string "> ";
+  let res_out = read_line () |> input_to_list in
+  let new_pl = fst (trade_to_bank player res_in res_out) in
+  print_string ("Your cards now: " ^ unmatch_input new_pl.cards "");
+  new_pl
+
 let build_from_input (build_type : string) player =
   match build_type with
+  | "card" -> trade_4_1_card player
   | "road" -> (
       try build_rd player
       with Player.InvalidTrade ->
@@ -265,7 +281,8 @@ let rec bank_trade (players_list : player list) (player : player) :
     \ Road: 1 wood, 1 brick\n\
     \ House: 1 wood, 1 brick, 1 wool, 1 wheat\n\
     \ City: 2 wheat, 3 ore\n\
-    \ Developement Card: 1 Wool, 1 wheat, 1 ore";
+    \ Developement Card: 1 Wool, 1 wheat, 1 ore \n\
+    \ card: 4 of any resource to 1 card";
   print_string "> ";
   let build_type_s = read_line () in
   if build_type_s = "back" then players_list
@@ -305,7 +322,7 @@ let rec trade_main pl_list player =
       let pl_trade_tup = player_trade pl_list player in
       let new_pl_list =
         replace_players (fst pl_trade_tup) pl_list
-        |> replace_players (fst pl_trade_tup)
+        |> replace_players (snd pl_trade_tup)
       in
       trade_main new_pl_list player
   | "bank" ->
@@ -332,21 +349,17 @@ let rec play_turn players_list player json =
   let input = read_line () in
   if input = "roll" then begin
     print_string "rolling...\n";
-    let num = Random.int 12 + 1 in
+    let num = Random.int 11 + 2 in
     print_string ("rolled " ^ string_of_int num ^ "!\n");
     let new_pl_list = distr_res players_list num json in
     let new_pl =
       List.hd (List.filter (fun p -> p.name = player.name) new_pl_list)
     in
-    List.iter
-      (fun x ->
-        print_string
-          ("play turn dist resource--  player: " ^ x.name ^ ": "
-         ^ "you current have "
-          ^ unmatch_input x.cards " ,"
-          ^ " . \n"))
-      new_pl_list;
-    trade_main new_pl_list new_pl
+    (* List.iter (fun x -> print_string ("play turn dist resource--
+       player: " ^ x.name ^ ": " ^ "you current have " ^ unmatch_input
+       x.cards " ," ^ " . \n")) new_pl_list; *)
+    let new_list = replace_players new_pl players_list in
+    trade_main new_list new_pl
   end
   else play_turn players_list player json
 
@@ -359,17 +372,16 @@ let rec play_turns (players_list : player list) (player : player) n json
   if player.points = 10 then (
     print_string player.name;
     print_string "\n   has won the game. Congratulation!")
-  else if n >= num_players then
-    let pl_list_new_list = play_turn players_list player json in
-    play_turns pl_list_new_list
-      (List.nth players_list 0)
-      num_players json
   else
     let pl_list_new_list = play_turn players_list player json in
-    let new_n = n + 1 in
-    play_turns pl_list_new_list (List.nth players_list new_n) new_n json
+    let new_n = (n + 1) mod num_players in
+    print_int new_n;
+    print_string "new n ^ \n";
+    (* new_n represents next player*)
+    play_turns pl_list_new_list
+      (List.nth players_list new_n)
+      (n + 1) json
 
-(* [play_game num_pl pl_list] runs the rest of the game *)
 let play_game num_pl json =
   if num_pl = "QUIT" then (
     print_string "Thank you for playing OCatan.";
@@ -389,7 +401,7 @@ let play_game num_pl json =
     let new_list_2 =
       List.rev (setup new_list (List.length players - 1) 2)
     in
-    play_turns new_list_2 (List.hd new_list_2) 0 json
+    play_turns new_list_2 (List.hd new_list_2) 1 json
 
 (* Distribute resources *)
 (* let pl = List.nth players 0 in let pl_name = pl.name in print_string

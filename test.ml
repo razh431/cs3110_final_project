@@ -237,6 +237,15 @@ let parse_cn_err_test name index expected_output =
   assert_raises expected_output (fun () ->
       Parse.check_corner_input index)
 
+(* let distr_res_test name pl_list num json expected_output = name >::
+   fun _ -> assert_equal expected_output (distr_res pl_list num json) *)
+
+let update_pl_cards_test name num pl_list building res expected_output =
+  let player = List.hd (update_pl_cards num pl_list building res) in
+  name >:: fun _ ->
+  assert_equal expected_output ~cmp:cmp_lists
+    ~printer:(pp_list pp_resource) player.cards
+
 (********************************************************************
   Start constants for testing.
   ********************************************************************)
@@ -253,6 +262,18 @@ let p3 =
   }
 
 let p4 = { (init_player 4 "d" Yellow) with cards = [] }
+
+let p5 =
+  {
+    (init_player 5 "d" Blue) with
+    cards =
+      [ Wheat; Wheat; Ore; Ore; Wool; Wool; Brick; Brick; Wood; Wood ];
+  }
+
+let p5_updated_cards =
+  [
+    Wheat; Wheat; Ore; Ore; Wool; Wool; Brick; Brick; Wood; Wood; Wheat;
+  ]
 
 (* trading p1 wool for p2 ore *)
 let trade_1_output = ([ Wool; Brick; Ore; Wood ], [ Ore; Wool ])
@@ -647,7 +668,11 @@ let parse_tests =
     parse_cn_err_test "corner id > 54" 55 (Adj_matrix.InvalidTileId 55);
   ]
 
-let distr_res_tests = []
+let distr_res_tests =
+  [
+    update_pl_cards_test "p5 gets " 5 [ p5 ] Adj_matrix.House Wheat
+      p5_updated_cards;
+  ]
 
 let suite =
   "test suite for building"

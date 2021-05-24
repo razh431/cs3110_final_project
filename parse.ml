@@ -172,7 +172,7 @@ let check_road_list_aux (player : Player.t) (lst : int list) =
     Ex. [check_road_input "\[1,5\]"] returns ["\[1,5\]"] *)
 let rec check_road_input (player : Player.t) (str : string) : string =
   (* set [use_print] to false for testing *)
-  let use_print = false in
+  let use_print = true in
   try
     check_road_list_aux player (Dev_card_logic.parse_road_str str)
   with
@@ -229,7 +229,7 @@ let rec check_corner_input index =
     else idx
   in
   (* set [use_print] to false for testing *)
-  let use_print = false in
+  let use_print = true in
   try check_corner_input_aux index with
   | Adj_matrix.InvalidTileId i ->
       if use_print then (

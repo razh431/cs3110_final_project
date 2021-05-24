@@ -108,8 +108,6 @@ let update_corners index (c : node) =
   curr_corners
 
 let dice_roll_tiles num json =
-  List.filter
-    (fun x -> num = x.dice_num && x.robber == false)
-    (tiles_from_json json)
+  List.filter (fun x -> num = x.dice_num) (tiles_from_json json)
 
 let corner_to_node num = curr_corners.(num)
