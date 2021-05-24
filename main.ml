@@ -240,7 +240,7 @@ let trade_4_1_card player : player =
      resource! ";
   print_string "> ";
   let res = input_to_list (read_line ()) in
-  let res_in = gen_cards res 3 in
+  let res_in = gen_cards res 4 in
   print_string " What would you like to trade for? \n ";
   print_string "> ";
   let res_out = read_line () |> input_to_list in
@@ -348,7 +348,7 @@ let rec trade_main pl_list player roads_json =
    their resources, then [player] can choose to trade with players,
    trade with bank, or end turn. The function ends when they select end
    turn. *)
-let rec play_turn players_list player json roads_json : player list =
+let rec play_turn players_list player json roads_json =
   Random.self_init ();
   print_string player.name;
   print_string ", type \"roll\" to roll dice\n > ";
