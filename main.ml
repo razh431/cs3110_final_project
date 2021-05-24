@@ -129,7 +129,8 @@ let rec setup players_list num_players first_sec : player list =
 
     (*todo: factor building road logic out*)
     let road_loc =
-      Parse.check_road_input new_pl (read_line ()) roads_json
+      let road_input = read_line () in
+      Parse.check_road_input new_pl road_input roads_json
     in
     let road_loc_list = parse_road_str road_loc in
     ignore
@@ -181,16 +182,20 @@ let player_trade pl_list player =
 
 let build_rd player json =
   let new_pl = fst (trade_to_bank player [ Wood; Brick ] []) in
-  let road_loc = Parse.check_road_input new_pl (read_line ()) in
+  let road_loc =
+    Parse.check_road_input new_pl (read_line ()) roads_json
+  in
   let road_loc_list = parse_road_str road_loc in
   ignore
     (update_pl_roads new_pl.num
        (List.nth road_loc_list 0)
-       (List.nth road_loc_list 1));
+       (List.nth road_loc_list 1)
+       roads_json);
   ignore
     (update_pl_roads new_pl.num
        (List.nth road_loc_list 0)
-       (List.nth road_loc_list 1));
+       (List.nth road_loc_list 1)
+       roads_json);
   { new_pl with points = new_pl.points + 1 }
 
 let build_house player =
@@ -343,7 +348,7 @@ let rec trade_main pl_list player roads_json =
    their resources, then [player] can choose to trade with players,
    trade with bank, or end turn. The function ends when they select end
    turn. *)
-let rec play_turn players_list player json roads_json =
+let rec play_turn players_list player json roads_json : player list =
   Random.self_init ();
   print_string player.name;
   print_string ", type \"roll\" to roll dice\n > ";
@@ -361,7 +366,7 @@ let rec play_turn players_list player json roads_json =
        player: " ^ x.name ^ ": " ^ "you current have " ^ unmatch_input
        x.cards " ," ^ " . \n")) new_pl_list; *)
     let new_list = replace_players new_pl players_list in
-    trade_main new_list new_pl
+    trade_main new_list new_pl roads_json
   end
   else play_turn players_list player json roads_json
 
@@ -379,16 +384,18 @@ let rec play_turns
     print_string player.name;
     print_string "\n   has won the game. Congratulation!")
   else
-    let pl_list_new_list = play_turn players_list player json in
+    let pl_list_new_list =
+      play_turn players_list player json roads_json
+    in
     let new_n = (n + 1) mod num_players in
     print_int new_n;
     print_string "new n ^ \n";
     (* new_n represents next player*)
     play_turns pl_list_new_list
       (List.nth players_list new_n)
-      (n + 1) json
+      (n + 1) json roads_json
 
-let play_game num_pl json =
+let play_game num_pl json roads_json =
   if num_pl = "QUIT" then (
     print_string "Thank you for playing OCatan.";
     exit 0)
