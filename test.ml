@@ -4,7 +4,7 @@ open Resource
 open Parse
 
 (********************************************************************
-  Our approach to testing our Catan project
+  Our approach to testing our Catan project.
 
   Player module: Test cases were developed with black box and glass box
   testing. We believe this is the best way because some functions used
@@ -18,9 +18,22 @@ open Parse
   errors, raised in different if statements, were correctly raised. The
   constants for testing the matrix and the array are long because if the
   mutable array or adjacency matrix is not inside of each output
-  constant, the output would be incorrect.
+  constant, the output would be incorrect. The test cases for roads in
+  the [roads_test] suite must be different than the cases we used in
+  [parse_rd_test] in the [parse_test] suite because otherwise
+  [OccupiedRoad] will be falsely raised.
 
-  Main module: ???????
+  Main module: We tested primarily by playing the game because it would
+  be difficult to replicate gameplay in a test suite. Parts used in
+  Main, such as parsing inputs, were tested in our test suite.
+
+  Parse module: We tested using black box and glass box testing to
+  ensure that errors were correctly raised and handled. Inside of Parse
+  module functions like [check_road_input] and [check_corner_input], we
+  added a [use_print] boolean value. We turned it off by setting it to
+  be [false] when running the test suite so that the print statements
+  that re-prompt the user for valid inputs are not outputted. For actual
+  gameplay, the value is set to [true].
   ********************************************************************)
 
 (** [cmp_lists lst1 lst2] compares two set-like lists. *)
