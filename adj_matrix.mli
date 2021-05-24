@@ -57,21 +57,26 @@ val tiles_from_json : Yojson.Basic.t -> tile list
 (** [resource_from_string s] parses s into a Resource.t type*)
 val resource_from_string : string -> Resource.t
 
+(** [roads_from_json json] extracts the roads of the json as a list of
+    tuples representing valid roads. *)
+val roads_from_json : Yojson.Basic.t -> (int * int) list
+
 (** [init_road_mtx] makes the inital road matrix. *)
 val init_road_mtx : road array array
 
-(*[curr_roads] is the current road matrix*)
-
+(** [curr_roads] is the current road matrix*)
 val curr_roads : road array array
 
-(** [update_road_mtx r c v] returns the updated road matrix with value
-    [v] into row [r] and column [c] and row [c] and column [c]. r and c
-    range from [1, 54].
+(** [update_road_mtx r c v json] returns the updated road matrix with
+    value [v] into row [r] and column [c] and row [c] and column [c]. r
+    and c range from [1, 54]. [json] is an association list representing
+    valid roads.
 
     Raises [InvalidRoadId (r,c)] if at least one is out of bounds.
     Raises [OccupiedRoad (r,c)] if the road between [r] and [c] is
     already occupied. *)
-val update_road_mtx : int -> int -> road -> road array array
+val update_road_mtx :
+  int -> int -> road -> Yojson.Basic.t -> road array array
 
 (*corners functions*)
 

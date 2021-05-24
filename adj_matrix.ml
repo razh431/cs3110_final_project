@@ -79,14 +79,31 @@ let tile_from_json json =
 let tiles_from_json json =
   json |> member "tiles" |> to_list |> List.map tile_from_json
 
+(** [road_from_json json] extracts a single road from a json [json] as a
+    tuple of integers. *)
+let road_from_json json =
+  let lst = json |> member "vertices" |> to_list in
+  match lst with
+  | [ x; y ] ->
+      let v1 = x |> to_int in
+      let v2 = y |> to_int in
+      (v1, v2)
+  | _ -> failwith "JSON file error: road is formed by two vertices"
+
+(** [roads_from_json json] extracts the roads of the json as a list of
+    tuples representing valid roads, e.g. [(1,4); (1;5); ...]*)
+let roads_from_json json =
+  json |> member "roads" |> to_list |> List.map road_from_json
+
 let curr_roads = init_road_mtx
 
 (** Raises [InvalidRoadId (row, column)] if [row] or [column] are out of
-    bounds. Both must be in the range [1,54], inclusive. Raises
-    [OccupiedRoad (row, column)] if the road between [row] and [column]
-    is already occupied. *)
-let update_road_mtx row column (value : road) =
-  if row = 0 || column = 0 || row > 54 || column > 54 then
+    bounds. Both must be in the range [1,54], inclusive, and be a valid
+    road contained in [json]. Raises [OccupiedRoad (row, column)] if the
+    road between [row] and [column] is already occupied. *)
+let update_road_mtx row column (value : road) json =
+  let valid_roads = roads_from_json json in
+  if not (List.mem (row, column) valid_roads) then
     raise (InvalidRoadId (row, column))
   else if
     curr_roads.(row).(column) <> None
