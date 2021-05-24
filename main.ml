@@ -52,14 +52,9 @@ let replace_players new_player old_player_list : player list =
   let rec replace_helper pl_list acc =
     match pl_list with
     | [] ->
-        List.iter
-          (fun x ->
-            print_string
-              ("replace players: " ^ x.name ^ ": " ^ "you current have "
-              ^ unmatch_input x.cards " ,"
-              ^ " . \n"))
-          acc;
-
+        (* List.iter (fun x -> print_string ("replace players: " ^
+           x.name ^ ": " ^ "you current have " ^ unmatch_input x.cards "
+           ," ^ " . \n")) *)
         List.rev acc
     | h :: t ->
         if h.num = new_player.num then
@@ -186,11 +181,6 @@ let build_rd player json =
     Parse.check_road_input new_pl (read_line ()) roads_json
   in
   let road_loc_list = parse_road_str road_loc in
-  ignore
-    (update_pl_roads new_pl.num
-       (List.nth road_loc_list 0)
-       (List.nth road_loc_list 1)
-       roads_json);
   ignore
     (update_pl_roads new_pl.num
        (List.nth road_loc_list 0)
