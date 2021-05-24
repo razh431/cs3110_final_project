@@ -14,61 +14,6 @@ exception Letters_Name
 
 exception RoadLength
 
-(** [road_length_prompt] prints prompts when [RoadLength] gets raised. *)
-let road_length_prompt =
-  print_string
-    "Please enter two points in the correct format. Format: [*corner \
-     location*, *corner location*]\n";
-  print_string "> "
-
-(** [invalid_road_prompt] prints prompts when [Adj_matrix.InvalidRoadId]
-    gets raised. *)
-let invalid_road_prompt =
-  print_string
-    "Please enter two points within the range of [1,54]. Format: \
-     [*corner location*, *corner location*]\n";
-  print_string "> "
-
-(** [occupied_road_prompt] prints prompts when [Adj_matrix.OccupiedRoad]
-    gets raised. *)
-let occupied_road_prompt =
-  print_string
-    "Please enter the points of a road that is unoccupied. Format: \
-     [*corner location*, *corner location*]\n";
-  print_string "> "
-
-(** [connected_road_prompt] prints prompts when
-    [Adj_matrix.RoadNotConnected] gets raised. *)
-let connected_road_prompt =
-  print_string
-    "Please enter the points of a road that is connected to your other \
-     roads, houses, or cities. Format: [*corner location*, *corner \
-     location*]\n";
-  print_string "> "
-
-(** [invalid_rd_format_prompt] prints prompts when
-    [Dev_card_logic.InvalidRoadFormat] gets raised. *)
-let invalid_rd_format_prompt =
-  print_string
-    "Please write in the appropriate format. Format: [*corner \
-     location*, *corner location*] ex: [1,4] \n";
-  print_string "> "
-
-(** [invalid_tile_prompt] prints prompts when [Adj_matrix.InvalidTileId]
-    gets raised. *)
-let invalid_tile_prompt =
-  print_string
-    "Please enter the number of a corner in the range of [1,54]. \n";
-  print_string "> "
-
-(** [occupied_tile_prompt] prints prompts when [Adj_matrix.OccupiedTile]
-    gets raised. *)
-let occupied_tile_prompt =
-  print_string
-    "Please enter the number of a corner in the range of [1,54] that \
-     is not already occupied. \n";
-  print_string "> "
-
 (** [pp_array pp_elt arr] pretty-prints array [arr], using [pp_elt] to
     pretty-print each element of [arr]. *)
 let pp_array pp_elt arr =
@@ -235,37 +180,53 @@ let check_road_list_aux (player : Player.t) (lst : int list) json =
     Ex. [check_road_input "\[1,5\]"] returns ["\[1,5\]"] *)
 let rec check_road_input player str json : string =
   (* set [use_print] to false for testing *)
-  let use_print = false in
+  let use_print = true in
   try
     check_road_list_aux player (Dev_card_logic.parse_road_str str) json
   with
   | RoadLength ->
       if use_print then
-        (road_length_prompt;
+        (print_string
+           "Please enter two points in the correct format. Format: \
+            [*corner location*, *corner location*]\n";
+         print_string "> ";
          check_road_input player (read_line ()))
           json
       else raise RoadLength
   | Adj_matrix.InvalidRoadId (v1, v2) ->
       if use_print then
-        (invalid_road_prompt;
+        (print_string
+           "Please enter two points within the range of [1,54]. \
+            Format: [*corner location*, *corner location*]\n";
+         print_string "> ";
          check_road_input player (read_line ()))
           json
       else raise (Adj_matrix.InvalidRoadId (v1, v2))
   | Adj_matrix.OccupiedRoad (v1, v2) ->
       if use_print then
-        (occupied_road_prompt;
+        (print_string
+           "Please enter the points of a road that is unoccupied. \
+            Format: [*corner location*, *corner location*]\n";
+         print_string "> ";
          check_road_input player (read_line ()))
           json
       else raise (Adj_matrix.OccupiedRoad (v1, v2))
   | Adj_matrix.RoadNotConnected (v1, v2) ->
       if use_print then
-        (connected_road_prompt;
+        (print_string
+           "Please enter the points of a road that is connected to \
+            your other roads, houses, or cities. Format: [*corner \
+            location*, *corner location*]\n";
+         print_string "> ";
          check_road_input player (read_line ()))
           json
       else raise (Adj_matrix.RoadNotConnected (v1, v2))
   | Dev_card_logic.InvalidRoadFormat ->
       if use_print then
-        (invalid_rd_format_prompt;
+        (print_string
+           "Please write in the appropriate format. Format: [*corner \
+            location*, *corner location*] ex: [1,4] \n";
+         print_string "> ";
          check_road_input player (read_line ()))
           json
       else raise Dev_card_logic.InvalidRoadFormat
@@ -281,20 +242,28 @@ let rec check_corner_input index =
     else idx
   in
   (* set [use_print] to false for testing *)
-  let use_print = false in
+  let use_print = true in
   try check_corner_input_aux index with
   | Adj_matrix.InvalidTileId i ->
       if use_print then (
-        invalid_tile_prompt;
+        print_string
+          "Please enter the number of a corner in the range of [1,54]. \n";
+        print_string "> ";
         check_corner_input (read_int ()))
       else raise (Adj_matrix.InvalidTileId i)
   | Adj_matrix.OccupiedTileId i ->
       if use_print then (
-        occupied_tile_prompt;
+        print_string
+          "Please enter the number of a corner in the range of [1,54] \
+           that is not already occupied. \n";
+        print_string "> ";
         check_corner_input (read_int ()))
       else raise (Adj_matrix.OccupiedTileId i)
   | _ ->
-      occupied_tile_prompt;
+      print_string
+        "Please enter the number of a corner in the range of [1,54] \
+         that is not already occupied. \n";
+      print_string "> ";
       check_corner_input (read_int ())
 
 (** [parse_quit str] quits the game if [str] is "QUIT" *)
