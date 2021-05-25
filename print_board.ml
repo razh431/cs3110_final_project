@@ -5,6 +5,16 @@ type slash =
   | Backward
   | Straight
 
+let print_color n s =
+  match n with
+  | 1 -> ANSITerminal.print_string [ ANSITerminal.blue ] s
+  | 2 -> ANSITerminal.print_string [ ANSITerminal.red ] s
+  | 3 -> ANSITerminal.print_string [ ANSITerminal.green ] s
+  | 4 -> ANSITerminal.print_string [ ANSITerminal.yellow ] s
+  | 5 -> ANSITerminal.print_string [ ANSITerminal.white ] s
+  | 6 -> ANSITerminal.print_string [ ANSITerminal.blue ] s
+  | _ -> failwith "this should never happen print"
+
 let print_corner (corner : node) (num : int) =
   let strnum = Int.to_string num in
   let head =
@@ -16,16 +26,7 @@ let print_corner (corner : node) (num : int) =
   | Some t ->
       (* t is the settlement *)
       let build = match t.building with House -> "H" | City -> "C" in
-      begin
-        match t.player_num with
-        | 1 -> ANSITerminal.print_string [ ANSITerminal.blue ] build
-        | 2 -> ANSITerminal.print_string [ ANSITerminal.red ] build
-        | 3 -> ANSITerminal.print_string [ ANSITerminal.green ] build
-        | 4 -> ANSITerminal.print_string [ ANSITerminal.yellow ] build
-        | 5 -> ANSITerminal.print_string [ ANSITerminal.white ] build
-        | 6 -> ANSITerminal.print_string [ ANSITerminal.blue ] build
-        | _ -> failwith "this should never happen printcorner"
-      end;
+      print_color t.player_num build;
       print_string ")"
 
 let print_rd rd (s : slash) =
@@ -33,15 +34,7 @@ let print_rd rd (s : slash) =
     match s with Forward -> "/" | Backward -> "\\" | Straight -> "|"
   in
   match rd with
-  | Some t -> (
-      match t with
-      | 1 -> ANSITerminal.print_string [ ANSITerminal.blue ] s_type
-      | 2 -> ANSITerminal.print_string [ ANSITerminal.red ] s_type
-      | 3 -> ANSITerminal.print_string [ ANSITerminal.green ] s_type
-      | 4 -> ANSITerminal.print_string [ ANSITerminal.yellow ] s_type
-      | 5 -> ANSITerminal.print_string [ ANSITerminal.white ] s_type
-      | 6 -> ANSITerminal.print_string [ ANSITerminal.blue ] s_type
-      | _ -> failwith "this should never happen printrd")
+  | Some t -> print_color t s_type
   | None -> (
       match s with
       | Forward -> print_string s_type
@@ -122,7 +115,7 @@ let print_tile_row roads tiles size t_start rd_start =
   done;
   print_rd roads.(rd_start + size).(rd_start + size + size + 1) Straight
 
-let print_board
+let board_top
     (corners : node array)
     (roads : road array array)
     (tiles : tile list) =
@@ -137,7 +130,12 @@ let print_board
   print_corner_row corners 17 5;
   print_road_row roads 10 17 5;
   print_corner_row corners 22 6;
-  print_tile_row roads tiles 5 7 22;
+  print_tile_row roads tiles 5 7 22
+
+let board_bot
+    (corners : node array)
+    (roads : road array array)
+    (tiles : tile list) =
   print_corner_row corners 28 6;
   print_road_row roads 14 34 5;
   print_corner_row corners 34 5;
@@ -150,3 +148,10 @@ let print_board
   print_road_row roads 22 52 3;
   print_corner_row corners 52 3;
   print_string "\n\n"
+
+let print_board
+    (corners : node array)
+    (roads : road array array)
+    (tiles : tile list) =
+  board_top corners roads tiles;
+  board_bot corners roads tiles

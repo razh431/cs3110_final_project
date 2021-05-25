@@ -20,9 +20,16 @@ exception Letters_Name
 
 exception RoadLength
 
+exception InvalidRoadFormat
+
 val is_alpha : char -> bool
 
 val name_player : string -> Player.player list -> string
+
+(** [parse_road_str str] parses a string of brackets, integers, and
+    commas denoting a road into a list of integers. Raises
+    [InvalidRoadFormat] if it cannot be parsed. *)
+val parse_road_str : string -> int list
 
 (** [check_road_input player str json] returns the string [str] if it is
     valid for player [player] to build the road specified in [str],
@@ -43,3 +50,5 @@ val check_road_input : Player.t -> string -> Yojson.Basic.t -> string
     occupied. Raises [Adj_matrix.InvalidTileId i] if [i] is not in the
     bounds of [1,54]. *)
 val check_corner_input : int -> int
+
+val parse_help : string -> unit

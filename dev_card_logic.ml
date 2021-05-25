@@ -1,6 +1,7 @@
 open Player
+open Parse
 
-exception InvalidRoadFormat
+(* exception InvalidRoadFormat *)
 
 let monopoly (pl : player) =
   (*calculating how many [res] cards are out there, named res_num *)
@@ -31,35 +32,29 @@ let rec year_of_plenty pl : player =
 
 let knight pl = failwith "unimplemented"
 
-let parse_road_str (s : string) =
-  try
-    s |> String.trim
-    |> String.split_on_char '['
-    |> String.concat ""
-    |> String.split_on_char ']'
-    |> String.concat ""
-    |> String.split_on_char ','
-    |> List.map String.trim |> List.map int_of_string
-  with e -> raise InvalidRoadFormat
-
 (* print_string "\n\ Please write in the appropriate format. Format: \n\
    \ [*corner location*, *corner location*] ex: [1,4] \n"; exit 0 *)
 
-let road_building pl json =
-  print_string
-    ", where would you like to build your first road? Format: [*corner \
-     location*, *corner location*] ex: [1,4] \n\
-    \ ";
-  let road_loc = read_line () in
-  let road_loc_list =
-    parse_road_str road_loc |> List.map (fun x -> x - 1)
+let road_building pl roads_json =
+  let new_pl = fst (trade_to_bank pl [ Wood; Brick ] []) in
+  let input = read_line () in
+  if input = "QUIT" then exit 0
+  else
+    print_string
+      ", where would you like to build your road? Format: [*corner \
+       location*, *corner location*] ex: [1,4] \n\
+      \ ";
+  print_string ">";
+  let road_loc =
+    Parse.check_road_input new_pl (read_line ()) roads_json
   in
+  let road_loc_list = Parse.parse_road_str road_loc in
   ignore
-    (update_pl_roads pl.num
+    (update_pl_roads new_pl.num
        (List.nth road_loc_list 0)
        (List.nth road_loc_list 1)
-       json);
-  pl
+       roads_json);
+  new_pl
 
 let rec dev_to_string (res_list : Dev_cards.t list) (acc : string) =
   match res_list with
@@ -74,25 +69,25 @@ let rec dev_to_string (res_list : Dev_cards.t list) (acc : string) =
 let rm_used_dev dev_card (pl_cards_list : Dev_cards.t list) acc =
   failwith ""
 
-let rec dev_logic dev_card pl json : player =
+let rec dev_logic dev_card pl roads_json : player =
   match dev_card with
   | "Monopoly" -> monopoly pl
   | "Victory_Points" -> victory_points pl
   | "Road_Building" ->
       (*returns the same player*)
-      road_building pl json
+      road_building pl roads_json
   | "Year_Of_Plenty" -> year_of_plenty pl
   | _ ->
       print_string "Please choose one of your cards to use. ";
       print_string ">";
-      dev_logic (read_line ()) pl json
+      dev_logic (read_line ()) pl roads_json
 
 (* [json] represents the json of valid roads *)
-let dev_card_logic player json : player =
+let dev_card_logic player roads_json =
   print_string
     (" You currently have "
     ^ dev_to_string player.dev_cards " ,"
     ^ "What would you like to use? \n ");
   print_string "> ";
   let dev_card = read_line () in
-  dev_logic dev_card player json
+  dev_logic dev_card player roads_json

@@ -19,12 +19,11 @@ exception BadNumber
 (* [json] is of the abstract type t that represents our board *)
 let json = Yojson.Basic.from_file "board.json"
 
+(* [init_tiles tiles_from_json json] is the tiles list of json*)
 let init_tiles = tiles_from_json json
 
 (** [roads_json] is a list of tuples representing valid roads. *)
 let roads_json = Yojson.Basic.from_file "roads.json"
-
-let parse (str : string) = failwith "TODO"
 
 (* [create_player_list num_pl total_num_pl pl_list] returns a list of
    players depending on user inputs for the players names. [num_pl] is
@@ -33,15 +32,34 @@ let parse (str : string) = failwith "TODO"
 
 let rec create_player_list num_pl total_num_pl pl_list =
   (* append into list *)
-  if num_pl > 0 then (
+  if num_pl > 0 then begin
     (* let name_list = [] in *)
+    let i = total_num_pl - num_pl + 1 in
     print_string "\nName of player ";
-    print_int (total_num_pl - num_pl + 1);
+    print_int i;
     print_string ": \n";
     print_string "> ";
+
     let name_input = read_line () |> String.trim in
-    let new_pl = init_player num_pl name_input Green in
-    create_player_list (num_pl - 1) total_num_pl (new_pl :: pl_list))
+    let rec num_pl_setup str i =
+      match str with
+      | "HELP" | "RULES" | "QUIT" ->
+          parse_help str;
+          print_string "\nName of player ";
+          print_int i;
+          print_string ": \n";
+          print_string "> ";
+          let new_str = read_line () in
+          num_pl_setup new_str i
+      | _ ->
+          let new_pl =
+            init_player num_pl (name_player name_input pl_list) Green
+          in
+          create_player_list (num_pl - 1) total_num_pl
+            (new_pl :: pl_list)
+    in
+    num_pl_setup name_input i
+  end
   else pl_list
 
 (*[replace_players new_players old_player_list] replacing players in
@@ -63,83 +81,111 @@ let replace_players new_player old_player_list : player list =
   in
   replace_helper old_player_list []
 
+(* [get_road_loc road_input player] updates the roads of the player
+   [player] with the input [road_input]*)
+let rec get_road_loc road_input player =
+  let road_loc = Parse.check_road_input player road_input roads_json in
+  let road_loc_list = parse_road_str road_loc in
+  ignore
+    (update_pl_roads player.num
+       (List.nth road_loc_list 0)
+       (List.nth road_loc_list 1)
+       roads_json)
+
+let rec get_house_loc house_input player =
+  let rec get_valid_house_loc str_num =
+    print_string
+      "This is not a valid input. Please enter a\n\
+      \   number of an  unoccupied corner in the range of [1,54]. \n";
+    print_string ">";
+    let new_str = read_line () in
+    try int_of_string new_str with _ -> get_valid_house_loc new_str
+  in
+  let house_num =
+    try int_of_string house_input
+    with _ -> get_valid_house_loc house_input
+  in
+  Parse.check_corner_input house_num
+
 (* [setup players_list num_players first_sec] is a new list of players
    after the players set up the game giving each player the ability to
    build a home and 2 roads twice. This is all before actual game play
-   happens such as rolling dice[players_list] is the list of players.
+   happens such as rolling dice. [players_list] is the list of players.
    [num_players] is the number of players in players_list. [first_sec]
    is 1 if we are on the first round of home building and 2 is if we are
-   on the second round of home building.*)
+   (* on the second round of home building.*) let rec setup players_list
+   num_players first_sec : player list = (* all players finished setting
+   up *) if num_players < 0 && first_sec == "second" then ( print_string
+   "Let's start the game! "; players_list (* finished first round of
+   homes *)) else if num_players < 0 && first_sec == "first" then (
+   print_string ("Now, we will build the " ^ first_sec ^ " round of
+   homes and roads! \n"); players_list) else let current_player =
+   List.nth players_list num_players in let pl_name =
+   current_player.name in print_string pl_name; print_string (", where\n
+   would you like to place your " ^ first_sec ^ " house? \n ");
+   print_string "> "; let new_str = read_line () in let rec
+   get_valid_house_loc str_num = print_string "This is not a valid\n\ \
+   input. Please enter a number of an unoccupied corner in \ the
+   range\n\ \ of [1,54]. \n"; print_string ">"; let new_str = read_line
+   () in try int_of_string new_str with _ -> get_valid_house_loc new_str
+   in let house_num = try int_of_string new_str with _ ->
+   get_valid_house_loc new_str in let house_loc =
+   Parse.check_corner_input house_num in let new_pl = distr_res_setup
+   current_player house_loc json in ignore (update_pl_settlements
+   new_pl.num House house_loc); print_board curr_corners curr_roads
+   init_tiles; print_string pl_name; print_string (" You currently have
+   " ^ unmatch_input new_pl.cards ""); print_string (", where would you
+   like to build your " ^ first_sec ^ " road? Format: [*corner
+   location*, *corner location*]\n\ \ ex: [1,4] \n\ \ "); print_string
+   "> "; get_road_loc (read_line ()) new_pl; print_board curr_corners
+   curr_roads init_tiles; let new_list = replace_players new_pl
+   players_list in setup new_list (num_players - 1) first_sec *)
+
 let rec setup players_list num_players first_sec : player list =
   if num_players < 0 && first_sec == 2 then (
-    print_string "Let's start the game! ";
-    let new_list = players_list in
-    new_list)
+    print_string "Let's start\n   the game! ";
+    players_list)
   else if num_players < 0 && first_sec == 1 then (
     print_string
-      "Now, we will build the second round of homes and roads! \n";
-    let new_list = players_list in
-    new_list)
+      "Now, we will build the second round of homes and\n   roads! \n";
+    players_list)
   else
-    let pl = List.nth players_list num_players in
-    let pl_name = pl.name in
+    let current_player = List.nth players_list num_players in
+    let pl_name = current_player.name in
     print_string pl_name;
     if first_sec == 1 then
       print_string
-        ", where would you like to place your first house? \n "
+        ", where\n   would you like to place your first house? \n "
     else
       print_string
-        ", where would you like to place your second house? \n ";
+        ",\n   where would you like to place your second house? \n ";
     print_string "> ";
-    (* read value and print out changed board *)
-    let new_str = read_line () in
-    let rec get_valid_house_loc str_num =
-      print_string
-        "This is not a valid input. Please enter a number of an \
-         unoccupied corner in the range of [1,54]. \n";
-      print_string ">";
-      let new_str = read_line () in
-      try int_of_string new_str with _ -> get_valid_house_loc new_str
-    in
-    let house_num =
-      try int_of_string new_str with _ -> get_valid_house_loc new_str
-    in
+    let house_num = get_house_loc (read_line ()) curr_corners in
     let house_loc = Parse.check_corner_input house_num in
-    let new_pl = distr_res_setup pl house_loc json in
+    let new_pl = distr_res_setup current_player house_loc json in
     ignore (update_pl_settlements new_pl.num House house_loc);
     print_board curr_corners curr_roads init_tiles;
     print_string pl_name;
-    print_string (" You currently have " ^ unmatch_input new_pl.cards "");
+    print_string
+      (", you currently have " ^ unmatch_input new_pl.cards "");
     if first_sec == 1 then (
       print_string
-        ", where would you like to build your first road? Format: \
-         [*corner location*, *corner location*] ex: [1,4] \n\
-        \ ";
+        "Where would you like to\n\
+        \   build your first road? Format:  [*corner location*, *corner\n\
+        \   location*] ex: [1,4] \n\
+        \  ";
       print_string "> ")
     else (
       print_string
-        ", where would you like to build your second road? Format: \
-         [*corner location*, *corner location*] ex: [1,4]\n";
+        ", where would you like to build your second road? Format:  \
+         [*corner\n\
+        \   location*, *corner location*] ex: [1,4]\n";
       print_string "> ");
-
-    (*todo: factor building road logic out*)
-    let road_loc =
-      let road_input = read_line () in
-      Parse.check_road_input new_pl road_input roads_json
-    in
-    let road_loc_list = parse_road_str road_loc in
-    ignore
-      (update_pl_roads new_pl.num
-         (List.nth road_loc_list 0)
-         (List.nth road_loc_list 1)
-         roads_json);
-    (* if curr_roads.(List.nth road_loc_list 0).(List.nth road_loc_list
-       1) != None then print_string "there is a road here"; *)
+    get_road_loc (read_line ()) new_pl;
     print_board curr_corners curr_roads init_tiles;
     let new_list = replace_players new_pl players_list in
     setup new_list (num_players - 1) first_sec
 
-(* TODO: Change to list.filter *)
 (* [get_player list name] is the player in the player list [list] with
    the name [name]*)
 let rec get_player list name =
@@ -164,19 +210,30 @@ let player_trade pl_list player =
   in
   List.iter (fun x -> print_string (x.name ^ " ")) other_players;
   print_string
-    "Please type the name of the player you would like to trade with.\n";
+    "Please type the name of the player you would like to trade with, \
+     or type \"back\" to go back.\n";
   print_string "> ";
   let name = read_line () in
-  let player_2 =
-    List.hd (List.filter (fun x -> x.name = name) other_players)
-  in
-  print_string (dev_to_string player_2.dev_cards ", ");
-  (* get_player pl_list name (* TODO: make sure trading logic checks if
-     the resource inputted is valid *) in *)
-  trading_logic player player_2
+  if name = "back" then (player, List.nth pl_list 1)
+  else
+    let player_2 =
+      List.hd (List.filter (fun x -> x.name = name) other_players)
+    in
+    print_string (dev_to_string player_2.dev_cards ", ");
+    (* get_player pl_list name (* TODO: make sure trading logic checks
+       if the resource inputted is valid *) in *)
+    trading_logic player player_2
 
 let build_rd player json =
   let new_pl = fst (trade_to_bank player [ Wood; Brick ] []) in
+  let input = read_line () in
+  if input = "QUIT" then exit 0
+  else
+    print_string
+      ", where would you like to build your road? Format: [*corner \
+       location*, *corner location*] ex: [1,4] \n\
+      \ ";
+  print_string ">";
   let road_loc =
     Parse.check_road_input new_pl (read_line ()) roads_json
   in
@@ -186,7 +243,7 @@ let build_rd player json =
        (List.nth road_loc_list 0)
        (List.nth road_loc_list 1)
        roads_json);
-  { new_pl with points = new_pl.points + 1 }
+  new_pl
 
 let build_house player =
   let new_pl =
@@ -194,12 +251,23 @@ let build_house player =
   in
   print_string "Where would you like to place your house? \n ";
   print_string "> ";
-  (* read value and print out changed board *)
-  let house_loc = Parse.check_corner_input (read_int ()) in
-  ignore (update_pl_settlements new_pl.num House house_loc);
-  print_board curr_corners curr_roads init_tiles;
-  print_string new_pl.name;
-  { new_pl with points = new_pl.points + 1 }
+  let input = read_line () in
+  let rec house_setup str =
+    match str with
+    | "HELP" | "RULES" | "QUIT" ->
+        print_string "Where would you like to place your house? \n ";
+        print_string "> ";
+        let new_str = read_line () in
+        house_setup new_str
+    | _ ->
+        (* read value and print out changed board *)
+        let house_loc = Parse.check_corner_input (int_of_string str) in
+        ignore (update_pl_settlements new_pl.num House house_loc);
+        print_board curr_corners curr_roads init_tiles;
+        print_string new_pl.name;
+        { new_pl with points = new_pl.points + 1 }
+  in
+  house_setup input
 
 let build_city player =
   let new_pl =
@@ -208,13 +276,31 @@ let build_city player =
   print_string "Where would you like to place your city? \n ";
   print_string "> ";
   (* read value and print out changed board *)
-  let city_loc = read_int () in
-  ignore (update_pl_settlements new_pl.num City city_loc);
-  print_board curr_corners curr_roads init_tiles;
-  print_string new_pl.name;
-  new_pl
+  let city_loc = read_line () in
+
+  let rec city_setup str =
+    match str with
+    | "HELP" | "RULES" | "QUIT" ->
+        print_string "Where would you like to place your city? \n ";
+        print_string "> ";
+        let new_str = read_line () in
+        city_setup new_str
+    | _ -> (
+        try
+          let city_loc = int_of_string str in
+          ignore (update_pl_settlements new_pl.num City city_loc);
+          print_board curr_corners curr_roads init_tiles;
+          print_string new_pl.name;
+          new_pl
+        with Failure _ ->
+          print_string "Please put an integer input. \n > ";
+          let new_str = read_line () in
+          city_setup new_str)
+  in
+  city_setup city_loc
 
 let create_dev player : player =
+  Random.self_init ();
   let new_pl = fst (trade_to_bank player [ Wool; Wheat; Ore ] []) in
   let dev_cards_list =
     [ Monopoly; Victory_Points; Road_Building; Year_Of_Plenty ]
@@ -329,8 +415,15 @@ let rec trade_main pl_list player roads_json =
       let new_pl_list = use_dev_card player pl_list roads_json in
       trade_main new_pl_list player roads_json
   | "end turn" -> pl_list
-  (* TODO: Figure out how to quit the game *)
-  | "QUIT" -> exit 0
+  | "HELP" ->
+      parse_help "HELP";
+      pl_list
+  | "RULES" ->
+      parse_help "RULES";
+      pl_list
+  | "QUIT" ->
+      parse_help "QUIT";
+      pl_list
   | _ -> trade_main pl_list player roads_json
 
 (* [play_turn player] is a new player list updated after the specified
@@ -358,6 +451,9 @@ let rec play_turn players_list player json roads_json =
     let new_list = replace_players new_pl players_list in
     trade_main new_list new_pl roads_json
   end
+  else if input = "HELP" || input = "RULES" || input = "QUIT" then (
+    parse_help input;
+    play_turn players_list player json roads_json)
   else play_turn players_list player json roads_json
 
 (* [play_turns players_list] will continuously carry out the turns of
@@ -438,9 +534,12 @@ let rec inval_num_player inval_input json roads_json =
   print_string " is not valid. \n Please enter 2, 3, or 4. \n";
   print_string "> ";
   let input_num_pl = read_line () in
-  if num_pl_checker input_num_pl then
-    play_game input_num_pl json roads_json
-  else inval_num_player input_num_pl json roads_json
+  match input_num_pl with
+  | "HELP" | "RULES" | "QUIT" -> parse_help input_num_pl
+  | _ ->
+      if num_pl_checker input_num_pl then
+        play_game input_num_pl json roads_json
+      else inval_num_player input_num_pl json roads_json
 
 (* [main] runs the beginning of the game that asks for the input for the
    number of players and asks you to input another number if the number
@@ -451,8 +550,18 @@ let main () =
   print_endline "\nInstructions: Please enter the number of players 2-4";
   print_string "> ";
   let input_num_pl = read_line () |> String.trim in
-  if num_pl_checker input_num_pl then
-    play_game input_num_pl json roads_json
-  else inval_num_player input_num_pl json roads_json
+  let rec num_pl_setup str =
+    match str with
+    | "HELP" | "RULES" | "QUIT" ->
+        parse_help input_num_pl;
+        print_string "Please enter the number of players 2-4\n > ";
+        let new_str = read_line () in
+        num_pl_setup new_str
+    | _ ->
+        if num_pl_checker input_num_pl then
+          play_game input_num_pl json roads_json
+        else inval_num_player input_num_pl json roads_json
+  in
+  num_pl_setup input_num_pl
 
 let () = main ()

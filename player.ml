@@ -288,7 +288,7 @@ let trading_logic player1 player2 =
   print_string ("Your cards now: " ^ unmatch_input player_1.cards "");
   (player_1, player_2)
 
-(*[dist_helper corners players] check if players have a building on any
+(*[dist_helper corners players] check if players have a b\uilding on any
   of those corners by checking and distribute accordingly by creating
   new players with those resources. [corners] is the corners of a tile.
   [players] is a list of all the players that are playing. *)
@@ -316,8 +316,9 @@ let distr_res (players_list : t list) (num : int) json : t list =
   (*Check which tiles have the same dice number (from tile list) *)
   let tiles = dice_roll_tiles num json in
   print_string
-    ("The number rolled = " ^ string_of_int num ^ "and the length is"
-    ^ string_of_int (List.length tiles));
+    ("The number rolled = " ^ string_of_int num ^ " and the length is"
+    ^ string_of_int (List.length tiles)
+    ^ " ");
   (*Find all the corners of those tiles *)
   let rec distr_per_tile tile_list new_pl_list =
     match tile_list with

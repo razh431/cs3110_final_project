@@ -698,6 +698,9 @@ let parse_tests =
     (* roads that don't exist *)
     parse_rd_err_test "p3's road (1,2) not valid" p3 "[1,2]" valid_roads
       (Adj_matrix.InvalidRoadId (1, 2));
+    parse_rd_err_test "p3's road (23,24) not valid" p3 "[23,24]"
+      valid_roads
+      (Adj_matrix.InvalidRoadId (53, 51));
     parse_rd_err_test "p3's road (53,51) not valid" p3 "[53,51]"
       valid_roads
       (Adj_matrix.InvalidRoadId (53, 51));

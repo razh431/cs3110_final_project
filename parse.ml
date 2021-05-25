@@ -4,7 +4,6 @@ open Resource
 open State
 open Adj_matrix
 open Print_board
-open Dev_card_logic
 
 exception Empty_Name
 
@@ -13,6 +12,8 @@ exception Repeated_Name
 exception Letters_Name
 
 exception RoadLength
+
+exception InvalidRoadFormat
 
 (** [pp_array pp_elt arr] pretty-prints array [arr], using [pp_elt] to
     pretty-print each element of [arr]. *)
@@ -63,7 +64,7 @@ let name_player_helper n pl_list : string =
   | _ ->
       (*if not empty, check if it's a repeat of names*)
       let pl_names_list = List.map (fun x -> x.name) pl_list in
-      if List.mem n pl_names_list then raise Empty_Name
+      if List.mem n pl_names_list then raise Repeated_Name
       else
         let rec is_letter s =
           if not (is_alpha s.[0]) then raise Letters_Name
@@ -71,7 +72,7 @@ let name_player_helper n pl_list : string =
             let l = String.length s in
             if l = 1 then n else is_letter (String.sub s 1 (l - 1))
         in
-        is_letter n
+        is_letter n |> String.capitalize_ascii |> String.trim
 
 let rec name_player n pl_list : string =
   try name_player_helper n pl_list with
@@ -87,6 +88,17 @@ let rec name_player n pl_list : string =
       print_string "Please choose a name with only letters. ";
       print_string "> ";
       name_player (read_line ()) pl_list
+
+let parse_road_str (s : string) =
+  try
+    s |> String.trim
+    |> String.split_on_char '['
+    |> String.concat ""
+    |> String.split_on_char ']'
+    |> String.concat ""
+    |> String.split_on_char ','
+    |> List.map String.trim |> List.map int_of_string
+  with e -> raise InvalidRoadFormat
 
 (** [conn_with_road player v1 v2] returns true if the road denoted by
     [v1], [v2] is connected to a road owned by [player]. *)
@@ -140,7 +152,7 @@ let check_road_list_aux (player : Player.t) (lst : int list) json =
   let valid_roads = Adj_matrix.roads_from_json json in
   if List.length lst <> 2 then raise RoadLength
   else
-    match lst with
+    match List.sort compare lst with
     | [ v1; v2 ] ->
         if
           (* check valid road ids *)
@@ -181,9 +193,7 @@ let check_road_list_aux (player : Player.t) (lst : int list) json =
 let rec check_road_input player str json : string =
   (* set [use_print] to false for testing *)
   let use_print = true in
-  try
-    check_road_list_aux player (Dev_card_logic.parse_road_str str) json
-  with
+  try check_road_list_aux player (parse_road_str str) json with
   | RoadLength ->
       if use_print then
         (print_string
@@ -196,8 +206,8 @@ let rec check_road_input player str json : string =
   | Adj_matrix.InvalidRoadId (v1, v2) ->
       if use_print then
         (print_string
-           "Please enter two points within the range of [1,54]. \
-            Format: [*corner location*, *corner location*]\n";
+           "Please enter two neighboring points within the range of \
+            [1,54]. Format: [*corner location*, *corner location*]\n";
          print_string "> ";
          check_road_input player (read_line ()))
           json
@@ -221,7 +231,7 @@ let rec check_road_input player str json : string =
          check_road_input player (read_line ()))
           json
       else raise (Adj_matrix.RoadNotConnected (v1, v2))
-  | Dev_card_logic.InvalidRoadFormat ->
+  | InvalidRoadFormat ->
       if use_print then
         (print_string
            "Please write in the appropriate format. Format: [*corner \
@@ -229,7 +239,7 @@ let rec check_road_input player str json : string =
          print_string "> ";
          check_road_input player (read_line ()))
           json
-      else raise Dev_card_logic.InvalidRoadFormat
+      else raise InvalidRoadFormat
 
 (** [check_corner_input index] returns corner index [i] if it is valid
     to build a house or city on that corner, i.e. it is in the bounds
@@ -267,8 +277,25 @@ let rec check_corner_input index =
       check_corner_input (read_int ())
 
 (** [parse_quit str] quits the game if [str] is "QUIT" *)
-let parse_quit = function
+let parse_help input =
+  match input with
+  | "HELP" ->
+      print_string
+        "Type \"RULES\" top print out rules, \"QUIT\" or quit to quit \
+         the game.\n\n"
+  | "RULES" ->
+      print_string
+        "1. 2-4 players can play\n\n\
+         2. To set up the game, players take turns building 2 homes \
+         and 2 roads. The players get the resources in which they \
+         placed their homes\n\n\
+         3. Each player is allowed to place a home and road down until \
+         everyone has finished their turn and then repeat\n\n\
+         4. For each turn, roll for dice for resource production, \
+         trade with other players, build homes and cities, or buy \
+         development cards\n\n\
+         5. Once you receive 10 points, you win.\n\n"
   | "QUIT" ->
-      print_string "Thank you for playing Catan!";
+      print_string "Thank you for playing Catan!\n\n";
       exit 0
   | _ -> ()
