@@ -6,7 +6,7 @@ open Parse
 let monopoly (pl : player) =
   (*calculating how many [res] cards are out there, named res_num *)
   print_string "What resource would you like to monopolize?";
-  print_string ">";
+  print_string "> ";
   let res = Adj_matrix.resource_from_string (read_line ()) in
   let res_num =
     19
@@ -27,7 +27,7 @@ let rec year_of_plenty pl : player =
   if List.length resources = 2 then fst (trade_to_bank pl [] resources)
   else (
     print_string "Please only input two resources";
-    print_string ">";
+    print_string "> ";
     year_of_plenty pl)
 
 let knight pl = failwith "unimplemented"
@@ -44,7 +44,7 @@ let road_building pl roads_json =
       ", where would you like to build your road? Format: [*corner \
        location*, *corner location*] ex: [1,4] \n\
       \ ";
-  print_string ">";
+  print_string "> ";
   let road_loc =
     Parse.check_road_input new_pl (read_line ()) roads_json
   in
@@ -79,7 +79,7 @@ let rec dev_logic dev_card pl roads_json : player =
   | "Year_Of_Plenty" -> year_of_plenty pl
   | _ ->
       print_string "Please choose one of your cards to use. ";
-      print_string ">";
+      print_string "> ";
       dev_logic (read_line ()) pl roads_json
 
 (* [json] represents the json of valid roads *)

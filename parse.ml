@@ -82,7 +82,7 @@ let pp_node (n : Adj_matrix.node) =
 
 let is_alpha = function
   | 'a' .. 'z' -> true
-  | 'A' .. 'A' -> true
+  | 'A' .. 'Z' -> true
   | _ -> false
 
 let name_player_helper n pl_list : string =
