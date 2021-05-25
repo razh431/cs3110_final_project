@@ -122,7 +122,7 @@ let setup_home player first_sec =
   print_string (", you currently have " ^ unmatch_input new_pl.cards "");
   new_pl
 
-(* let setup_road = *)
+(* let setup_road first_sec player players_list= *)
 
 (** ([setup players_list num_players first_sec] is a new list of players
     after the players set up the game giving each player the ability to
@@ -143,7 +143,21 @@ let rec setup players_list num_players first_sec : player list =
     let current_player = List.nth players_list num_players in
     let pl_name = current_player.name in
     print_string pl_name;
-    let new_player = setup_home current_player first_sec in
+    if first_sec == 1 then
+      print_string
+        ", where would you like to place your first house? \n "
+    else
+      print_string
+        ", where would you like to place your second house? \n ";
+    print_string "> ";
+    let house_num = get_house_loc (read_line ()) curr_corners in
+    let house_loc = Parse.check_corner_input house_num in
+    let new_pl = distr_res_setup current_player house_loc json in
+    ignore (update_pl_settlements new_pl.num House house_loc);
+    print_board curr_corners curr_roads init_tiles;
+    print_string pl_name;
+    print_string
+      (", you currently have " ^ unmatch_input new_pl.cards "");
     if first_sec == 1 then (
       print_string
         "Where would you like to\n\
@@ -157,12 +171,12 @@ let rec setup players_list num_players first_sec : player list =
          [*corner\n\
         \   location*, *corner location*] ex: [1,4]\n";
       print_string "> ");
-    get_road_loc (read_line ()) new_player;
+    get_road_loc (read_line ()) new_pl;
     print_board curr_corners curr_roads init_tiles;
-    let new_list = replace_players new_player players_list in
+    let new_list = replace_players new_pl players_list in
     setup new_list (num_players - 1) first_sec
 
-(** [player_trade pl_list player trades a resource between [player] and
+(** [player_trade pl_list player] trades a resource between [player] and
     player_2 which the user inputs. pl_list is the list of players *)
 let player_trade pl_list player =
   print_string "You can trade with these players: ";
@@ -218,6 +232,7 @@ let build_house player =
   let rec house_setup str =
     match str with
     | "HELP" | "RULES" | "QUIT" ->
+        parse_help str;
         print_string "Where would you like to place your house? \n ";
         print_string "> ";
         let new_str = read_line () in
@@ -244,6 +259,7 @@ let build_city player =
   let rec city_setup str =
     match str with
     | "HELP" | "RULES" | "QUIT" ->
+        parse_help str;
         print_string "Where would you like to place your city? \n ";
         print_string "> ";
         let new_str = read_line () in
@@ -278,6 +294,11 @@ let trade_4_1_card player : player =
     " What resource would you like to trade in? Must have 4 of this \
      resource! ";
   print_string "> ";
+
+  (* let input = read_line () in
+
+     let rec input_list str = match str with | "HELP" | "RULES" | "QUIT"
+     -> parse_help input_num_pl | _ -> *)
   let res = input_to_list (read_line ()) in
   let res_in = gen_cards res 4 in
   print_string " What would you like to trade for? \n ";
