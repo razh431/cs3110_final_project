@@ -85,7 +85,8 @@ let update_player player cards dev_cards points =
 
 let get_player_name (pl : t) : string = pl.name
 
-(*generate bank cards*)
+(** [gen_cards card num_needed] is used to generate multiple copies of
+    resource cards, for the bank. *)
 let rec gen_cards (card : Resource.t list) (num_needed : int) =
   match card with
   | [] -> failwith "never called"
@@ -227,7 +228,7 @@ let update_pl_cards player_num pl_list building res =
   let new_player =
     match building with
     | House ->
-        print_string "here in update player house";
+        (* print_string "here in update player house"; *)
         fst (trade_to_bank player [] [ res ])
     | City -> fst (trade_to_bank player [] [ res; res ])
   in
@@ -315,10 +316,8 @@ let rec dist_helper corners players res =
 let distr_res (players_list : t list) (num : int) json : t list =
   (*Check which tiles have the same dice number (from tile list) *)
   let tiles = dice_roll_tiles num json in
-  print_string
-    ("The number rolled = " ^ string_of_int num ^ " and the length is"
-    ^ string_of_int (List.length tiles)
-    ^ " ");
+  (* print_string ("The number rolled = " ^ string_of_int num ^ " and
+     the length is" ^ string_of_int (List.length tiles) ^ " "); *)
   (*Find all the corners of those tiles *)
   let rec distr_per_tile tile_list new_pl_list =
     match tile_list with

@@ -11,9 +11,36 @@ exception Repeated_Name
 
 exception Letters_Name
 
-exception RoadLength
-
 exception InvalidRoadFormat
+
+let invalid_rd_fmt =
+  "Please enter two points in the correct format. Format: [*corner \
+   location*, *corner location*]\n\
+  \ > "
+
+let invalid_rd_id =
+  "Please enter two neighboring points in the range of [1,54]. Format: \
+   [*corner location*, *corner location*]\n\
+  \ > "
+
+let occupied_rd =
+  "Please enter the points of a road that is connected to your other \
+   roads, houses, or cities. Format: [*corner location*, *corner \
+   location*] \n\
+  \ > "
+
+let connected_rd =
+  "Please enter the points of a road that is connected to your other \
+   roads, houses, or cities.\n\
+  \ >"
+
+let invalid_tile_id =
+  "Please enter the number of a corner in the range of [1,54]. \n > "
+
+let occupied_tile =
+  "Please enter the number of a corner in the range of [1,54] that is \
+   not already occupied. \n\
+   > "
 
 (** [pp_array pp_elt arr] pretty-prints array [arr], using [pp_elt] to
     pretty-print each element of [arr]. *)
@@ -134,9 +161,6 @@ let conn_with_corner player v1 v2 =
     Requires: v1 and v2 are in bounds of [1,54], and the road is not
     already occupied. *)
 let is_connected_rd player v1 v2 =
-  (* print_string ("\nplayer " ^ string_of_int player.num ^ " building
-     rd on " ^ string_of_int v1 ^ ", " ^ string_of_int v2); print_string
-     ("\n" ^ pp_array pp_node Adj_matrix.curr_corners); *)
   conn_with_road player v1 v2 || conn_with_corner player v1 v2
 
 (** [check_road_list_aux player lst json] checks the validity of player
@@ -150,7 +174,7 @@ let is_connected_rd player v1 v2 =
     player. *)
 let check_road_list_aux (player : Player.t) (lst : int list) json =
   let valid_roads = Adj_matrix.roads_from_json json in
-  if List.length lst <> 2 then raise RoadLength
+  if List.length lst <> 2 then raise InvalidRoadFormat
   else
     match List.sort compare lst with
     | [ v1; v2 ] ->
@@ -169,7 +193,7 @@ let check_road_list_aux (player : Player.t) (lst : int list) json =
           not (is_connected_rd player v1 v2)
         then raise (Adj_matrix.RoadNotConnected (v1, v2))
         else "[" ^ string_of_int v1 ^ "," ^ string_of_int v2 ^ "]"
-    | _ -> raise RoadLength
+    | _ -> raise InvalidRoadFormat
 
 (** [check_road_input player str] returns the string [str] if it is
     valid for player [player] to build the road specified in [str],
@@ -194,49 +218,27 @@ let rec check_road_input player str json : string =
   (* set [use_print] to false for testing *)
   let use_print = true in
   try check_road_list_aux player (parse_road_str str) json with
-  | RoadLength ->
-      if use_print then
-        (print_string
-           "Please enter two points in the correct format. Format: \
-            [*corner location*, *corner location*]\n";
-         print_string "> ";
-         check_road_input player (read_line ()))
-          json
-      else raise RoadLength
   | Adj_matrix.InvalidRoadId (v1, v2) ->
       if use_print then
-        (print_string
-           "Please enter two neighboring points within the range of \
-            [1,54]. Format: [*corner location*, *corner location*]\n";
-         print_string "> ";
+        (print_string invalid_rd_id;
          check_road_input player (read_line ()))
           json
       else raise (Adj_matrix.InvalidRoadId (v1, v2))
   | Adj_matrix.OccupiedRoad (v1, v2) ->
       if use_print then
-        (print_string
-           "Please enter the points of a road that is unoccupied. \
-            Format: [*corner location*, *corner location*]\n";
-         print_string "> ";
+        (print_string occupied_rd;
          check_road_input player (read_line ()))
           json
       else raise (Adj_matrix.OccupiedRoad (v1, v2))
   | Adj_matrix.RoadNotConnected (v1, v2) ->
       if use_print then
-        (print_string
-           "Please enter the points of a road that is connected to \
-            your other roads, houses, or cities. Format: [*corner \
-            location*, *corner location*]\n";
-         print_string "> ";
+        (print_string connected_rd;
          check_road_input player (read_line ()))
           json
       else raise (Adj_matrix.RoadNotConnected (v1, v2))
   | InvalidRoadFormat ->
       if use_print then
-        (print_string
-           "Please write in the appropriate format. Format: [*corner \
-            location*, *corner location*] ex: [1,4] \n";
-         print_string "> ";
+        (print_string invalid_rd_fmt;
          check_road_input player (read_line ()))
           json
       else raise InvalidRoadFormat
@@ -256,27 +258,21 @@ let rec check_corner_input index =
   try check_corner_input_aux index with
   | Adj_matrix.InvalidTileId i ->
       if use_print then (
-        print_string
-          "Please enter the number of a corner in the range of [1,54]. \n";
-        print_string "> ";
+        print_string invalid_tile_id;
         check_corner_input (read_int ()))
       else raise (Adj_matrix.InvalidTileId i)
   | Adj_matrix.OccupiedTileId i ->
       if use_print then (
-        print_string
-          "Please enter the number of a corner in the range of [1,54] \
-           that is not already occupied. \n";
-        print_string "> ";
+        print_string occupied_tile;
         check_corner_input (read_int ()))
       else raise (Adj_matrix.OccupiedTileId i)
   | _ ->
-      print_string
-        "Please enter the number of a corner in the range of [1,54] \
-         that is not already occupied. \n";
-      print_string "> ";
+      print_string invalid_tile_id;
       check_corner_input (read_int ())
 
-(** [parse_quit str] quits the game if [str] is "QUIT" *)
+(** [parse_help str] quits the game if [str] is "QUIT", prints out rules
+    if [str] is "RULES", and prints out directional rules if [str] is
+    "HELP" *)
 let parse_help input =
   match input with
   | "HELP" ->
@@ -287,7 +283,7 @@ let parse_help input =
       print_string
         "1. 2-4 players can play\n\n\
          2. To set up the game, players take turns building 2 homes \
-         and 2 roads. The players get the resources in which they \
+         and 2 roads. The players get the resources on which they \
          placed their homes\n\n\
          3. Each player is allowed to place a home and road down until \
          everyone has finished their turn and then repeat\n\n\

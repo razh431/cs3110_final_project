@@ -18,8 +18,6 @@ exception Repeated_Name
 
 exception Letters_Name
 
-exception RoadLength
-
 exception InvalidRoadFormat
 
 val is_alpha : char -> bool
@@ -36,10 +34,11 @@ val parse_road_str : string -> int list
     which is a string of the form ["\[v1,v2\]"], containing two indices
     that represent a road. [json] represents valid roads.
 
-    Raises [RoadLength] if the input string does not have two indices.
-    Raises [Adj_matrix.InvalidRoad (v1,v2)] if at least one index is out
-    of range [1,54]. Raises [Adj_matrix.OccupiedRoad (v1,v2)] if the
-    road specified is already occupied. *)
+    Raises [InvalidRoadFormat] if the input string does not have two
+    indices. Raises [Adj_matrix.InvalidRoad (v1,v2)] if at least one
+    index is out of range [1,54]. Raises
+    [Adj_matrix.OccupiedRoad (v1,v2)] if the road specified is already
+    occupied. *)
 val check_road_input : Player.t -> string -> Yojson.Basic.t -> string
 
 (** [check_road_input index] returns corner index [i] if it is valid to
