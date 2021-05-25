@@ -1,0 +1,33 @@
+<html><head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="Start" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of exceptions" rel=Appendix href="index_exceptions.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Board" rel="Chapter" href="Board.html">
+<link title="Player" rel="Chapter" href="Player.html">
+<link title="Resource" rel="Chapter" href="Resource.html">
+<link title="Dev_cards" rel="Chapter" href="Dev_cards.html">
+<link title="State" rel="Chapter" href="State.html">
+<link title="Main" rel="Chapter" href="Main.html">
+<link title="Author" rel="Chapter" href="Author.html">
+<link title="Adj_matrix" rel="Chapter" href="Adj_matrix.html">
+<link title="Dev_card_logic" rel="Chapter" href="Dev_card_logic.html">
+<link title="Parse" rel="Chapter" href="Parse.html"><title>Parse</title>
+</head>
+<body>
+<code class="code"><span class="keyword">sig</span><br>
+&nbsp;&nbsp;<span class="keyword">exception</span>&nbsp;<span class="constructor">Empty_Name</span><br>
+&nbsp;&nbsp;<span class="keyword">exception</span>&nbsp;<span class="constructor">Repeated_Name</span><br>
+&nbsp;&nbsp;<span class="keyword">exception</span>&nbsp;<span class="constructor">Letters_Name</span><br>
+&nbsp;&nbsp;<span class="keyword">exception</span>&nbsp;<span class="constructor">InvalidRoadFormat</span><br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;is_alpha&nbsp;:&nbsp;char&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;bool<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;name_player&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Player</span>.player&nbsp;list&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;parse_road_str&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int&nbsp;list<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;check_road_input&nbsp;:&nbsp;<span class="constructor">Player</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;<span class="constructor">Yojson</span>.<span class="constructor">Basic</span>.t&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;string<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;check_corner_input&nbsp;:&nbsp;int&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;int<br>
+&nbsp;&nbsp;<span class="keyword">val</span>&nbsp;parse_help&nbsp;:&nbsp;string&nbsp;<span class="keywordsign">-&gt;</span>&nbsp;unit<br>
+<span class="keyword">end</span></code></body></html>

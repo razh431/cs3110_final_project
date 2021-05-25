@@ -1,0 +1,181 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="Start" href="index.html">
+<link rel="previous" href="Dev_card_logic.html">
+<link rel="Up" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of exceptions" rel=Appendix href="index_exceptions.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Board" rel="Chapter" href="Board.html">
+<link title="Player" rel="Chapter" href="Player.html">
+<link title="Resource" rel="Chapter" href="Resource.html">
+<link title="Dev_cards" rel="Chapter" href="Dev_cards.html">
+<link title="State" rel="Chapter" href="State.html">
+<link title="Main" rel="Chapter" href="Main.html">
+<link title="Author" rel="Chapter" href="Author.html">
+<link title="Adj_matrix" rel="Chapter" href="Adj_matrix.html">
+<link title="Dev_card_logic" rel="Chapter" href="Dev_card_logic.html">
+<link title="Parse" rel="Chapter" href="Parse.html"><title>Parse</title>
+</head>
+<body>
+<div class="navbar"><a class="pre" href="Dev_card_logic.html" title="Dev_card_logic">Previous</a>
+&nbsp;<a class="up" href="index.html" title="Index">Up</a>
+&nbsp;</div>
+<h1>Module <a href="type_Parse.html">Parse</a></h1>
+
+<pre><span id="MODULEParse"><span class="keyword">module</span> Parse</span>: <code class="code">sig</code> <a href="Parse.html">..</a> <code class="code">end</code></pre><hr width="100%">
+
+<pre><span id="EXCEPTIONEmpty_Name"><span class="keyword">exception</span> Empty_Name</span></pre>
+
+<pre><span id="EXCEPTIONRepeated_Name"><span class="keyword">exception</span> Repeated_Name</span></pre>
+
+<pre><span id="EXCEPTIONLetters_Name"><span class="keyword">exception</span> Letters_Name</span></pre>
+
+<pre><span id="EXCEPTIONInvalidRoadFormat"><span class="keyword">exception</span> InvalidRoadFormat</span></pre>
+
+<pre><span id="VALinvalid_rd_fmt"><span class="keyword">val</span> invalid_rd_fmt</span> : <code class="type">string</code></pre>
+<pre><span id="VALinvalid_rd_id"><span class="keyword">val</span> invalid_rd_id</span> : <code class="type">string</code></pre>
+<pre><span id="VALoccupied_rd"><span class="keyword">val</span> occupied_rd</span> : <code class="type">string</code></pre>
+<pre><span id="VALconnected_rd"><span class="keyword">val</span> connected_rd</span> : <code class="type">string</code></pre>
+<pre><span id="VALinvalid_tile_id"><span class="keyword">val</span> invalid_tile_id</span> : <code class="type">string</code></pre>
+<pre><span id="VALoccupied_tile"><span class="keyword">val</span> occupied_tile</span> : <code class="type">string</code></pre>
+<pre><span id="VALpp_array"><span class="keyword">val</span> pp_array</span> : <code class="type">('a -> string) -> 'a array -> string</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">pp_array pp_elt arr</code> pretty-prints array <code class="code">arr</code>, using <code class="code">pp_elt</code> to
+    pretty-print each element of <code class="code">arr</code>.</p>
+</div>
+</div>
+
+<pre><span id="VALpp_building"><span class="keyword">val</span> pp_building</span> : <code class="type"><a href="Adj_matrix.html#TYPEbuilding">Adj_matrix.building</a> -> string</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">pp_building b</code> pretty-prints building <code class="code">b</code>.</p>
+</div>
+</div>
+
+<pre><span id="VALpp_pnum"><span class="keyword">val</span> pp_pnum</span> : <code class="type">int -> string</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">pp_pnum num</code> pretty-prints a player number <code class="code">num</code>.</p>
+</div>
+</div>
+
+<pre><span id="VALpp_node"><span class="keyword">val</span> pp_node</span> : <code class="type"><a href="Adj_matrix.html#TYPEnode">Adj_matrix.node</a> -> string</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">pp_node node</code> pretty-prints a node <code class="code">node</code>.</p>
+</div>
+</div>
+
+<pre><span id="VALis_alpha"><span class="keyword">val</span> is_alpha</span> : <code class="type">char -> bool</code></pre>
+<pre><span id="VALname_player_helper"><span class="keyword">val</span> name_player_helper</span> : <code class="type">string -> <a href="Player.html#TYPEplayer">Player.player</a> list -> string</code></pre>
+<pre><span id="VALname_player"><span class="keyword">val</span> name_player</span> : <code class="type">string -> <a href="Player.html#TYPEplayer">Player.player</a> list -> string</code></pre>
+<pre><span id="VALparse_road_str"><span class="keyword">val</span> parse_road_str</span> : <code class="type">string -> int list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">parse_road_str str</code> parses a string of brackets, integers, and
+    commas denoting a road into a list of integers. Raises
+    <code class="code">InvalidRoadFormat</code> if it cannot be parsed.</p>
+</div>
+</div>
+
+<pre><span id="VALconn_with_road"><span class="keyword">val</span> conn_with_road</span> : <code class="type"><a href="Player.html#TYPEplayer">Player.player</a> -> int -> int -> bool</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">conn_with_road player v1 v2</code> returns true if the road denoted by
+    <code class="code">v1</code>, <code class="code">v2</code> is connected to a road owned by <code class="code">player</code>.</p>
+</div>
+</div>
+
+<pre><span id="VALconn_with_corner"><span class="keyword">val</span> conn_with_corner</span> : <code class="type"><a href="Player.html#TYPEplayer">Player.player</a> -> int -> int -> bool</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">conn_with_corner player v1 v2</code> returns true the road denoted by
+    <code class="code">v1</code>, <code class="code">v2</code> is connected to a corner of a tile that has one of
+    <code class="code">player</code>'s buildings.</p>
+</div>
+</div>
+
+<pre><span id="VALis_connected_rd"><span class="keyword">val</span> is_connected_rd</span> : <code class="type"><a href="Player.html#TYPEplayer">Player.player</a> -> int -> int -> bool</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">is_connected_rd player v1 v2</code> returns true if the road denoted by
+    v1,v2 is connected to player <code class="code">player</code>'s other houses, cities, or
+    roads.</p>
+
+<p>Requires: v1 and v2 are in bounds of <code class="code">1,54</code>, and the road is not
+    already occupied.</p>
+</div>
+</div>
+
+<pre><span id="VALcheck_road_list_aux"><span class="keyword">val</span> check_road_list_aux</span> : <code class="type"><a href="Player.html#TYPEt">Player.t</a> -> int list -> Yojson.Basic.t -> string</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">check_road_list_aux player lst json</code> checks the validity of player
+    <code class="code">player</code> building a road denoted by a list of integers <code class="code">lst</code>, using
+    <code class="code">json</code> as the list of valid roads.</p>
+
+<p>Raises <code class="code">Adj_matrix.InvalidRoadId (v1, v2)</code> if the road id is out of
+    bounds. Raises <code class="code">Adj_matrix.OccupiedRoad (v1, v2)</code> if the road is
+    already occupied. Raises <code class="code">Adj_matrix.RoadNotConnected (v1, v2)</code> if
+    the road is not connected another road or corner owned by the
+    player.</p>
+</div>
+</div>
+
+<pre><span id="VALcheck_road_input"><span class="keyword">val</span> check_road_input</span> : <code class="type"><a href="Player.html#TYPEt">Player.t</a> -> string -> Yojson.Basic.t -> string</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">check_road_input player str</code> returns the string <code class="code">str</code> if it is
+    valid for player <code class="code">player</code> to build the road specified in <code class="code">str</code>,
+    which is a string of the form <code class="code">"[v1,v2]"</code>, containing two indices
+    that represent a road.</p>
+
+<p><code class="code">str</code> is valid if the road is not yet occupied, the road indices are
+    in the bounds <code class="code">1,54</code>, and the road is represented in <code class="code">json</code>. Also,
+    the road a player builds must be connected to another road owned by
+    that player or one of the houses/cities owned by that player.</p>
+
+<p>NOTE: for testing purposes, the <code class="code">use_print</code> constant should be
+    switched to <code class="code">false</code>.</p>
+
+<p>Ex. <code class="code">check_road_input "[0,2]"</code> raises
+    <code class="code">Adj_matrix.InvalidRoadId (0,2)</code></p>
+
+<p>Ex. <code class="code">check_road_input "[2,3,4]"</code> raises <code class="code">InvalidRoadFormat</code></p>
+
+<p>Ex. <code class="code">check_road_input "[1,5]"</code> returns <code class="code">"[1,5]"</code></p>
+
+<p><code class="code">check_road_input player str json</code> returns the string <code class="code">str</code> if it is
+    valid for player <code class="code">player</code> to build the road specified in <code class="code">str</code>,
+    which is a string of the form <code class="code">"[v1,v2]"</code>, containing two indices
+    that represent a road. <code class="code">json</code> represents valid roads.</p>
+
+<p>Raises <code class="code">InvalidRoadFormat</code> if the input string does not have two
+    indices. Raises <code class="code">Adj_matrix.InvalidRoad (v1,v2)</code> if at least one
+    index is out of range <code class="code">1,54</code>. Raises
+    <code class="code">Adj_matrix.OccupiedRoad (v1,v2)</code> if the road specified is already
+    occupied.</p>
+</div>
+</div>
+
+<pre><span id="VALcheck_corner_input"><span class="keyword">val</span> check_corner_input</span> : <code class="type">int -> int</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">check_corner_input index</code> returns corner index <code class="code">i</code> if it is valid
+    to build a house or city on that corner, i.e. it is in the bounds
+    <code class="code">1,54</code> and that index is not already occupied.</p>
+
+<p><code class="code">check_road_input index</code> returns corner index <code class="code">i</code> if it is valid to
+    build a house or city on that corner, i.e. it is in the bounds
+    <code class="code">1,54</code> and that index is not already occupied.</p>
+
+<p>Raises <code class="code">Adj_matrix.OccupiedTileId idx</code> if corner <code class="code">i</code> is already
+    occupied. Raises <code class="code">Adj_matrix.InvalidTileId i</code> if <code class="code">i</code> is not in the
+    bounds of <code class="code">1,54</code>.</p>
+</div>
+</div>
+
+<pre><span id="VALparse_help"><span class="keyword">val</span> parse_help</span> : <code class="type">string -> unit</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">parse_help str</code> quits the game if <code class="code">str</code> is "QUIT", prints out rules
+    if <code class="code">str</code> is "RULES", and prints out directional rules if <code class="code">str</code> is
+    "HELP"</p>
+</div>
+</div>
+</body></html>

@@ -693,12 +693,25 @@ let parse_tests =
     parse_rd_err_test "p4's road [24,30] connected to nothing" p4
       "[24,30]" valid_roads
       (Adj_matrix.RoadNotConnected (24, 30));
+    parse_rd_err_test "p3's road [7,11] connected to nothing" p3
+      "[7,11]" valid_roads
+      (Adj_matrix.RoadNotConnected (7, 11));
+    parse_rd_err_test "p2's road [36,41] connected to nothing" p3
+      "[36,41]" valid_roads
+      (Adj_matrix.RoadNotConnected (36, 41));
+    parse_rd_err_test "p1's road [51,47] connected to nothing" p3
+      "[51,47]" valid_roads
+      (Adj_matrix.RoadNotConnected (47, 51));
     (* roads connected to other people's settlements, roads, or both,
        are not valid *)
     parse_rd_err_test
       "p3's road (1,4) connected to p1 road and p1 house but not valid"
       p3 "[1,4]" valid_roads
       (Adj_matrix.RoadNotConnected (1, 4));
+    parse_rd_err_test
+      "p2's road (18,23) connected to p4 house but not valid" p2
+      "[18,23]" valid_roads
+      (Adj_matrix.RoadNotConnected (18, 23));
     parse_rd_err_test
       "p3's road (51,54) connected to p4 city but not valid" p3
       "[51,54]" valid_roads
@@ -720,20 +733,17 @@ let parse_tests =
       (Adj_matrix.InvalidRoadId (4, 4));
     (************ corner input tests ************)
     parse_cn_test "unoccupied corner 23" 23 23;
-    parse_cn_err_test "occupied corner 2" 2
+    parse_cn_err_test "occupied corner 1H" 1
+      (Adj_matrix.OccupiedTileId 1);
+    parse_cn_err_test "occupied corner 2C" 2
       (Adj_matrix.OccupiedTileId 2);
+    parse_cn_err_test "occupied corner 18H" 18
+      (Adj_matrix.OccupiedTileId 18);
+    parse_cn_err_test "occupied corner 54C" 54
+      (Adj_matrix.OccupiedTileId 54);
     parse_cn_err_test "corner id < 1" ~-1 (Adj_matrix.InvalidTileId ~-1);
     parse_cn_err_test "corner id > 54" 55 (Adj_matrix.InvalidTileId 55);
   ]
-
-let distr_res_tests =
-  [ (* update_pl_cards_test "p5 gets wheat" 5 [ p5 ] Adj_matrix.House
-       Wheat p5_updated_cards; update_pl_cards_test "p3 gets ore " 5 [
-       p3 ] Adj_matrix.House Ore p3_updated_cards; update_pl_cards_test
-       "p3 gets brick " 5 [ p5 ] Adj_matrix.House Brick
-       p3_updated_cards_1; update_pl_cards_test "p5 gets brick" 5 [ p5 ]
-       Adj_matrix.House Brick p1_updated_cards; update_pl_cards_test "p5
-       gets wheat" 5 [ p5 ] Adj_matrix.House Wheat p5_updated_cards; *) ]
 
 let suite =
   "test suite for building"
@@ -745,7 +755,6 @@ let suite =
            roads_test;
            corners_test;
            parse_tests;
-           distr_res_tests;
          ]
 
 let _ = run_test_tt_main suite

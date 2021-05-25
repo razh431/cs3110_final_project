@@ -1,0 +1,297 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="Start" href="index.html">
+<link rel="previous" href="Board.html">
+<link rel="next" href="Resource.html">
+<link rel="Up" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of exceptions" rel=Appendix href="index_exceptions.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Board" rel="Chapter" href="Board.html">
+<link title="Player" rel="Chapter" href="Player.html">
+<link title="Resource" rel="Chapter" href="Resource.html">
+<link title="Dev_cards" rel="Chapter" href="Dev_cards.html">
+<link title="State" rel="Chapter" href="State.html">
+<link title="Main" rel="Chapter" href="Main.html">
+<link title="Author" rel="Chapter" href="Author.html">
+<link title="Adj_matrix" rel="Chapter" href="Adj_matrix.html">
+<link title="Dev_card_logic" rel="Chapter" href="Dev_card_logic.html">
+<link title="Parse" rel="Chapter" href="Parse.html"><title>Player</title>
+</head>
+<body>
+<div class="navbar"><a class="pre" href="Board.html" title="Board">Previous</a>
+&nbsp;<a class="up" href="index.html" title="Index">Up</a>
+&nbsp;<a class="post" href="Resource.html" title="Resource">Next</a>
+</div>
+<h1>Module <a href="type_Player.html">Player</a></h1>
+
+<pre><span id="MODULEPlayer"><span class="keyword">module</span> Player</span>: <code class="code">sig</code> <a href="Player.html">..</a> <code class="code">end</code></pre><hr width="100%">
+
+<pre><span id="EXCEPTIONUnknownBuilding"><span class="keyword">exception</span> UnknownBuilding</span></pre>
+
+<pre><span id="EXCEPTIONInvalidTrade"><span class="keyword">exception</span> InvalidTrade</span></pre>
+
+<pre><span id="VALpp_list"><span class="keyword">val</span> pp_list</span> : <code class="type">('a -> string) -> 'a list -> string</code></pre>
+<pre><span id="VALpp_resource"><span class="keyword">val</span> pp_resource</span> : <code class="type"><a href="Resource.html#TYPEt">Resource.t</a> -> string</code></pre>
+<pre><code><span id="TYPEcolor"><span class="keyword">type</span> <code class="type"></code>color</span> = </code></pre><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTcolor.Blue"><span class="constructor">Blue</span></span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTcolor.Red"><span class="constructor">Red</span></span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTcolor.Green"><span class="constructor">Green</span></span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTcolor.Yellow"><span class="constructor">Yellow</span></span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTcolor.White"><span class="constructor">White</span></span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTcolor.Magenta"><span class="constructor">Magenta</span></span></code></td>
+
+</tr></table>
+
+<div class="info ">
+<div class="info-desc">
+<p>The type <code class="code">color</code> represents the colors of players.</p>
+</div>
+</div>
+
+
+<pre><code><span id="TYPEplayer"><span class="keyword">type</span> <code class="type"></code>player</span> = {</code></pre><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTplayer.name">name</span>&nbsp;: <code class="type">string</code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTplayer.num">num</span>&nbsp;: <code class="type">int</code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTplayer.color">color</span>&nbsp;: <code class="type"><a href="Player.html#TYPEcolor">color</a></code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTplayer.cards">cards</span>&nbsp;: <code class="type"><a href="Resource.html#TYPEt">Resource.t</a> list</code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTplayer.dev_cards">dev_cards</span>&nbsp;: <code class="type"><a href="Dev_cards.html#TYPEt">Dev_cards.t</a> list</code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTplayer.points">points</span>&nbsp;: <code class="type">int</code>;</code></td>
+
+</tr></table>
+<code>}</code>
+
+<div class="info ">
+<div class="info-desc">
+<p>The type <code class="code">player</code> represents a player. A player has a number <code class="code">num</code>,
+    color represented by <code class="code">color</code>, a hand of resource cards <code class="code">cards</code>, a
+    hand of development cards <code class="code">dev_cards</code>, and victory points <code class="code">points</code>.</p>
+</div>
+</div>
+
+
+<pre><span id="TYPEt"><span class="keyword">type</span> <code class="type"></code>t</span> = <code class="type"><a href="Player.html#TYPEplayer">player</a></code> </pre>
+
+
+<pre><span id="VALpp_list"><span class="keyword">val</span> pp_list</span> : <code class="type">('a -> string) -> 'a list -> string</code></pre>
+<pre><span id="VALpp_resource"><span class="keyword">val</span> pp_resource</span> : <code class="type"><a href="Resource.html#TYPEt">Resource.t</a> -> string</code></pre>
+<pre><span id="VALinit_player"><span class="keyword">val</span> init_player</span> : <code class="type">int -> string -> <a href="Player.html#TYPEcolor">color</a> -> <a href="Player.html#TYPEt">t</a></code></pre>
+<pre><span id="VALupdate_player"><span class="keyword">val</span> update_player</span> : <code class="type"><a href="Player.html#TYPEplayer">player</a> -> <a href="Resource.html#TYPEt">Resource.t</a> list -> <a href="Dev_cards.html#TYPEt">Dev_cards.t</a> list -> int -> <a href="Player.html#TYPEplayer">player</a></code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">update_player player cards dev_cards points</code> makes a new player
+    with those fields</p>
+</div>
+</div>
+
+<pre><span id="VALget_player_name"><span class="keyword">val</span> get_player_name</span> : <code class="type"><a href="Player.html#TYPEt">t</a> -> string</code></pre>
+<pre><span id="VALgen_cards"><span class="keyword">val</span> gen_cards</span> : <code class="type"><a href="Resource.html#TYPEt">Resource.t</a> list -> int -> <a href="Resource.html#TYPEt">Resource.t</a> list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">gen_cards card num_needed</code> is used to generate multiple copies of
+    resource cards, for the bank.</p>
+
+<p><code class="code">gen_cards card num_needed</code> just creates a list of resource of
+    number <code class="code">num_needed</code></p>
+</div>
+</div>
+
+<pre><span id="VALbank"><span class="keyword">val</span> bank</span> : <code class="type"><a href="Player.html#TYPEplayer">player</a></code></pre>
+<pre><span id="TYPEtr"><span class="keyword">type</span> <code class="type"></code>tr</span> = <code class="type"><a href="Player.html#TYPEt">t</a> * <a href="Resource.html#TYPEt">Resource.t</a> list</code> </pre>
+<div class="info ">
+<div class="info-desc">
+<p>The type <code class="code">tr</code> represents the type of a trade as a tuple of a player
+    and the resource cards.</p>
+
+<p>The type of a trade. a tuple of list and the list to trade out</p>
+</div>
+</div>
+
+
+<pre><span id="VALtrade_out"><span class="keyword">val</span> trade_out</span> : <code class="type"><a href="Resource.html#TYPEt">Resource.t</a> list -> <a href="Resource.html#TYPEt">Resource.t</a> list -> <a href="Resource.html#TYPEt">Resource.t</a> list -> <a href="Resource.html#TYPEt">Resource.t</a> list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">trade_out player_cards resources new_pl_res</code> returns a list of
+    cards that removes the cards that a player wants to trade away.
+    <code class="code">player_cards</code> is the cards owned. <code class="code">resources</code> is list of resources
+    they're trading in. <code class="code">new_pl_res</code> is an accumulator.</p>
+
+<p>Raises <code class="code">InvalidTrade</code> if the player has insufficient resources for
+    the trade they want to make.</p>
+</div>
+</div>
+
+<pre><span id="VALtrade"><span class="keyword">val</span> trade</span> : <code class="type"><a href="Player.html#TYPEplayer">player</a> * <a href="Resource.html#TYPEt">Resource.t</a> list -> <a href="Resource.html#TYPEt">Resource.t</a> list -> bool -> <a href="Resource.html#TYPEt">Resource.t</a> list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">trade trade_tup gained_res</code> returns a list of resources resulting
+    from trading away the resources from the player, both specified in
+    the trade <code class="code">trade_tup</code>, to be replaced with the resources in
+    <code class="code">gained_res</code>.</p>
+
+<p>Raises <code class="code">InvalidTrade</code> if one of the players is trades no cards in
+    <code class="code">trade_tup</code>.</p>
+</div>
+</div>
+
+<pre><span id="VALtrade_to_player"><span class="keyword">val</span> trade_to_player</span> : <code class="type"><a href="Player.html#TYPEplayer">player</a> * <a href="Resource.html#TYPEt">Resource.t</a> list -><br>       <a href="Player.html#TYPEplayer">player</a> * <a href="Resource.html#TYPEt">Resource.t</a> list -> bool -> <a href="Player.html#TYPEplayer">player</a> * <a href="Player.html#TYPEplayer">player</a></code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">trade_to_player trade_1 trade_2 with_bank</code> returns a tuple of two
+    players with newly traded cards. It removes resource cards from the
+    player specified in <code class="code">trade1</code> and adds them to the player in
+    <code class="code">trade2</code>. <code class="code">with_bank</code> is a bool that is true if the first player is
+    trading with the bank as the second player, and false otherwise.
+    Note: <code class="code">trade_1</code> must be the player of the current turn. This way,
+    can be used to trade with bank, which must be <code class="code">trade_2</code>.</p>
+
+<p>Raises <code class="code">InvalidTrade</code> if one of the players is trading no cards, and
+    the trade is not being conducted with the bank.</p>
+
+<p><code class="code">trade_to_player tr1 tr2 with_bank</code> returns a new tuple of players
+    whose lists of resources have been updated after a trade has been
+    completed.</p>
+
+<p>Raises <code class="code">InvalidTrade</code> if one or more players has insufficient
+    resources for the desired trade. Also raises <code class="code">InvalidTrade</code> if a
+    trade between players involves one player trading no cards. Ex. If
+    p1 wants to trade 1 wool and 2 brick for p2's 2 lumber:
+    trade_to_player (p1,[Wool, Brick, Brick]) (p2, [Lumber, Lumber])</p>
+</div>
+</div>
+
+<pre><span id="VALtrade_to_bank"><span class="keyword">val</span> trade_to_bank</span> : <code class="type"><a href="Player.html#TYPEplayer">player</a> -><br>       <a href="Resource.html#TYPEt">Resource.t</a> list -> <a href="Resource.html#TYPEt">Resource.t</a> list -> <a href="Player.html#TYPEplayer">player</a> * <a href="Player.html#TYPEplayer">player</a></code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">trade_to_bank player player_res bank_res</code> updates the resources of
+    the player according to the resources they wish to trade away in
+    <code class="code">player_res</code>. The resources that the bank is giving to the player is
+    denoted by <code class="code">bank_res</code>.</p>
+</div>
+</div>
+
+<pre><span id="VALfront_of_list"><span class="keyword">val</span> front_of_list</span> : <code class="type">int -> <a href="Player.html#TYPEplayer">player</a> list -> <a href="Player.html#TYPEplayer">player</a> list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">front_of_list pl_num lst</code> returns the elements of player list <code class="code">lst</code>
+    up to player with number <code class="code">pl_num</code>, not inclusive. E.g.
+    <code class="code">front_of_list 3 [p4;p3;p2;p1]</code> returns [p4]</p>
+</div>
+</div>
+
+<pre><span id="VALback_of_list"><span class="keyword">val</span> back_of_list</span> : <code class="type">int -> <a href="Player.html#TYPEplayer">player</a> list -> <a href="Player.html#TYPEplayer">player</a> list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">back_of_list pl_num lst</code> returns the elements of player list <code class="code">lst</code>
+    after player with number <code class="code">pl_num</code>, not inclusive. E.g.
+    <code class="code">back_of_list 3 [p4;p3;p2;p1]</code> returns [p2;p1]</p>
+</div>
+</div>
+
+<pre><span id="VALupdate_pl_cards_failed"><span class="keyword">val</span> update_pl_cards_failed</span> : <code class="type">int -><br>       <a href="Player.html#TYPEplayer">player</a> list -> <a href="Adj_matrix.html#TYPEbuilding">Adj_matrix.building</a> -> <a href="Resource.html#TYPEt">Resource.t</a> -> <a href="Player.html#TYPEplayer">player</a> list</code></pre>
+<pre><span id="VALupdate_pl_cards"><span class="keyword">val</span> update_pl_cards</span> : <code class="type">int -><br>       <a href="Player.html#TYPEplayer">player</a> list -> <a href="Adj_matrix.html#TYPEbuilding">Adj_matrix.building</a> -> <a href="Resource.html#TYPEt">Resource.t</a> -> <a href="Player.html#TYPEplayer">player</a> list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">update_pl_cards pl_num pl_list building res</code> updates the cards of
+    player with number <code class="code">pl_num</code> from a list of players <code class="code">pl_list</code>.
+    Returns an updated list of players. If <code class="code">building</code> is <code class="code">House</code>, then
+    they get one of <code class="code">res</code>. If it is <code class="code">City</code>, they get two <code class="code">res</code> cards.
+    <code class="code">pl_list</code> stores the players in decreasing order, i.e. <code class="code">p3;p2;p1</code></p>
+</div>
+</div>
+
+<pre><span id="VALupdate_pl_settlements"><span class="keyword">val</span> update_pl_settlements</span> : <code class="type">int -> <a href="Adj_matrix.html#TYPEbuilding">Adj_matrix.building</a> -> int -> <a href="Adj_matrix.html#TYPEnode">Adj_matrix.node</a> array</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">update_pl_settlements pl_num building loc</code> returns the updated
+    corner array in Adj_matrix by adding a settlement <code class="code">building</code> at the
+    corner with id <code class="code">loc</code>.</p>
+
+<p>Raises <code class="code">Adj_matrix.InvalidTileId i</code> if i is not in the range <code class="code">1,54</code>.</p>
+</div>
+</div>
+
+<pre><span id="VALupdate_pl_roads"><span class="keyword">val</span> update_pl_roads</span> : <code class="type">int -> int -> int -> Yojson.Basic.t -> <a href="Adj_matrix.html#TYPEroad">Adj_matrix.road</a> array array</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">update_pl_roads pl_num v1 v2 json</code> returns the updated road matrix
+    in Adj_matrix so that there is a road owned by player with number
+    <code class="code">pl_num</code> between points <code class="code">v1</code> and <code class="code">v2</code>. <code class="code">json</code> is a list of valid
+    roads.</p>
+
+<p>Raises <code class="code">Adj_matrix.InvalidRoad (v1,v2)</code> if at least one is not in
+    the range <code class="code">1,54</code>.</p>
+</div>
+</div>
+
+<pre><span id="VALplayer1"><span class="keyword">val</span> player1</span> : <code class="type"><a href="Player.html#TYPEplayer">player</a></code></pre>
+<pre><span id="VALplayer2"><span class="keyword">val</span> player2</span> : <code class="type"><a href="Player.html#TYPEplayer">player</a></code></pre>
+<pre><span id="VALunmatch_input"><span class="keyword">val</span> unmatch_input</span> : <code class="type"><a href="Resource.html#TYPEt">Resource.t</a> list -> string -> string</code></pre>
+<pre><span id="VALmatching_input"><span class="keyword">val</span> matching_input</span> : <code class="type">string list -> <a href="Resource.html#TYPEt">Resource.t</a> list -> <a href="Resource.html#TYPEt">Resource.t</a> list</code></pre>
+<pre><span id="VALinput_to_list"><span class="keyword">val</span> input_to_list</span> : <code class="type">string -> <a href="Resource.html#TYPEt">Resource.t</a> list</code></pre>
+<pre><span id="VALtrading_logic"><span class="keyword">val</span> trading_logic</span> : <code class="type"><a href="Player.html#TYPEplayer">player</a> -> <a href="Player.html#TYPEplayer">player</a> -> <a href="Player.html#TYPEplayer">player</a> * <a href="Player.html#TYPEplayer">player</a></code></pre>
+<pre><span id="VALdist_helper"><span class="keyword">val</span> dist_helper</span> : <code class="type">int list -> <a href="Player.html#TYPEplayer">player</a> list -> <a href="Resource.html#TYPEt">Resource.t</a> -> <a href="Player.html#TYPEplayer">player</a> list</code></pre>
+<pre><span id="VALdistr_res"><span class="keyword">val</span> distr_res</span> : <code class="type"><a href="Player.html#TYPEt">t</a> list -> int -> Yojson.Basic.t -> <a href="Player.html#TYPEt">t</a> list</code></pre>
+<pre><span id="VALdistr_res_setup"><span class="keyword">val</span> distr_res_setup</span> : <code class="type"><a href="Player.html#TYPEplayer">player</a> -> int -> Yojson.Basic.t -> <a href="Player.html#TYPEplayer">player</a></code></pre></body></html>

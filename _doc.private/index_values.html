@@ -1,0 +1,588 @@
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="Start" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of exceptions" rel=Appendix href="index_exceptions.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Board" rel="Chapter" href="Board.html">
+<link title="Player" rel="Chapter" href="Player.html">
+<link title="Resource" rel="Chapter" href="Resource.html">
+<link title="Dev_cards" rel="Chapter" href="Dev_cards.html">
+<link title="State" rel="Chapter" href="State.html">
+<link title="Main" rel="Chapter" href="Main.html">
+<link title="Author" rel="Chapter" href="Author.html">
+<link title="Adj_matrix" rel="Chapter" href="Adj_matrix.html">
+<link title="Dev_card_logic" rel="Chapter" href="Dev_card_logic.html">
+<link title="Parse" rel="Chapter" href="Parse.html"><title>Index of values</title>
+</head>
+<body>
+<div class="navbar">&nbsp;<a class="up" href="index.html" title="Index">Up</a>
+&nbsp;</div>
+<h1>Index of values</h1>
+<table>
+<tr><td align="left"><div>B</div></td></tr>
+<tr><td><a href="Player.html#VALback_of_list">back_of_list</a> [<a href="Player.html">Player</a>]</td>
+<td><div class="info">
+<p><code class="code">back_of_list pl_num lst</code> returns the elements of player list <code class="code">lst</code>
+    after player with number <code class="code">pl_num</code>, not inclusive.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Player.html#VALbank">bank</a> [<a href="Player.html">Player</a>]</td>
+<td></td></tr>
+<tr><td><a href="Main.html#VALbank_trade">bank_trade</a> [<a href="Main.html">Main</a>]</td>
+<td><div class="info">
+<p><code class="code">bank_trade players_list player</code> allows the player <code class="code">player</code> of the
+    players_list <code class="code">players_list</code> their resources for a Road, House, City,
+    Developement card, or Resource Cards</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Main.html#VALbuild_city">build_city</a> [<a href="Main.html">Main</a>]</td>
+<td><div class="info">
+<p><code class="code">build_city player</code> builds a city based on where which node the
+    player <code class="code">player</code> specifies to build the city</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Main.html#VALbuild_from_input">build_from_input</a> [<a href="Main.html">Main</a>]</td>
+<td><div class="info">
+<p><code class="code">build_from_input build_type</code> builds the specified type from the
+    <code class="code">build_type</code> input</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Main.html#VALbuild_house">build_house</a> [<a href="Main.html">Main</a>]</td>
+<td><div class="info">
+<p><code class="code">build_house player</code> builds a house at the node specified by the
+    player <code class="code">player</code></p>
+
+</div>
+</td></tr>
+<tr><td><a href="State.html#VALbuild_house">build_house</a> [<a href="State.html">State</a>]</td>
+<td><div class="info">
+<p><code class="code">build_house b pos</code> is the board <code class="code">b</code> resulting from building a house
+    on the tile at position <code class="code">pos</code>.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Main.html#VALbuild_rd">build_rd</a> [<a href="Main.html">Main</a>]</td>
+<td><div class="info">
+<p><code class="code">build_rd player json</code> builds updates the roads of the player
+    <code class="code">player</code> in the json <code class="code">json</code></p>
+
+</div>
+</td></tr>
+<tr><td><a href="State.html#VALbuild_road">build_road</a> [<a href="State.html">State</a>]</td>
+<td><div class="info">
+<p><code class="code">build_road b pos</code> is the board <code class="code">b</code> resulting from building a road
+    on the tile at position <code class="code">pos</code>.</p>
+
+</div>
+</td></tr>
+<tr><td align="left"><div>C</div></td></tr>
+<tr><td><a href="Parse.html#VALcheck_corner_input">check_corner_input</a> [<a href="Parse.html">Parse</a>]</td>
+<td><div class="info">
+<p><code class="code">check_corner_input index</code> returns corner index <code class="code">i</code> if it is valid
+    to build a house or city on that corner, i.e.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Parse.html#VALcheck_road_input">check_road_input</a> [<a href="Parse.html">Parse</a>]</td>
+<td><div class="info">
+<p><code class="code">check_road_input player str</code> returns the string <code class="code">str</code> if it is
+    valid for player <code class="code">player</code> to build the road specified in <code class="code">str</code>,
+    which is a string of the form <code class="code">"[v1,v2]"</code>, containing two indices
+    that represent a road.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Parse.html#VALcheck_road_list_aux">check_road_list_aux</a> [<a href="Parse.html">Parse</a>]</td>
+<td><div class="info">
+<p><code class="code">check_road_list_aux player lst json</code> checks the validity of player
+    <code class="code">player</code> building a road denoted by a list of integers <code class="code">lst</code>, using
+    <code class="code">json</code> as the list of valid roads.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Parse.html#VALconn_with_corner">conn_with_corner</a> [<a href="Parse.html">Parse</a>]</td>
+<td><div class="info">
+<p><code class="code">conn_with_corner player v1 v2</code> returns true the road denoted by
+    <code class="code">v1</code>, <code class="code">v2</code> is connected to a corner of a tile that has one of
+    <code class="code">player</code>'s buildings.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Parse.html#VALconn_with_road">conn_with_road</a> [<a href="Parse.html">Parse</a>]</td>
+<td><div class="info">
+<p><code class="code">conn_with_road player v1 v2</code> returns true if the road denoted by
+    <code class="code">v1</code>, <code class="code">v2</code> is connected to a road owned by <code class="code">player</code>.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Parse.html#VALconnected_rd">connected_rd</a> [<a href="Parse.html">Parse</a>]</td>
+<td></td></tr>
+<tr><td><a href="Adj_matrix.html#VALcorner_to_node">corner_to_node</a> [<a href="Adj_matrix.html">Adj_matrix</a>]</td>
+<td><div class="info">
+<p><code class="code">corner_to_node num</code> returns the node corresponding to the corner,
+    which is the int</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Main.html#VALcreate_dev">create_dev</a> [<a href="Main.html">Main</a>]</td>
+<td><div class="info">
+<p><code class="code">create_dev player</code> creates a dev card associated to the player
+    <code class="code">player</code></p>
+
+</div>
+</td></tr>
+<tr><td><a href="Main.html#VALcreate_player_list">create_player_list</a> [<a href="Main.html">Main</a>]</td>
+<td><div class="info">
+<p><code class="code">create_player_list num_pl total_num_pl player_list</code> returns a list
+    of players depending on user inputs for the players names.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Adj_matrix.html#VALcurr_corners">curr_corners</a> [<a href="Adj_matrix.html">Adj_matrix</a>]</td>
+<td><div class="info">
+<p><code class="code">curr_corners</code> is the current corners list</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Adj_matrix.html#VALcurr_roads">curr_roads</a> [<a href="Adj_matrix.html">Adj_matrix</a>]</td>
+<td><div class="info">
+<p><code class="code">curr_roads</code> is the current road matrix</p>
+
+</div>
+</td></tr>
+<tr><td align="left"><div>D</div></td></tr>
+<tr><td><a href="Dev_card_logic.html#VALdev_card_logic">dev_card_logic</a> [<a href="Dev_card_logic.html">Dev_card_logic</a>]</td>
+<td><div class="info">
+<p><code class="code">dev_card_logic player roads_json</code> parses the user's command to use
+    a development card.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Dev_card_logic.html#VALdev_logic">dev_logic</a> [<a href="Dev_card_logic.html">Dev_card_logic</a>]</td>
+<td></td></tr>
+<tr><td><a href="Dev_card_logic.html#VALdev_to_string">dev_to_string</a> [<a href="Dev_card_logic.html">Dev_card_logic</a>]</td>
+<td><div class="info">
+<p><code class="code">dev_to_string dev_cards acc</code> converts <code class="code">dev_cards</code> to a printable
+    string</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Adj_matrix.html#VALdice_roll_tiles">dice_roll_tiles</a> [<a href="Adj_matrix.html">Adj_matrix</a>]</td>
+<td><div class="info">
+<p><code class="code">dice_roll_tiles num</code> if we roll dice, we want a certain number, and
+    get all the tiles with that number in a list</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Player.html#VALdist_helper">dist_helper</a> [<a href="Player.html">Player</a>]</td>
+<td></td></tr>
+<tr><td><a href="Player.html#VALdistr_res">distr_res</a> [<a href="Player.html">Player</a>]</td>
+<td></td></tr>
+<tr><td><a href="Player.html#VALdistr_res_setup">distr_res_setup</a> [<a href="Player.html">Player</a>]</td>
+<td></td></tr>
+<tr><td align="left"><div>F</div></td></tr>
+<tr><td><a href="Player.html#VALfront_of_list">front_of_list</a> [<a href="Player.html">Player</a>]</td>
+<td><div class="info">
+<p><code class="code">front_of_list pl_num lst</code> returns the elements of player list <code class="code">lst</code>
+    up to player with number <code class="code">pl_num</code>, not inclusive.</p>
+
+</div>
+</td></tr>
+<tr><td align="left"><div>G</div></td></tr>
+<tr><td><a href="Player.html#VALgen_cards">gen_cards</a> [<a href="Player.html">Player</a>]</td>
+<td><div class="info">
+<p><code class="code">gen_cards card num_needed</code> is used to generate multiple copies of
+    resource cards, for the bank.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Main.html#VALget_house_loc">get_house_loc</a> [<a href="Main.html">Main</a>]</td>
+<td><div class="info">
+<p><code class="code">get_house_loc house_input player</code> is the house location inputted by
+    the user.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Player.html#VALget_player_name">get_player_name</a> [<a href="Player.html">Player</a>]</td>
+<td></td></tr>
+<tr><td align="left"><div>H</div></td></tr>
+<tr><td><a href="Author.html#VALhours_worked">hours_worked</a> [<a href="Author.html">Author</a>]</td>
+<td><div class="info">
+<p><code class="code">hours_worked</code> is the number of hours you worked on this assignment.</p>
+
+</div>
+</td></tr>
+<tr><td align="left"><div>I</div></td></tr>
+<tr><td><a href="Adj_matrix.html#VALinit_corners">init_corners</a> [<a href="Adj_matrix.html">Adj_matrix</a>]</td>
+<td><div class="info">
+<p><code class="code">init_corners</code> makes the initial array of corners.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Player.html#VALinit_player">init_player</a> [<a href="Player.html">Player</a>]</td>
+<td></td></tr>
+<tr><td><a href="Adj_matrix.html#VALinit_road_mtx">init_road_mtx</a> [<a href="Adj_matrix.html">Adj_matrix</a>]</td>
+<td><div class="info">
+<p><code class="code">init_road_mtx</code> makes the inital road matrix.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Main.html#VALinit_tiles">init_tiles</a> [<a href="Main.html">Main</a>]</td>
+<td></td></tr>
+<tr><td><a href="Main.html#VALinput_list">input_list</a> [<a href="Main.html">Main</a>]</td>
+<td><div class="info">
+<p><code class="code">input_list str</code> helps with checking if str is "HELP", "RULES", or
+    "QUIT".</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Player.html#VALinput_to_list">input_to_list</a> [<a href="Player.html">Player</a>]</td>
+<td></td></tr>
+<tr><td><a href="Main.html#VALinval_num_player">inval_num_player</a> [<a href="Main.html">Main</a>]</td>
+<td><div class="info">
+<p><code class="code">inval_num_player input json roads_json</code> is called when a user
+    enters an invalid number of players <code class="code">input</code>.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Parse.html#VALinvalid_rd_fmt">invalid_rd_fmt</a> [<a href="Parse.html">Parse</a>]</td>
+<td></td></tr>
+<tr><td><a href="Parse.html#VALinvalid_rd_id">invalid_rd_id</a> [<a href="Parse.html">Parse</a>]</td>
+<td></td></tr>
+<tr><td><a href="Parse.html#VALinvalid_tile_id">invalid_tile_id</a> [<a href="Parse.html">Parse</a>]</td>
+<td></td></tr>
+<tr><td><a href="Parse.html#VALis_alpha">is_alpha</a> [<a href="Parse.html">Parse</a>]</td>
+<td></td></tr>
+<tr><td><a href="Parse.html#VALis_connected_rd">is_connected_rd</a> [<a href="Parse.html">Parse</a>]</td>
+<td><div class="info">
+<p><code class="code">is_connected_rd player v1 v2</code> returns true if the road denoted by
+    v1,v2 is connected to player <code class="code">player</code>'s other houses, cities, or
+    roads.</p>
+
+</div>
+</td></tr>
+<tr><td align="left"><div>J</div></td></tr>
+<tr><td><a href="Main.html#VALjson">json</a> [<a href="Main.html">Main</a>]</td>
+<td></td></tr>
+<tr><td align="left"><div>L</div></td></tr>
+<tr><td><a href="Main.html#VALloc_h">loc_h</a> [<a href="Main.html">Main</a>]</td>
+<td></td></tr>
+<tr><td align="left"><div>M</div></td></tr>
+<tr><td><a href="Main.html#VALmain">main</a> [<a href="Main.html">Main</a>]</td>
+<td><div class="info">
+<p><code class="code">main</code> runs the beginning of the game that asks for the input for
+    the number of players and asks you to input another number if the
+    number is not between 2-4</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Dev_cards.html#VALmatch_dev_string">match_dev_string</a> [<a href="Dev_cards.html">Dev_cards</a>]</td>
+<td><div class="info">
+<p><code class="code">match_dev_string dev_card </code> returns the <code class="code">dev_card</code> in a string
+    format</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Player.html#VALmatching_input">matching_input</a> [<a href="Player.html">Player</a>]</td>
+<td></td></tr>
+<tr><td><a href="Dev_card_logic.html#VALmonopoly">monopoly</a> [<a href="Dev_card_logic.html">Dev_card_logic</a>]</td>
+<td></td></tr>
+<tr><td align="left"><div>N</div></td></tr>
+<tr><td><a href="Parse.html#VALname_player">name_player</a> [<a href="Parse.html">Parse</a>]</td>
+<td></td></tr>
+<tr><td><a href="Parse.html#VALname_player_helper">name_player_helper</a> [<a href="Parse.html">Parse</a>]</td>
+<td></td></tr>
+<tr><td><a href="Main.html#VALnum_pl_checker">num_pl_checker</a> [<a href="Main.html">Main</a>]</td>
+<td><div class="info">
+<p><code class="code">num_pl_checker input_num_pl</code> is the boolean value of if
+    <code class="code">input_num_players</code> is a valid int of players.</p>
+
+</div>
+</td></tr>
+<tr><td align="left"><div>O</div></td></tr>
+<tr><td><a href="Parse.html#VALoccupied_rd">occupied_rd</a> [<a href="Parse.html">Parse</a>]</td>
+<td></td></tr>
+<tr><td><a href="Parse.html#VALoccupied_tile">occupied_tile</a> [<a href="Parse.html">Parse</a>]</td>
+<td></td></tr>
+<tr><td align="left"><div>P</div></td></tr>
+<tr><td><a href="Parse.html#VALparse_help">parse_help</a> [<a href="Parse.html">Parse</a>]</td>
+<td><div class="info">
+<p><code class="code">parse_help str</code> quits the game if <code class="code">str</code> is "QUIT", prints out rules
+    if <code class="code">str</code> is "RULES", and prints out directional rules if <code class="code">str</code> is
+    "HELP"</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Parse.html#VALparse_road_str">parse_road_str</a> [<a href="Parse.html">Parse</a>]</td>
+<td><div class="info">
+<p><code class="code">parse_road_str str</code> parses a string of brackets, integers, and
+    commas denoting a road into a list of integers.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Main.html#VALplay_game">play_game</a> [<a href="Main.html">Main</a>]</td>
+<td><div class="info">
+<p><code class="code">play_game num_pl json roads_json</code> runs the main functionality of
+    the game-creating a players list, printing the board, setting up the
+    game, and playing the turns until a player wins.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Main.html#VALplay_turn">play_turn</a> [<a href="Main.html">Main</a>]</td>
+<td><div class="info">
+<p><code class="code">play_turn player</code> is a new player list updated after the specified
+    player <code class="code">player</code> has gone.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Main.html#VALplay_turns">play_turns</a> [<a href="Main.html">Main</a>]</td>
+<td><div class="info">
+<p><code class="code">play_turns players_list</code> will continuously carry out the turns of
+    each player until someone has 10 victory points, meaning they have
+    won the game</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Player.html#VALplayer1">player1</a> [<a href="Player.html">Player</a>]</td>
+<td></td></tr>
+<tr><td><a href="Player.html#VALplayer2">player2</a> [<a href="Player.html">Player</a>]</td>
+<td></td></tr>
+<tr><td><a href="Main.html#VALplayer_trade">player_trade</a> [<a href="Main.html">Main</a>]</td>
+<td><div class="info">
+<p><code class="code">player_trade player_list player</code> trades a resource between <code class="code">player</code>
+    and player_2 which the user inputs.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Parse.html#VALpp_array">pp_array</a> [<a href="Parse.html">Parse</a>]</td>
+<td><div class="info">
+<p><code class="code">pp_array pp_elt arr</code> pretty-prints array <code class="code">arr</code>, using <code class="code">pp_elt</code> to
+    pretty-print each element of <code class="code">arr</code>.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Parse.html#VALpp_building">pp_building</a> [<a href="Parse.html">Parse</a>]</td>
+<td><div class="info">
+<p><code class="code">pp_building b</code> pretty-prints building <code class="code">b</code>.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Player.html#VALpp_list">pp_list</a> [<a href="Player.html">Player</a>]</td>
+<td></td></tr>
+<tr><td><a href="Parse.html#VALpp_node">pp_node</a> [<a href="Parse.html">Parse</a>]</td>
+<td><div class="info">
+<p><code class="code">pp_node node</code> pretty-prints a node <code class="code">node</code>.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Parse.html#VALpp_pnum">pp_pnum</a> [<a href="Parse.html">Parse</a>]</td>
+<td><div class="info">
+<p><code class="code">pp_pnum num</code> pretty-prints a player number <code class="code">num</code>.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Player.html#VALpp_resource">pp_resource</a> [<a href="Player.html">Player</a>]</td>
+<td></td></tr>
+<tr><td align="left"><div>R</div></td></tr>
+<tr><td><a href="Main.html#VALreplace_players">replace_players</a> [<a href="Main.html">Main</a>]</td>
+<td><div class="info">
+<p><code class="code">replace_players new_players old_player_list</code> replacing players in
+    <code class="code">new_players</code> with ones in <code class="code">old_player</code> that correspond to the same
+    number.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Adj_matrix.html#VALresource_from_string">resource_from_string</a> [<a href="Adj_matrix.html">Adj_matrix</a>]</td>
+<td><div class="info">
+<p><code class="code">resource_from_string s</code> parses s into a Resource.t type</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Dev_card_logic.html#VALroad_building">road_building</a> [<a href="Dev_card_logic.html">Dev_card_logic</a>]</td>
+<td><div class="info">
+<p><code class="code">road_building player</code> returns a new player that prompts the user to
+    build a road at the player's choice</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Adj_matrix.html#VALroad_from_json">road_from_json</a> [<a href="Adj_matrix.html">Adj_matrix</a>]</td>
+<td><div class="info">
+<p><code class="code">road_from_json json</code> extracts a single road from a json <code class="code">json</code> as a
+    tuple of integers.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Adj_matrix.html#VALroads_from_json">roads_from_json</a> [<a href="Adj_matrix.html">Adj_matrix</a>]</td>
+<td><div class="info">
+<p><code class="code">roads_from_json json</code> extracts the roads of the json as a list of
+    tuples representing valid roads, e.g.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Main.html#VALroads_json">roads_json</a> [<a href="Main.html">Main</a>]</td>
+<td><div class="info">
+<p><code class="code">roads_json</code> is a list of tuples representing valid roads.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Main.html#VALroll_dice">roll_dice</a> [<a href="Main.html">Main</a>]</td>
+<td></td></tr>
+<tr><td align="left"><div>S</div></td></tr>
+<tr><td><a href="Main.html#VALsetup">setup</a> [<a href="Main.html">Main</a>]</td>
+<td></td></tr>
+<tr><td><a href="Main.html#VALsetup_home">setup_home</a> [<a href="Main.html">Main</a>]</td>
+<td></td></tr>
+<tr><td><a href="Main.html#VALsetup_road">setup_road</a> [<a href="Main.html">Main</a>]</td>
+<td><div class="info">
+<p>(<code class="code">setup players_list num_players first_sec</code> is a new list of players
+    after the players set up the game giving each player the ability to
+    build a home and 2 roads twice.</p>
+
+</div>
+</td></tr>
+<tr><td align="left"><div>T</div></td></tr>
+<tr><td><a href="Adj_matrix.html#VALtile_from_json">tile_from_json</a> [<a href="Adj_matrix.html">Adj_matrix</a>]</td>
+<td><div class="info">
+<p><code class="code">tile_from_json</code> extracts a single tile from a json <code class="code">json</code>.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Adj_matrix.html#VALtiles_from_json">tiles_from_json</a> [<a href="Adj_matrix.html">Adj_matrix</a>]</td>
+<td><div class="info">
+<p><code class="code">tiles_from_json j</code> makes a list of tiles from the json</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Player.html#VALtrade">trade</a> [<a href="Player.html">Player</a>]</td>
+<td><div class="info">
+<p><code class="code">trade trade_tup gained_res</code> returns a list of resources resulting
+    from trading away the resources from the player, both specified in
+    the trade <code class="code">trade_tup</code>, to be replaced with the resources in
+    <code class="code">gained_res</code>.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Main.html#VALtrade_4_1_card">trade_4_1_card</a> [<a href="Main.html">Main</a>]</td>
+<td><div class="info">
+<p><code class="code">trade_4_1_card player</code> allows a player <code class="code">player</code> to trade four of a
+    kind of resource for another resource.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Main.html#VALtrade_main">trade_main</a> [<a href="Main.html">Main</a>]</td>
+<td></td></tr>
+<tr><td><a href="Player.html#VALtrade_out">trade_out</a> [<a href="Player.html">Player</a>]</td>
+<td><div class="info">
+<p><code class="code">trade_out player_cards resources new_pl_res</code> returns a list of
+    cards that removes the cards that a player wants to trade away.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Main.html#VALtrade_prompt_str">trade_prompt_str</a> [<a href="Main.html">Main</a>]</td>
+<td></td></tr>
+<tr><td><a href="Player.html#VALtrade_to_bank">trade_to_bank</a> [<a href="Player.html">Player</a>]</td>
+<td><div class="info">
+<p><code class="code">trade_to_bank player player_res bank_res</code> updates the resources of
+    the player according to the resources they wish to trade away in
+    <code class="code">player_res</code>.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Player.html#VALtrade_to_player">trade_to_player</a> [<a href="Player.html">Player</a>]</td>
+<td><div class="info">
+<p><code class="code">trade_to_player trade_1 trade_2 with_bank</code> returns a tuple of two
+    players with newly traded cards.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Player.html#VALtrading_logic">trading_logic</a> [<a href="Player.html">Player</a>]</td>
+<td></td></tr>
+<tr><td align="left"><div>U</div></td></tr>
+<tr><td><a href="Player.html#VALunmatch_input">unmatch_input</a> [<a href="Player.html">Player</a>]</td>
+<td></td></tr>
+<tr><td><a href="Adj_matrix.html#VALupdate_corners">update_corners</a> [<a href="Adj_matrix.html">Adj_matrix</a>]</td>
+<td><div class="info">
+<p>Raises <code class="code">InvalidTileId index</code> if <code class="code">index</code> is out of the range <code class="code">1,54</code>,
+    inclusive.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Player.html#VALupdate_pl_cards">update_pl_cards</a> [<a href="Player.html">Player</a>]</td>
+<td><div class="info">
+<p><code class="code">update_pl_cards pl_num pl_list building res</code> updates the cards of
+    player with number <code class="code">pl_num</code> from a list of players <code class="code">pl_list</code>.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Player.html#VALupdate_pl_cards_failed">update_pl_cards_failed</a> [<a href="Player.html">Player</a>]</td>
+<td></td></tr>
+<tr><td><a href="Player.html#VALupdate_pl_roads">update_pl_roads</a> [<a href="Player.html">Player</a>]</td>
+<td><div class="info">
+<p><code class="code">update_pl_roads pl_num v1 v2 json</code> returns the updated road matrix
+    in Adj_matrix so that there is a road owned by player with number
+    <code class="code">pl_num</code> between points <code class="code">v1</code> and <code class="code">v2</code>.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Player.html#VALupdate_pl_settlements">update_pl_settlements</a> [<a href="Player.html">Player</a>]</td>
+<td><div class="info">
+<p><code class="code">update_pl_settlements pl_num building loc</code> returns the updated
+    corner array in Adj_matrix by adding a settlement <code class="code">building</code> at the
+    corner with id <code class="code">loc</code>.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Player.html#VALupdate_player">update_player</a> [<a href="Player.html">Player</a>]</td>
+<td><div class="info">
+<p><code class="code">update_player player cards dev_cards points</code> makes a new player
+    with those fields</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Main.html#VALupdate_road_loc">update_road_loc</a> [<a href="Main.html">Main</a>]</td>
+<td><div class="info">
+<p><code class="code">update_road_loc road_input player</code> updates the roads of the player
+    <code class="code">player</code> with the input <code class="code">road_input</code></p>
+
+</div>
+</td></tr>
+<tr><td><a href="Adj_matrix.html#VALupdate_road_mtx">update_road_mtx</a> [<a href="Adj_matrix.html">Adj_matrix</a>]</td>
+<td><div class="info">
+<p>Raises <code class="code">InvalidRoadId (row, column)</code> if <code class="code">row</code> or <code class="code">column</code> are out of
+    bounds.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Main.html#VALuse_dev_card">use_dev_card</a> [<a href="Main.html">Main</a>]</td>
+<td><div class="info">
+<p><code class="code">use_dev_card</code> is the new player list after</p>
+
+</div>
+</td></tr>
+<tr><td align="left"><div>V</div></td></tr>
+<tr><td><a href="Dev_card_logic.html#VALvictory_points">victory_points</a> [<a href="Dev_card_logic.html">Dev_card_logic</a>]</td>
+<td><div class="info">
+<p><code class="code">victory_points player</code> returns a player with a point added</p>
+
+</div>
+</td></tr>
+<tr><td align="left"><div>Y</div></td></tr>
+<tr><td><a href="Dev_card_logic.html#VALyear_of_plenty">year_of_plenty</a> [<a href="Dev_card_logic.html">Dev_card_logic</a>]</td>
+<td><div class="info">
+<p><code class="code">year_of_plenty player</code> returns a new player that takes two
+    resources of the player's choice</p>
+
+</div>
+</td></tr>
+</table>
+</body>
+</html>
