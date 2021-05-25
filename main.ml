@@ -133,8 +133,8 @@ let rec loc_h str msg =
 let setup_home player first_sec =
   let msg =
     if first_sec == 1 then
-      ", where would you like to place your first house? \n  >"
-    else ", where would you like to place your second house? \n "
+      ", where would you like to place your first house? \n  > "
+    else ", where would you like to place your second house? \n > "
   in
   print_string msg;
   let loc = read_line () in
@@ -145,6 +145,7 @@ let setup_home player first_sec =
   print_board curr_corners curr_roads init_tiles;
   print_string player.name;
   print_string (", you currently have " ^ unmatch_input new_pl.cards "");
+  print_string "\n > ";
   new_pl
 
 (** ([setup players_list num_players first_sec] is a new list of players
@@ -160,11 +161,11 @@ let rec setup_road player first_sec =
       "Where would you like to build your first road? Format: [*corner \
        location*, *corner location*] ex: [1,4] \n\
       \ "
-  else (
+  else
     print_string
       ", where would you like to build your second road? Format: \
        [*corner location*, *corner location*] ex: [1,4]\n";
-    print_string "> ");
+  print_string "> ";
   update_road_loc (read_line ()) player;
   print_board curr_corners curr_roads init_tiles
 
@@ -242,7 +243,7 @@ let build_rd player json =
        ^ ", where would you like to build your road? Format: [*corner \
           location*, *corner location*] ex: [1,4] \n\
          \ ");
-    print_string ">";
+    print_string "> ";
     let road_loc =
       Parse.check_road_input new_player (read_line ()) roads_json
     in
@@ -255,7 +256,7 @@ let build_rd player json =
     print_board curr_corners curr_roads init_tiles;
     new_player
   with InvalidTrade ->
-    print_string "You do not have the valid resources for a road. ";
+    print_string "You do not have the valid resources for a road. \n";
     player
 
 (** [build_house player] builds a house at the node specified by the
@@ -288,7 +289,7 @@ let build_house player =
     in
     house_setup input
   with InvalidTrade ->
-    print_string "You do not have the valid resources for a house. ";
+    print_string "You do not have the valid resources for a house. \n";
     player
 
 (** [build_city player] builds a city based on where which node the
@@ -372,6 +373,7 @@ let create_dev player : player =
       let new_player = fst (trade_to_bank player res_in res_out) in
       print_string
         ("Your cards now: " ^ unmatch_input new_player.cards "");
+      print_string "\n ";
       new_player
     with InvalidTrade ->
       print_string
@@ -409,6 +411,7 @@ let trade_4_1_card player : player =
   let res_out = input_list (read_line ()) |> input_to_list in
   let new_pl = fst (trade_to_bank player res_in res_out) in
   print_string ("Your cards now: " ^ unmatch_input new_pl.cards "");
+  print_string "\n";
   new_pl
 
 (** [build_from_input build_type] builds the specified type from the
