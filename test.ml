@@ -291,6 +291,16 @@ let p5_updated_cards =
     Wheat; Wheat; Ore; Ore; Wool; Wool; Brick; Brick; Wood; Wood; Wheat;
   ]
 
+let p3_updated_cards =
+  [ Wheat; Wheat; Ore; Ore; Wool; Wool; Brick; Brick; Wood; Wood; Ore ]
+
+let p3_updated_cards_1 =
+  [
+    Wheat; Wheat; Ore; Ore; Wool; Wool; Brick; Brick; Wood; Wood; Brick;
+  ]
+
+let p1_updated_cards = [ Wool; Wool; Brick; Wood; Brick ]
+
 (* trading p1 wool for p2 ore *)
 let trade_1_output = ([ Wool; Brick; Ore; Wood ], [ Ore; Wool ])
 
@@ -714,6 +724,14 @@ let parse_tests =
 
 let distr_res_tests =
   [
+    update_pl_cards_test "p5 gets " 5 [ p5 ] Adj_matrix.House Wheat
+      p5_updated_cards;
+    update_pl_cards_test "p3 gets ore " 5 [ p3 ] Adj_matrix.House Ore
+      p3_updated_cards;
+    update_pl_cards_test "p3 gets " 5 [ p5 ] Adj_matrix.House Brick
+      p3_updated_cards_1;
+    update_pl_cards_test "p5 gets " 5 [ p5 ] Adj_matrix.House Brick
+      p1_updated_cards;
     update_pl_cards_test "p5 gets " 5 [ p5 ] Adj_matrix.House Wheat
       p5_updated_cards;
   ]

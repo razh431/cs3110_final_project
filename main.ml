@@ -143,21 +143,7 @@ let rec setup players_list num_players first_sec : player list =
     let current_player = List.nth players_list num_players in
     let pl_name = current_player.name in
     print_string pl_name;
-    if first_sec == 1 then
-      print_string
-        ", where would you like to place your first house? \n "
-    else
-      print_string
-        ", where would you like to place your second house? \n ";
-    print_string "> ";
-    let house_num = get_house_loc (read_line ()) curr_corners in
-    let house_loc = Parse.check_corner_input house_num in
-    let new_pl = distr_res_setup current_player house_loc json in
-    ignore (update_pl_settlements new_pl.num House house_loc);
-    print_board curr_corners curr_roads init_tiles;
-    print_string pl_name;
-    print_string
-      (", you currently have " ^ unmatch_input new_pl.cards "");
+    let new_pl = setup_home current_player first_sec in
     if first_sec == 1 then (
       print_string
         "Where would you like to\n\
@@ -294,16 +280,25 @@ let trade_4_1_card player : player =
     " What resource would you like to trade in? Must have 4 of this \
      resource! ";
   print_string "> ";
-
-  (* let input = read_line () in
-
-     let rec input_list str = match str with | "HELP" | "RULES" | "QUIT"
-     -> parse_help input_num_pl | _ -> *)
-  let res = input_to_list (read_line ()) in
+  let input = read_line () in
+  let rec input_list str =
+    match str with
+    | "HELP" | "RULES" | "QUIT" ->
+        parse_help str;
+        print_string
+          " What resource would you like to trade in? Must have 4 of \
+           this resource! \n\
+          \ ";
+        print_string "> ";
+        let input = read_line () in
+        input_list input
+    | str -> str
+  in
+  let res = input_to_list (input_list input) in
   let res_in = gen_cards res 4 in
   print_string " What would you like to trade for? \n ";
   print_string "> ";
-  let res_out = read_line () |> input_to_list in
+  let res_out = input_list (read_line ()) |> input_to_list in
   let new_pl = fst (trade_to_bank player res_in res_out) in
   print_string ("Your cards now: " ^ unmatch_input new_pl.cards "");
   new_pl
@@ -348,7 +343,7 @@ let rec bank_trade (players_list : player list) (player : player) :
     \ Road: 1 wood, 1 brick\n\
     \ House: 1 wood, 1 brick, 1 wool, 1 wheat\n\
     \ City: 2 wheat, 3 ore\n\
-    \ Developement card: 1 Wool, 1 wheat, 1 ore \n\
+    \ Development card: 1 Wool, 1 wheat, 1 ore \n\
     \ Card: 4 of any resource to 1 card";
   print_string "> ";
   let build_type_s = read_line () in
